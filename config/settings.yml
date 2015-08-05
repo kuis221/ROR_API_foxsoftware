@@ -1,0 +1,6 @@
+roles:
+  - :user
+  - :admin
+  - :seller
+  - :buyer
+default_role: :user

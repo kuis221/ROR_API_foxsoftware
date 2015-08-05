@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+
+development:
+  <<: *default
+  database: fox_development
+
+test:
+  <<: *default
+  database: fox_test
+
+production:
+  <<: *default
+  host: ec2-54-228-180-92.eu-west-1.compute.amazonaws.com
+  database: <%= ENV['FOX_DATABASE_NAME'] %>
+  username: <%= ENV['FOX_DATABASE_USER'] %>
+  password: <%= ENV['FOX_DATABASE_PASSWORD'] %>
