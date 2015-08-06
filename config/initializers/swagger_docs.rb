@@ -1,18 +1,32 @@
+# class Swagger::Docs::Config
+#     def self.transform_path(path, api_version)
+#         # Make a distinction between the APIs and API documentation paths.
+#         "api-docs/#{path}"
+#     end
+# end
+
+class Swagger::Docs::Config
+    def self.transform_path(path, api_version)
+        "http://localhost:3000/apidocs/#{path}"
+    end
+end
 Swagger::Docs::Config.register_apis({
-    "1.0" => {
+    '1.0' => {
         # the extension used for the API
-        :api_extension_type => :json,
+        api_extension_type: :json,
         # the output location where your .json files are written to
-        :api_file_path => "public/api/v1/",
+        api_file_path: "public/apidocs",
         # the URL base path to your API
-        :base_path => "http://foxsoftware.todo",
+        base_path: 'http://localhost:3000',
+        # controller_base_path: '',
         # if you want to delete all .json files at each generation
-        :clean_directory => false,
+        clean_directory: true,
+        # base_api_controllers: [ApplicationController],
         # add custom attributes to api-docs
-        :attributes => {
-            :info => {
+        attributes: {
+            info: {
                 "title" => "Fox Software",
-                "description" => "Freight network",
+                "description" => "Freight dealing network",
                 "contact" => "cat.of.duty@gmail.com"
             }
         }

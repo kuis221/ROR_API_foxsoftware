@@ -16,9 +16,7 @@ class Ability
       # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
       can :read, :create, :update, Deal
       can :read, :create, :update, Bid
-      can :read, :create, :update, Chat
       can :read, :create, :update, DealFeedback
-      can :read, :create, :update, Venue
     end
 
     #
