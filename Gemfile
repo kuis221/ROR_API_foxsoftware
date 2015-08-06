@@ -19,6 +19,7 @@ gem 'mini_magick'
 
 ## Authorization and roles
 gem 'devise'
+gem 'devise_token_auth'
 gem 'cancancan'
 gem 'rolify'
 

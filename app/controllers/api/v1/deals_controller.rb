@@ -1,2 +1,2 @@
-class Api::V1::DealsController < ApiBaseController
+class Api::V1::DealsController < Api::V1::ApiBaseController
 end

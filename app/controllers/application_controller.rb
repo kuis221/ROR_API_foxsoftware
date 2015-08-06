@@ -1,12 +1,11 @@
 class ApplicationController < ActionController::Base
+  include Extenders
+  respond_to :json
 
   ensure_security_headers
 
   before_filter :check_registration
   before_filter :configure_permitted_parameters, if: :devise_controller?
-
-  include Extenders
-  respond_to :json
 
   rescue_from CanCan::AccessDenied do |exception|
     render_error :access_denied
