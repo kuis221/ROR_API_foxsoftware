@@ -38,6 +38,17 @@ module FoxSoftware
       g.test_framework  :rspec
       g.integration_tool :rspec
     end
+
+    config.middleware.use Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', # TODO, later set to frontend app url
+                 headers: :any,
+                 expose: ['access-token', 'expiry', 'token-type', 'uid', 'client'],
+                 methods: [:get, :post, :options, :delete, :put, :patch]
+      end
+    end
   end
 end
 
+$current_api_version = 'V1'

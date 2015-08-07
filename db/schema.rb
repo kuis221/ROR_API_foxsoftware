@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150614163510) do
+ActiveRecord::Schema.define(version: 20150614200139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,23 @@ ActiveRecord::Schema.define(version: 20150614163510) do
 
   add_index "deals", ["user_id"], name: "index_deals_on_user_id", using: :btree
 
+  create_table "identities", force: :cascade do |t|
+    t.string   "uid"
+    t.string   "provider"
+    t.string   "token"
+    t.string   "secret"
+    t.string   "email"
+    t.string   "avatar_url"
+    t.string   "nickname"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "identities", ["uid", "provider"], name: "index_identities_on_uid_and_provider", using: :btree
+
   create_table "roles", force: :cascade do |t|
     t.string   "name"
     t.integer  "resource_id"
@@ -72,14 +89,13 @@ ActiveRecord::Schema.define(version: 20150614163510) do
     t.string   "last_name"
     t.string   "about"
     t.string   "avatar"
-    t.inet     "ip"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.string   "encrypted_password",     default: "",    null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.string   "encrypted_password",     default: "",      null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,     null: false
+    t.integer  "sign_in_count",          default: 0,       null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
@@ -88,10 +104,13 @@ ActiveRecord::Schema.define(version: 20150614163510) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.boolean  "approved",               default: false, null: false
+    t.boolean  "blocked",                default: true,    null: false
+    t.string   "provider",               default: "email", null: false
+    t.string   "uid",                    default: "",      null: false
+    t.json     "tokens"
   end
 
-  add_index "users", ["approved"], name: "index_users_on_approved", using: :btree
+  add_index "users", ["blocked"], name: "index_users_on_blocked", using: :btree
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree

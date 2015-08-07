@@ -14,7 +14,9 @@ class Api::V1::ApiBaseController < ApplicationController
     def setup_basic_api_documentation
       [:index, :show, :create, :update, :delete].each do |api_action|
         swagger_api api_action do
-          param :header, 'Authentication-Token', :string, :required, 'Authentication token'
+          # or :query
+          param :header, 'access-token', :string, :required, 'Logged in user access token'
+          param :header, 'access-uid', :string, :required, 'Logged in user UID'
         end
       end
     end

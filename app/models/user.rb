@@ -8,7 +8,6 @@
 #  last_name              :string
 #  about                  :string
 #  avatar                 :string
-#  ip                     :inet
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  encrypted_password     :string           default(""), not null
@@ -24,11 +23,14 @@
 #  confirmed_at           :datetime
 #  confirmation_sent_at   :datetime
 #  unconfirmed_email      :string
-#  approved               :boolean          default(FALSE), not null
+#  blocked                :boolean          default(TRUE), not null
+#  provider               :string           default("email"), not null
+#  uid                    :string           default(""), not null
+#  tokens                 :json
 #
 # Indexes
 #
-#  index_users_on_approved              (approved)
+#  index_users_on_blocked               (blocked)
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
@@ -39,17 +41,22 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable, :registerable, :recoverable, :rememberable, :trackable
   # , omniauth_providers: [:google_oauth2, :facebook]
-  devise :database_authenticatable, :recoverable, :registerable, :rememberable
+  devise :database_authenticatable, :recoverable, :registerable, :rememberable, :omniauthable, omniauth_providers: [:google_oauth2, :facebook, :linkedin]
+  include DeviseTokenAuth::Concerns::User # after devise
 
+  has_many :identities
   has_many :deals
   has_many :bids
 
   mount_uploader :avatar, UserAvatarUploader
 
-  scope :active, ->() {where(approved: true)}
+  scope :active, ->() {where(blocked: false)}
 
-  before_create :assign_user_role
-  # after_create :send_admin_mail # IF approved? are in use
+  before_create -> do
+    assign_user_role
+    self.uid = SecureRandom.uuid
+    # skip_confirmation!
+  end
 
   def assign_user_role
     self.add_role Settings.default_role
@@ -61,18 +68,15 @@ class User < ActiveRecord::Base
 
 
   def active_for_authentication?
-    super && approved?
+    super && !blocked?
   end
 
   def inactive_message
-    if !approved?
-      :not_approved
+    if blocked?
+      :blocked
     else
       super # Use whatever other message
     end
   end
 
-  def send_admin_mail
-    # AdminMailer.new_user_waiting_for_approval(self).deliver
-  end
 end
