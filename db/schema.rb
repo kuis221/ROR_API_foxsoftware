@@ -11,14 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150614200139) do
+ActiveRecord::Schema.define(version: 20150809121148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "address_infos", force: :cascade do |t|
+    t.string   "type"
+    t.string   "city"
+    t.string   "street"
+    t.integer  "user_id"
+    t.integer  "home_number"
+    t.integer  "apartment_number"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
   create_table "bids", force: :cascade do |t|
-    t.integer  "seller_id"
-    t.integer  "buyer_id"
+    t.integer  "user_id"
     t.integer  "commodity_id"
     t.decimal  "price",        precision: 10, scale: 2
     t.inet     "ip"
@@ -26,19 +36,23 @@ ActiveRecord::Schema.define(version: 20150614200139) do
     t.datetime "updated_at",                            null: false
   end
 
-  add_index "bids", ["buyer_id"], name: "index_bids_on_buyer_id", using: :btree
   add_index "bids", ["commodity_id"], name: "index_bids_on_commodity_id", using: :btree
-  add_index "bids", ["seller_id"], name: "index_bids_on_seller_id", using: :btree
+  add_index "bids", ["user_id"], name: "index_bids_on_user_id", using: :btree
 
   create_table "commodities", force: :cascade do |t|
     t.string   "description"
     t.string   "picture"
-    t.integer  "distance",                                null: false
+    t.decimal  "dim_w",          precision: 10, scale: 2
+    t.decimal  "dim_h",          precision: 10, scale: 2
+    t.decimal  "dim_l",          precision: 10, scale: 2
+    t.integer  "distance",                                                null: false
+    t.integer  "weight",                                                  null: false
     t.integer  "user_id"
     t.integer  "truckload_type"
+    t.boolean  "hazard",                                  default: false
     t.decimal  "price",          precision: 10, scale: 2
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
   end
 
   add_index "commodities", ["truckload_type"], name: "index_commodities_on_truckload_type", using: :btree

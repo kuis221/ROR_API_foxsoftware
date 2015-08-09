@@ -13,11 +13,17 @@ class Ability
       # See more user cases for rails_admin: https://github.com/sferik/rails_admin/wiki/CanCan
     elsif user.client?
       # TODO
-      # can :read, :create, :update, Commodity
-      # can :read, :create, :update, Bid
-      # can :read, :create, :update, CommodityFeedback
+      can :manage, Commodity, user_id: user.id
+      # can read only his own commodities
+      can :read, Bid do |bid|
+        user.commodity_ids.include?(bid.commodity_id)
+      end
     elsif user.carrier?
-
+      can :manage, Bid, user_id: user.id
+      can :read, Commodity
+    elsif user.has_role?(:user)
+      can :manage, AddressInfo, user_id: user.id
+      can [:read, :create, :update], CommodityFeedback, user_id: user.id
     else
       # TODO more complex abilities according to who created the resource:
       # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
