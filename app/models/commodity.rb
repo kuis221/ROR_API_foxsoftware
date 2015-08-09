@@ -14,6 +14,8 @@
 #  truckload_type :integer
 #  hazard         :boolean          default(FALSE)
 #  price          :decimal(10, 2)
+#  pickup_at      :datetime         not null
+#  arrive_at      :datetime         not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #
@@ -25,7 +27,8 @@
 
 class Commodity < ActiveRecord::Base
   belongs_to :user
-  belongs_to :address_info
+  belongs_to :shipper_info
+  belongs_to :receiver_info
   has_many :commodity_feedbacks, dependent: :destroy
 
   mount_uploader :picture, CommodityPictureUploader

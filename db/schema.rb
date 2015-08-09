@@ -18,13 +18,14 @@ ActiveRecord::Schema.define(version: 20150809121148) do
 
   create_table "address_infos", force: :cascade do |t|
     t.string   "type"
-    t.string   "city"
-    t.string   "street"
+    t.string   "city",                       null: false
+    t.string   "street",                     null: false
+    t.string   "state",            limit: 2, null: false
     t.integer  "user_id"
     t.integer  "home_number"
     t.integer  "apartment_number"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   create_table "bids", force: :cascade do |t|
@@ -51,6 +52,8 @@ ActiveRecord::Schema.define(version: 20150809121148) do
     t.integer  "truckload_type"
     t.boolean  "hazard",                                  default: false
     t.decimal  "price",          precision: 10, scale: 2
+    t.datetime "pickup_at",                                               null: false
+    t.datetime "arrive_at",                                               null: false
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
   end

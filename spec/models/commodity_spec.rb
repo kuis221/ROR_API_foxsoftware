@@ -14,6 +14,8 @@
 #  truckload_type :integer
 #  hazard         :boolean          default(FALSE)
 #  price          :decimal(10, 2)
+#  pickup_at      :datetime         not null
+#  arrive_at      :datetime         not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #

@@ -7,7 +7,7 @@ class CreateCommodities < ActiveRecord::Migration
       t.integer :user_id, :truckload_type
       t.boolean :hazard, default: false
       t.decimal :price, precision: 10, scale: 2
-      t.timestamps :pickup_at, :arrive_at, null: false
+      t.datetime :pickup_at, :arrive_at, null: false
       t.timestamps null: false
     end
     add_index :commodities, :user_id

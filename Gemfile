@@ -51,6 +51,8 @@ group :development do
   gem 'quiet_assets'
   gem 'guard'
   gem 'guard-rspec'
+  gem 'colorize'
+  gem 'colorized_routes'
 end
 
 group :development, :test do

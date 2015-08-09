@@ -12,8 +12,8 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from CanCan::AccessDenied do |exception|
-    logger.info 'DENIED;0'
-    render_error :access_denied, 403
+    logger.info 'ROLE DENIED DENIED;0'
+    render_error :access_denied_with_role, 403
   end
 
   private

@@ -4,8 +4,9 @@
 #
 #  id               :integer          not null, primary key
 #  type             :string
-#  city             :string
-#  street           :string
+#  city             :string           not null
+#  street           :string           not null
+#  state            :string(2)        not null
 #  user_id          :integer
 #  home_number      :integer
 #  apartment_number :integer
