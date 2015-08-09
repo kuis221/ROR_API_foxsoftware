@@ -8,9 +8,9 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     api_version(module: 'V1', path: {value: 'v1'}, default: true) do
 
-      resources :deal_feedbacks
+      resources :commodity_feedbacks
       resources :bids
-      resources :deals
+      resources :commodities
       resources :users
     end
 

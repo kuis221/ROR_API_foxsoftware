@@ -1,6 +1,6 @@
 roles:
   - :user
   - :admin
-  - :seller
-  - :buyer
+  - :client
+  - :carrier
 default_role: :user

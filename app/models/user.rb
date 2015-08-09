@@ -23,7 +23,7 @@
 #  confirmed_at           :datetime
 #  confirmation_sent_at   :datetime
 #  unconfirmed_email      :string
-#  blocked                :boolean          default(TRUE), not null
+#  blocked                :boolean          default(FALSE), not null
 #  provider               :string           default("email"), not null
 #  uid                    :string           default(""), not null
 #  tokens                 :json
@@ -44,9 +44,9 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :recoverable, :registerable, :rememberable, :omniauthable, omniauth_providers: [:google_oauth2, :facebook, :linkedin]
   include DeviseTokenAuth::Concerns::User # after devise
 
-  has_many :identities
-  has_many :deals
-  has_many :bids
+  has_many :identities, dependent: :destroy
+  has_many :commodities, dependent: :destroy
+  has_many :bids, dependent: :destroy
 
   mount_uploader :avatar, UserAvatarUploader
 
@@ -66,6 +66,13 @@ class User < ActiveRecord::Base
     has_role?(:admin)
   end
 
+  def client?
+    has_role?(:client)
+  end
+
+  def carrier?
+    has_role?(:carrier)
+  end
 
   def active_for_authentication?
     super && !blocked?
