@@ -82,7 +82,7 @@ class Identity < ActiveRecord::Base
   end
 
   def create_user
-    raise 'todo'
+    raise 'todo C'
   end
 
 end

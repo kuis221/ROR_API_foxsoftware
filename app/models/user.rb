@@ -49,13 +49,16 @@ class User < ActiveRecord::Base
   has_many :bids, dependent: :destroy
   has_many :address_infos, dependent: :destroy
 
+  validates_presence_of :email
+  validates_presence_of :password, :password_confirmation, confirmation: true
+  validates_confirmation_of :password
+
   mount_uploader :avatar, UserAvatarUploader
 
   scope :active, ->() {where(blocked: false)}
 
   before_create -> do
     assign_user_role
-    self.uid = SecureRandom.uuid
     # skip_confirmation!
   end
 

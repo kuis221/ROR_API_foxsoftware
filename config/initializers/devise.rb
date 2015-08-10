@@ -6,13 +6,13 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` on Rails 4+ applications as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  config.secret_key = 'g45446d67434cc61rwe3tg34bba46e15fc42d1d9e1b3c5fd8unlockb14ae1b7c2cbd3d0df6a19f4229cbb37b085a4a8d4d4efe3ccf2f63gr223ec5ab3a98'
+  config.secret_key = 'g45446d67434cc61rwe3tg34bba46e15fc42d1d9re234ewfdsfslockb14ae1b7c2cbd3d0df6a19f4229cbb37b085a4a8d4d4efe3ccf2f63gr223ec5ab3a98'
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  config.mailer_sender = 'no-reply@e.com'
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -191,7 +191,7 @@ Devise.setup do |config|
   # Time interval you can reset your password with a reset password key.
   # Don't put a too small interval or your users won't have the time to
   # change their passwords.
-  config.reset_password_within = 6.hours
+  config.reset_password_within = 12.hours
 
   # When set to false, does not sign a user in automatically after their password is
   # reset. Defaults to true, so a user is signed in automatically after a reset.
