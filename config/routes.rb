@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   # devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
 
   root to: 'home#index'
+
+  get 'authentication/auth' => 'authentication#auth' # stub for documentation
+
   # when forwarding to next version set new default: true
   namespace :api, defaults: {format: :json} do
     api_version(module: 'V1', path: {value: 'v1'}, default: true) do

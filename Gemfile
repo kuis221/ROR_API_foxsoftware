@@ -6,7 +6,7 @@ gem 'rails', '4.2.1'
 gem 'pg'
 gem 'unicorn'
 gem 'versionist'
-gem 'swagger-docs'#, github: 'PublicStuff/swagger-docs'
+gem 'swagger-docs'
 # gem 'jbuilder', '~> 2.2.16'
 # gem 'oj'
 

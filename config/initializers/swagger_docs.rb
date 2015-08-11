@@ -26,7 +26,7 @@ Swagger::Docs::Config.register_apis({
         attributes: {
             info: {
                 "title" => "Fox Software",
-                "description" => "Commodity commoditying network",
+                # "description" => "Commodity commoditying network",
                 "contact" => "cat.of.duty@gmail.com"
             }
         }

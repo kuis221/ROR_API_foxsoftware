@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiBaseController
   before_filter :find_user
-  before_filter :set_user, only: [:update]
+  # before_filter :set_user, only: [:update]
 
   swagger_controller :users, 'User Management'
 

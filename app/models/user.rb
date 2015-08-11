@@ -41,10 +41,10 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable, :registerable, :recoverable, :rememberable, :trackable
   # , omniauth_providers: [:google_oauth2, :facebook]
-  devise :database_authenticatable, :recoverable, :registerable, :rememberable, :omniauthable, omniauth_providers: [:google_oauth2, :facebook, :linkedin]
+  devise :database_authenticatable, :recoverable, :registerable, :omniauthable, omniauth_providers: [:google_oauth2, :facebook, :linkedin]
   include DeviseTokenAuth::Concerns::User # after devise
 
-  has_many :identities, dependent: :destroy
+  # has_many :identities, dependent: :destroy
   has_many :commodities, dependent: :destroy
   has_many :bids, dependent: :destroy
   has_many :address_infos, dependent: :destroy
@@ -90,4 +90,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  def block!
+    update_attribute :blocked, true
+  end
 end

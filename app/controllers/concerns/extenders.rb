@@ -9,7 +9,7 @@
   end
 
   def render_error(code=400, status = 200, explanation='')
-    logger.info "***  GOT ERROR CODE:#{code} explain:[#{explanation}]"
+    logger.info "***  GOT ERROR CODE:#{code} explanation:#{explanation}]  user:#{current_user.try(:id)}"
     render json: {error: code, text: explanation, version: $current_api_version}, status: status
   end
 

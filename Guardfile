@@ -10,7 +10,7 @@ guard 'rspec', bundler: false do
   watch(%r{^app/(.*)(\.erb|\.haml|\.jbuilder)$})                 { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
   watch(%r{^app/controllers/api/v1/(.+)_(controller)\.rb$})  { |m| ["spec/#{m[2]}s/#{m[1]}_#{m[2]}_spec.rb"] }
   watch(%r{^spec/support/(.+)\.rb$})                  { "spec" }
-  watch('config/routes.rb')                           { "spec/routing" }
+  # watch('config/routes.rb')                           { "spec/routing" }
   watch('app/controllers/application_controller.rb')  { "spec/controllers" }
 
   # Capybara features specs
@@ -22,7 +22,7 @@ guard 'rspec', bundler: false do
     %W[
       spec/models/#{m[1].singularize}_spec.rb
       spec/controllers/v1/#{m[1]}_controller_spec.rb
-      spec/requests/#{m[1]}_spec.rb
+      spec/requests/#{m[1]}_controller_cspec.rb
     ]
   end
 end

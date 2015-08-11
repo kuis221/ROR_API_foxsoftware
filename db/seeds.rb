@@ -7,5 +7,6 @@ unless User.exists?(email: email)
   user.password_confirmation = "123qweasd"
   user.confirmed_at = Time.now
   user.save!
+  user.create_new_auth_token
   user.add_role :admin
 end

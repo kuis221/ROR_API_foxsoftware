@@ -46,7 +46,7 @@ FactoryGirl.define do
     password_confirmation '123123'
     after :create do |user|
       user.add_role :user
-      user.tokens['access-token'] = SecureRandom.hex
+      user.create_new_auth_token
     end
   end
 

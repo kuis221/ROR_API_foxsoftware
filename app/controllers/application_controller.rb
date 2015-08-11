@@ -1,9 +1,12 @@
 class ApplicationController < ActionController::Base
-  include DeviseTokenAuth::Concerns::SetUserByToken
-  include Extenders
-
   respond_to :json
   ensure_security_headers
+  # before_filter :dummy_proof_auth_headers
+
+  include DeviseTokenAuth::Concerns::SetUserByToken
+  include Extenders
+  before_action :authenticate_user!
+
   before_filter :check_registration
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
@@ -18,10 +21,15 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # def dummy_proof_auth_headers
+  #   params['access-token'] = request.headers['access-token']
+  #   params['uid'] = request.headers['uid']
+  #   params['client'] = request.headers['client']
+  # end
+
   def check_registration
-    if current_user && (!current_user.valid? || current_user.blocked?)
-      render_error :not_valid_or_blocked, 403
-      head 403
+    if current_user && current_user.blocked?
+      render_error :user_not_valid_or_blocked, 403
     end
   end
 

@@ -43,14 +43,15 @@ ActiveRecord::Schema.define(version: 20150809121148) do
   create_table "commodities", force: :cascade do |t|
     t.string   "description"
     t.string   "picture"
-    t.decimal  "dim_w",          precision: 10, scale: 2
-    t.decimal  "dim_h",          precision: 10, scale: 2
-    t.decimal  "dim_l",          precision: 10, scale: 2
+    t.decimal  "weight",         precision: 10, scale: 2, default: 0.0
+    t.decimal  "dim_w",          precision: 10, scale: 2, default: 0.0
+    t.decimal  "dim_h",          precision: 10, scale: 2, default: 0.0
+    t.decimal  "dim_l",          precision: 10, scale: 2, default: 0.0
     t.integer  "distance",                                                null: false
-    t.integer  "weight",                                                  null: false
     t.integer  "user_id"
     t.integer  "truckload_type"
     t.boolean  "hazard",                                  default: false
+    t.boolean  "active",                                  default: true
     t.decimal  "price",          precision: 10, scale: 2
     t.datetime "pickup_at",                                               null: false
     t.datetime "arrive_at",                                               null: false

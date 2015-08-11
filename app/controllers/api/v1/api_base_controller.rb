@@ -16,7 +16,7 @@ class Api::V1::ApiBaseController < ApplicationController
         swagger_api api_action do
           # or :query
           param :header, 'access-token', :string, :required, 'Logged in user access token'
-          param :header, 'access-uid', :string, :required, 'Logged in user UID'
+          param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)'
         end
       end
     end

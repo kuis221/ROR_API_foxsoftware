@@ -13,7 +13,7 @@ test:
 
 production:
   <<: *default
-  host: ec2-54-228-180-92.eu-west-1.compute.amazonaws.com
+  host: ec2-54-204-3-200.compute-1.amazonaws.com
   database: <%= ENV['FOX_DATABASE_NAME'] %>
   username: <%= ENV['FOX_DATABASE_USER'] %>
   password: <%= ENV['FOX_DATABASE_PASSWORD'] %>

@@ -5,14 +5,15 @@
 #  id             :integer          not null, primary key
 #  description    :string
 #  picture        :string
-#  dim_w          :decimal(10, 2)
-#  dim_h          :decimal(10, 2)
-#  dim_l          :decimal(10, 2)
+#  weight         :decimal(10, 2)   default(0.0)
+#  dim_w          :decimal(10, 2)   default(0.0)
+#  dim_h          :decimal(10, 2)   default(0.0)
+#  dim_l          :decimal(10, 2)   default(0.0)
 #  distance       :integer          not null
-#  weight         :integer          not null
 #  user_id        :integer
 #  truckload_type :integer
 #  hazard         :boolean          default(FALSE)
+#  active         :boolean          default(TRUE)
 #  price          :decimal(10, 2)
 #  pickup_at      :datetime         not null
 #  arrive_at      :datetime         not null
@@ -36,5 +37,17 @@ class Commodity < ActiveRecord::Base
 
   TRUCKLOAD_TYPES = {}
   validates_presence_of :dim_w, :dim_h, :dim_l, :distance, :description, :price, :pickup_at, :arrive_at
+
+  def picture_url
+    picture.url
+  end
+
+  def active!
+    update_attribute :active, true
+  end
+
+  def inactive!
+    update_attribute :active, false
+  end
 
 end
