@@ -4,10 +4,10 @@ class ApplicationController < ActionController::Base
   # before_filter :dummy_proof_auth_headers
 
   include DeviseTokenAuth::Concerns::SetUserByToken
-  include Extenders
-  before_action :authenticate_user!
 
-  before_filter :check_registration
+  include Extenders
+
+
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from ActiveRecord::RecordNotFound do |e|
@@ -26,12 +26,6 @@ class ApplicationController < ActionController::Base
   #   params['uid'] = request.headers['uid']
   #   params['client'] = request.headers['client']
   # end
-
-  def check_registration
-    if current_user && current_user.blocked?
-      render_error :user_not_valid_or_blocked, 403
-    end
-  end
 
   protected
   def configure_permitted_parameters

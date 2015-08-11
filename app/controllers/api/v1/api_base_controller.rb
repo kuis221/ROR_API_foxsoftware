@@ -1,5 +1,8 @@
 class Api::V1::ApiBaseController < ApplicationController
 
+  before_action :authenticate_user!
+  before_filter :check_registration
+
   class << self
     Swagger::Docs::Generator::set_real_methods
 
