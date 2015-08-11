@@ -15,28 +15,50 @@ describe Api::V1::CommoditiesController do
     end
   end
 
-  context 'browsing commodities' do
+  context 'Carrier browsing commodities' do
+
+    login_user
+
+    before do
+      @logged_in_user.add_role :carrier
+    end
 
     it 'should let authorized carrier to read invited shipment' do
+      # TODO Check with Matt, if way by invited commodity or ANY commodity upon inv'
+    end
+
+    it 'should not let carrier see inactive commodities' do
 
     end
 
-    ## TODO check with Matt about permitting carriers to look on any commodity/shipment
     it "should not let carrier read someone's shipment" do
-
-    end
-
-    it 'should not let client read other commodities' do
-
-    end
-
-    it 'should let client list its commodities' do
-
+      ## TODO check with Matt about permitting carriers to look on any commodity/shipment
     end
 
   end
 
-  context 'Commodity manipulating' do
+  context 'Client commodities manipulations' do
+
+    login_user
+
+    before do
+      @logged_in_user.add_role :client
+    end
+
+    context 'listing' do
+      it 'should let client list its commodities' do
+        create_list :commodity, 2, user: @logged_in_user
+        json_query :get, :index
+        expect(@json[:results].size).to eq 2
+        expect(@json[:results].first['active']).to eq true
+      end
+
+      it 'should not let client list other commodities' do
+        create_list :commodity, 2
+        json_query :get, :index
+        expect(@json[:results].size).to eq 0
+      end
+    end
 
     it 'should let client edit its own commodity' do
 

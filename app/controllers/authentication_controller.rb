@@ -8,12 +8,11 @@ class AuthenticationController < ApplicationController
     notes <<-N
         <h2>Token Header Format</h2>
 
-        <p>The authentication information should be included by the client in the headers of each request. The headers follow the RFC 6750 Bearer Token format:</p>
+        <p>The authentication information should be included by the client in the headers or query params of each request. The headers follow the RFC 6750 Bearer Token format:</p>
 
         <p>Authentication headers example:</p>
         <pre><code class='ruby'>{
           "access-token": "wwwww",
-          "token-type":   "Bearer",
           "client":       "xxxxx",
           "expiry":       "yyyyy",
           "uid":          "zzzzz"

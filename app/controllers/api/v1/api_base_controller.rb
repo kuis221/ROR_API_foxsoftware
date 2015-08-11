@@ -17,9 +17,13 @@ class Api::V1::ApiBaseController < ApplicationController
     def setup_basic_api_documentation
       [:index, :show, :create, :update, :delete].each do |api_action|
         swagger_api api_action do
-          # or :query
           param :header, 'access-token', :string, :required, 'Logged in user access token'
           param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)'
+          param :header, 'client', :string, :required, 'Cliend ID'
+          if api_action == :index
+            param :query, :page, :integer, :optional, 'Page, default 1'
+            param :query, :limit, :integer, :optional, "Results limit, default: #{Settings.index_limit}"
+          end
         end
       end
     end

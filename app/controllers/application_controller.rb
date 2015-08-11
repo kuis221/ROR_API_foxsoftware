@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
 
   include Extenders
 
-
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from ActiveRecord::RecordNotFound do |e|

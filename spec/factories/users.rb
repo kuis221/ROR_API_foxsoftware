@@ -56,4 +56,17 @@ FactoryGirl.define do
     end
   end
 
+  factory :carrier, parent: :user do
+    after :create do |user|
+      user.add_role :carrier
+    end
+  end
+
+  factory :client, parent: :user do
+    after :create do |user|
+      user.add_role :client
+    end
+  end
+
+
 end

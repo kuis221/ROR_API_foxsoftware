@@ -2,9 +2,12 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    # Define abilities for the passed in user here. For example:
-    #
-    user ||= User.new # guest user (not logged in)
+    # Define abilities for the passed in user here.
+
+    # TODO more complex abilities according to who created the resource:
+    # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
+
+  user ||= User.new # guest user (not logged in)
 
     if user.admin?
       can :manage, :all
@@ -12,21 +15,21 @@ class Ability
       can :dashboard
       # See more user cases for rails_admin: https://github.com/sferik/rails_admin/wiki/CanCan
     elsif user.client?
-      # TODO
-      can :manage, Commodity, user_id: user.id
       # can read only his own commodities
+      can :manage, Commodity, user_id: user.id
+      # And read bids related to his commodities
       can :read, Bid do |bid|
         user.commodity_ids.include?(bid.commodity_id)
       end
     elsif user.carrier?
+      # can create bid for invited commodities ?? check with Matt
       can :manage, Bid, user_id: user.id
       can :read, Commodity
     elsif user.has_role?(:user)
       can :manage, AddressInfo, user_id: user.id
       can [:read, :create, :update], CommodityFeedback, user_id: user.id
     else
-      # TODO more complex abilities according to who created the resource:
-      # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
+      # Unregistered anonym user, fuck off, just fuck off.
     end
 
     #

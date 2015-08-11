@@ -1,7 +1,7 @@
  module Extenders
 
   def limit
-    @limit ||= params[:limit]||10
+    @limit ||= params[:limit]||Settings.index_list
   end
 
   def page
@@ -18,8 +18,23 @@
   end
 
   def render_json(object)
+    if object.is_a?(Array) || object.is_a?(ActiveRecord::Relation)
+      json = []
+      object.each do |obj|
+        json << render_single_object(obj)
+      end
+      # This will add class as root json
+      # object.first.class.table_name
+      json = {results: json, page: page, limit: limit}
+    else
+      json = render_single_object(object)
+    end
+    render json: json
+  end
+
+  def render_single_object(object)
     klass = "Api::#{$current_api_version}::#{object.class}Presenter".constantize
-    render json: klass.minimal_hash(object)
+    klass.minimal_hash(object, current_user)
   end
 
   def detect_ip
@@ -29,6 +44,9 @@
     )
   end
 
+  def cu
+    current_user
+  end
   def check_registration
     if current_user && current_user.blocked?
       render_error :user_not_valid_or_blocked, 403
