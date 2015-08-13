@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-class CommodityPictureUploader < CarrierWave::Uploader::Base
+class ShipmentPictureUploader < CarrierWave::Uploader::Base
 
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
@@ -49,6 +49,6 @@ class CommodityPictureUploader < CarrierWave::Uploader::Base
   # end
 
   def default_url(*args)
-    ActionController::Base.helpers.asset_path("commodities_fallback/" + [version_name, "default.png"].compact.join('_'))
+    ActionController::Base.helpers.asset_path("shipments_fallback/" + [version_name, "default.png"].compact.join('_'))
   end
 end

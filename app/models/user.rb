@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User # after devise
 
   # has_many :identities, dependent: :destroy
-  has_many :commodities, dependent: :destroy
+  has_many :shipments, dependent: :destroy
   has_many :bids, dependent: :destroy
   has_many :address_infos, dependent: :destroy
 

@@ -1177,7 +1177,7 @@ var createRequest = function(request) {
       // Set up some event magic. The precedence is given first to
       // status-specific handlers, then to responses for a given event, and then
       // finally to the more general `response` handler. In the last case, we
-      // need to first make sure we're not commoditying with a a redirect.
+      // need to first make sure we're not shipmenting with a a redirect.
       var emit = function(event) {
         var emitter = request.emitter;
         var textStatus = STATUS_CODES[response.status] ? STATUS_CODES[response.status].toLowerCase() : null;
@@ -2124,7 +2124,7 @@ require.define("/shred/mixins/headers.js", function (require, module, exports, _
 // This also has the benefit of allowing us to introduce additional variations,
 // including snake case, which we automatically convert to what Matthew King has
 // dubbed "corset case" - the hyphen-separated names with initial caps:
-// `Content-Type`. We use corset-case just in case we're commoditying with servers
+// `Content-Type`. We use corset-case just in case we're shipmenting with servers
 // that haven't properly implemented the spec.
 
 // Convert headers to corset-case. **Example:** `CONTENT-TYPE` will be converted

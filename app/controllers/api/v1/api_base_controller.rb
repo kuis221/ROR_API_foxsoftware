@@ -27,8 +27,8 @@ class Api::V1::ApiBaseController < ApplicationController
         end
       end
       ## Populate Response model here
-      # Add models here which has ATTRS constants in it (see Commodity for details).
-      [Commodity].each do |s_model|
+      # Add models here which has ATTRS constants in it (see Shipment for details).
+      [Shipment].each do |s_model|
         class_name = s_model.name
         attrs = "#{class_name}::ATTRS".constantize
         swagger_model class_name.to_sym do

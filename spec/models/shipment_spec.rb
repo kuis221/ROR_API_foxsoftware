@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: commodities
+# Table name: shipments
 #
 #  id             :integer          not null, primary key
 #  description    :string
@@ -22,24 +22,11 @@
 #
 # Indexes
 #
-#  index_commodities_on_truckload_type  (truckload_type)
-#  index_commodities_on_user_id         (user_id)
+#  index_shipments_on_truckload_type  (truckload_type)
+#  index_shipments_on_user_id         (user_id)
 #
 
-FactoryGirl.define do
-  factory :commodity do
-    description FFaker::Lorem.words(2).join(' ')
-    dim_w {FFaker.numerify("##.##")}
-    dim_h {FFaker.numerify("##.##")}
-    dim_l {FFaker.numerify("##.##")}
-    distance {FFaker.numerify("####")}
-    weight {FFaker.numerify("##.##")}
-    user
-    price {FFaker.numerify("###.##")}
-    pickup_at 20.hours.from_now
-    arrive_at 40.hours.from_now
-    # TODO ->
-    # truckload_type
-  end
+require 'rails_helper'
 
+RSpec.describe Shipment, type: :model do
 end

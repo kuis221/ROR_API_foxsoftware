@@ -15,19 +15,19 @@ class Ability
       can :dashboard
       # See more user cases for rails_admin: https://github.com/sferik/rails_admin/wiki/CanCan
     elsif user.client?
-      # can read only his own commodities
-      can :manage, Commodity, user_id: user.id
-      # And read bids related to his commodities
+      # can read only his own shipments
+      can :manage, Shipment, user_id: user.id
+      # And read bids related to his shipments
       can :read, Bid do |bid|
-        user.commodity_ids.include?(bid.commodity_id)
+        user.shipment_ids.include?(bid.shipment_id)
       end
     elsif user.carrier?
-      # can create bid for invited commodities ?? check with Matt
+      # can create bid for invited shipments ?? check with Matt
       can :manage, Bid, user_id: user.id
-      can :read, Commodity
+      can :read, Shipment
     elsif user.has_role?(:user)
       can :manage, AddressInfo, user_id: user.id
-      can [:read, :create, :update], CommodityFeedback, user_id: user.id
+      can [:read, :create, :update], ShipmentFeedback, user_id: user.id
     else
       # Unregistered anonym user, fuck off, just fuck off.
     end

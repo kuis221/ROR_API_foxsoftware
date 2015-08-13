@@ -11,13 +11,13 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     api_version(module: 'V1', path: {value: 'v1'}, default: true) do
 
-      resources :commodities do
+      resources :shipments do
         member do
           post :toggle_active
         end
       end
       resources :bids
-      resources :commodity_feedbacks
+      resources :shipment_feedbacks
       resources :users
     end
 

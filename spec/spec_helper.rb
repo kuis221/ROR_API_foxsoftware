@@ -72,19 +72,10 @@ RSpec.configure do |config|
 end
 
 def json_query(type, action, params={})
-  eval("#{type} :#{action}, #{params.merge(format: :json)}")
+  params = params.merge(format: :json) # do not merge! here
+  eval("#{type} :#{action}, #{params}")
   read_json_response(type)
 end
-
-# def json_get(action, params={})
-#   get action, params
-#   read_json_response
-# end
-#
-# def json_post(action, params={})
-#   post action, params
-#   read_json_response
-# end
 
 def read_json_response(type)
   @json = JSON.parse(response.body).symbolize_keys rescue false

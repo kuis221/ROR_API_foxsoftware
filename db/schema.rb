@@ -18,61 +18,29 @@ ActiveRecord::Schema.define(version: 20150809121148) do
 
   create_table "address_infos", force: :cascade do |t|
     t.string   "type"
-    t.string   "city",                       null: false
-    t.string   "street",                     null: false
-    t.string   "state",            limit: 2, null: false
+    t.string   "contact_name",                           null: false
+    t.string   "city",                                   null: false
+    t.string   "zip_code",                               null: false
+    t.string   "address1",                               null: false
+    t.string   "address2",                               null: false
+    t.string   "state",        limit: 2,                 null: false
+    t.boolean  "appointment",            default: false
     t.integer  "user_id"
-    t.integer  "home_number"
-    t.integer  "apartment_number"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
   create_table "bids", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "commodity_id"
-    t.decimal  "price",        precision: 10, scale: 2
+    t.integer  "shipment_id"
+    t.decimal  "price",       precision: 10, scale: 2
     t.inet     "ip"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
-  add_index "bids", ["commodity_id"], name: "index_bids_on_commodity_id", using: :btree
+  add_index "bids", ["shipment_id"], name: "index_bids_on_shipment_id", using: :btree
   add_index "bids", ["user_id"], name: "index_bids_on_user_id", using: :btree
-
-  create_table "commodities", force: :cascade do |t|
-    t.string   "description"
-    t.string   "picture"
-    t.decimal  "weight",         precision: 10, scale: 2, default: 0.0
-    t.decimal  "dim_w",          precision: 10, scale: 2, default: 0.0
-    t.decimal  "dim_h",          precision: 10, scale: 2, default: 0.0
-    t.decimal  "dim_l",          precision: 10, scale: 2, default: 0.0
-    t.integer  "distance",                                                null: false
-    t.integer  "user_id"
-    t.integer  "truckload_type"
-    t.boolean  "hazard",                                  default: false
-    t.boolean  "active",                                  default: true
-    t.decimal  "price",          precision: 10, scale: 2
-    t.datetime "pickup_at",                                               null: false
-    t.datetime "arrive_at",                                               null: false
-    t.datetime "created_at",                                              null: false
-    t.datetime "updated_at",                                              null: false
-  end
-
-  add_index "commodities", ["truckload_type"], name: "index_commodities_on_truckload_type", using: :btree
-  add_index "commodities", ["user_id"], name: "index_commodities_on_user_id", using: :btree
-
-  create_table "commodity_feedbacks", force: :cascade do |t|
-    t.string   "description"
-    t.integer  "rate",         null: false
-    t.integer  "user_id"
-    t.integer  "commodity_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-  end
-
-  add_index "commodity_feedbacks", ["commodity_id"], name: "index_commodity_feedbacks_on_commodity_id", using: :btree
-  add_index "commodity_feedbacks", ["user_id"], name: "index_commodity_feedbacks_on_user_id", using: :btree
 
   create_table "identities", force: :cascade do |t|
     t.string   "uid"
@@ -101,6 +69,47 @@ ActiveRecord::Schema.define(version: 20150809121148) do
 
   add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
   add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
+
+  create_table "shipment_feedbacks", force: :cascade do |t|
+    t.string   "description"
+    t.integer  "rate",        null: false
+    t.integer  "user_id"
+    t.integer  "shipment_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "shipment_feedbacks", ["shipment_id"], name: "index_shipment_feedbacks_on_shipment_id", using: :btree
+  add_index "shipment_feedbacks", ["user_id"], name: "index_shipment_feedbacks_on_user_id", using: :btree
+
+  create_table "shipments", force: :cascade do |t|
+    t.string   "notes"
+    t.string   "picture"
+    t.string   "secret_id"
+    t.decimal  "weight",               precision: 10, scale: 2, default: 0.0
+    t.decimal  "dim_w",                precision: 10, scale: 2, default: 0.0
+    t.decimal  "dim_h",                precision: 10, scale: 2, default: 0.0
+    t.decimal  "dim_l",                precision: 10, scale: 2, default: 0.0
+    t.integer  "distance",                                                      null: false
+    t.integer  "n_of_cartons",                                  default: 0
+    t.integer  "cubic_feet",                                    default: 0
+    t.integer  "unit_count",                                    default: 0
+    t.integer  "skids_count",                                   default: 0
+    t.integer  "user_id"
+    t.integer  "original_shipment_id"
+    t.boolean  "hazard",                                        default: false
+    t.boolean  "private_bidding",                               default: false
+    t.boolean  "active",                                        default: true
+    t.boolean  "stackable",                                     default: true
+    t.decimal  "price",                precision: 10, scale: 2
+    t.datetime "pickup_at",                                                     null: false
+    t.datetime "arrive_at",                                                     null: false
+    t.datetime "created_at",                                                    null: false
+    t.datetime "updated_at",                                                    null: false
+  end
+
+  add_index "shipments", ["active"], name: "index_shipments_on_active", using: :btree
+  add_index "shipments", ["user_id"], name: "index_shipments_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email"
