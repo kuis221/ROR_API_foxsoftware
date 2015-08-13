@@ -23,10 +23,11 @@ Swagger::Docs::Config.register_apis({
         clean_directory: true,
         # base_api_controllers: [ApplicationController],
         # add custom attributes to api-docs
+        camelize_model_properties: false,
         attributes: {
             info: {
                 "title" => "Fox Software",
-                # "description" => "Commodity commoditying network",
+                # "description" => "Commodity network",
                 "contact" => "cat.of.duty@gmail.com"
             }
         }

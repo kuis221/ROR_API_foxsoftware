@@ -1,3 +1,12 @@
+
+## Create a demo data for api documentation.
+# Also swagger-ui doc folder(api-doc) js modified to use 'set_value' fields that populated by swagger, for auth.
+
+# TODO : user:client(with cheated-stored access-token for re-reading) -> commodity ?more
+
+
+## End demo data
+
 email = "adminx@exxample.com"
 unless User.exists?(email: email)
   puts 'Create a user with admin role'

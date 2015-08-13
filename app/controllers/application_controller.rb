@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
     render_error :not_found, 404
   end
 
+  rescue_from ActiveRecord::RecordInvalid do |e|
+    render_error :not_saved, 500, e.record.errors.full_messages
+  end
+
   rescue_from CanCan::AccessDenied do |exception|
     logger.info 'ROLE DENIED DENIED;0'
     render_error :access_denied_with_role, 403

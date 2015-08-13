@@ -36,7 +36,24 @@ class Commodity < ActiveRecord::Base
   resourcify
 
   TRUCKLOAD_TYPES = {}
-  validates_presence_of :dim_w, :dim_h, :dim_l, :distance, :description, :price, :pickup_at, :arrive_at
+
+  # Used for validation here, and in swagger doc generation
+  # :required or :optional for swagger !
+  ATTRS = {dim_w: {desc: 'Width', required: :required, type: :double},
+           dim_h: {desc: 'Height', required: :required, type: :double},
+           dim_l: {desc: 'Length', required: :required, type: :double},
+           distance: {desc: 'Distance in miles', required: :required, type: :integer},
+           description: {desc: 'Description', required: :required, type: :string},
+           price: {desc: 'Price', required: :required, type: :double},
+           pickup_at: {desc: 'Pickup time', required: :required, type: :datetime},
+           arrive_at: {desc: 'Arrive time', required: :required, type: :datetime}
+  }
+
+  ATTRS.each_pair do |k,v|
+    validates_presence_of k if v[:required] == :required
+  end
+
+
 
   def picture_url
     picture.url
