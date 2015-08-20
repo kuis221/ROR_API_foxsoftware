@@ -18,7 +18,11 @@ Rails.application.routes.draw do
       end
       resources :bids
       resources :shipment_feedbacks
-      resources :users
+      resources :users do
+        collection do
+          post :get_address_by_zip
+        end
+      end
     end
 
     # api_version(module: 'V2', path: {value: 'v2'}, default: true) do

@@ -24,6 +24,21 @@ describe Api::V1::UsersController, type: :controller do
       json_query :get, :show, id: user.id
       expect(@json[:error]).to eq 'user_not_valid_or_blocked'
     end
+
+    it 'should get_address_by_zip' do
+      # 20636,MD,Hollywood,38.352356,-76.562644
+      zip = '20636'# take one from cities.csv
+      json_query :post, :get_address_by_zip, zip: zip
+      expect(@json[:result]['city']).to eq 'Hollywood'
+      expect(@json[:result]['zip']).to eq zip
+      expect(@json[:result]['state']).to eq 'MD'
+    end
+
+    it 'should not find anything in get_address_by_zip' do
+      json_query :post, :get_address_by_zip, zip: '1234'
+      ap @json
+      expect(@json[:result]).to be nil
+    end
   end
 
   context 'Unregistered visitor' do

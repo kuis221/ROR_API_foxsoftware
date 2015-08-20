@@ -1,5 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApiBaseController
-  before_filter :find_user
+  before_filter :find_user, except: [:get_address_by_zip]
   # before_filter :set_user, only: [:update]
 
   swagger_controller :users, 'User Management'
@@ -26,6 +26,15 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
   end
   def update
     # TODO
+  end
+
+  swagger_api :get_address_by_zip do
+    summary 'Find State and City by Zip code (USA)'
+    param :query, :zip, :string, :required, 'Zip'
+  end
+  def get_address_by_zip
+    zip = params[:zip]
+    render json: {result: FindByZip.find(zip)}
   end
 
   private

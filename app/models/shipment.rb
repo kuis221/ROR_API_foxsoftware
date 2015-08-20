@@ -53,7 +53,7 @@ class Shipment < ActiveRecord::Base
            distance: {desc: 'Distance', required: :required, type: :integer},
            notes: {desc: 'Notes', required: :optional, type: :string},
            price: {desc: 'Price', required: :required, type: :double},
-           n_or_cartons: {desc: 'Number of cartons', required: :required, type: :integer},
+           n_of_cartons: {desc: 'Number of cartons', required: :required, type: :integer},
            cubic_feet: {desc: 'Cubic feet', required: :required, type: :integer},
            unit_count: {desc: 'Unit count', required: :required, type: :integer},
            skids_count: {desc: 'Skids count', required: :required, type: :integer},
