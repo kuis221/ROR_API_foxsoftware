@@ -5,3 +5,5 @@ roles:
   - :carrier
 default_role: :user
 index_list: 10
+default_email_from: no-reply@example.com
+host: http://localhost:3000

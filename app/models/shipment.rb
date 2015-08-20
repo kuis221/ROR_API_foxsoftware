@@ -37,30 +37,69 @@ class Shipment < ActiveRecord::Base
   belongs_to :user
   belongs_to :shipper_info
   belongs_to :receiver_info
+
+  has_many :ship_invitations, dependent: :destroy
   has_many :shipment_feedbacks, dependent: :destroy
 
   mount_uploader :picture, ShipmentPictureUploader
   resourcify
 
-  TRUCKLOAD_TYPES = {}
 
   # Used for validation here, and in swagger doc generation
   # :required or :optional for swagger !
   ATTRS = {dim_w: {desc: 'Width', required: :required, type: :double},
            dim_h: {desc: 'Height', required: :required, type: :double},
            dim_l: {desc: 'Length', required: :required, type: :double},
-           distance: {desc: 'Distance in miles', required: :required, type: :integer},
+           distance: {desc: 'Distance', required: :required, type: :integer},
            notes: {desc: 'Notes', required: :optional, type: :string},
            price: {desc: 'Price', required: :required, type: :double},
+           n_or_cartons: {desc: 'Number of cartons', required: :required, type: :integer},
+           cubic_feet: {desc: 'Cubic feet', required: :required, type: :integer},
+           unit_count: {desc: 'Unit count', required: :required, type: :integer},
+           skids_count: {desc: 'Skids count', required: :required, type: :integer},
+           hazard: {desc: 'Is hazard', required: :optional, type: :boolean, default: :false},
+           private_bidding: {desc: 'Is private bidding by link', required: :optional, type: :boolean, default: :false},
+           active: {desc: 'Is active', required: :optional, type: :boolean, default: :true},
+           stackable: {desc: 'Is stackable', required: :optional, type: :boolean, default: :true},
            pickup_at: {desc: 'Pickup time', required: :required, type: :datetime},
            arrive_at: {desc: 'Arrive time', required: :required, type: :datetime}
   }
+
+  before_create :set_secret_id
 
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required
   end
 
+  # Manage ship_invitations here. delete all when [], replace if size>0, or ignore if nil.
+  # TODO maybe add 'user_ids' => [1,2,3] in future
+  # invitations: {'emails' => ['email@example.com', 'email2@example.com']}
+  # Also reset secret_id so "old" invitees will not get access
+  def invite!(invitations = nil)
+    if invitations.nil?
+      # Ignore
+    else # edit
+      ship_invitations.each {|s| s.destroy } # Delete anyway
+      emails = invitations['emails'].to_a.compact
+      if emails.size > 0
+        # fill new
+        transaction do
+          set_secret_id
+          save!
+          InviteCarriers.perform_async(self.id, emails)
+          # ShipInvitation.invite_by_emails!(self, invitations)
+        end
+      end
+    end
+  end
 
+  def toggle_active!
+    update_attribute :active, !active?
+  end
+
+  def set_secret_id
+    self.secret_id = (Shipment.last.try(:id)||0).to_s + SecureRandom.urlsafe_base64(nil, false)
+  end
 
   def picture_url
     picture.url

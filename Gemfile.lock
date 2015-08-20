@@ -123,6 +123,7 @@ GEM
     concord (0.1.5)
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
+    connection_pool (2.2.0)
     database_cleaner (1.4.1)
     debug_inspector (0.0.2)
     descendants_tracker (0.0.4)
@@ -330,6 +331,9 @@ GEM
     rb-fsevent (0.9.5)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
+    redis (3.2.1)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     reek (1.6.5)
       parser (~> 2.2.0.pre.7)
       rainbow (>= 1.99, < 3.0)
@@ -385,6 +389,12 @@ GEM
     secure_headers (2.1.0)
     sexp_processor (4.6.0)
     shellany (0.0.1)
+    sidekiq (3.4.2)
+      celluloid (~> 0.16.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      json (~> 1.0)
+      redis (~> 3.2, >= 3.2.1)
+      redis-namespace (~> 1.5, >= 1.5.2)
     simplecov (0.10.0)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -475,6 +485,7 @@ DEPENDENCIES
   ffaker
   guard
   guard-rspec
+  haml
   mailgun_rails
   mini_magick
   newrelic_rpm
@@ -493,6 +504,7 @@ DEPENDENCIES
   rspec-rails
   rubycritic
   secure_headers
+  sidekiq
   simplecov
   spring
   swagger-docs

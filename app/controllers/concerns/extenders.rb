@@ -17,6 +17,7 @@
     render json: {status: :ok, version: $current_api_version, message: message}
   end
 
+  # Render JSON from a single AR object or and array/relation
   def render_json(object)
     if object.is_a?(Array) || object.is_a?(ActiveRecord::Relation)
       json = []

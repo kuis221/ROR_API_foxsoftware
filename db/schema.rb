@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150809121148) do
+ActiveRecord::Schema.define(version: 20150813141232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,17 @@ ActiveRecord::Schema.define(version: 20150809121148) do
 
   add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
   add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
+
+  create_table "ship_invitations", force: :cascade do |t|
+    t.integer  "shipment_id"
+    t.string   "invitee_email"
+    t.integer  "invitee_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "ship_invitations", ["invitee_id"], name: "index_ship_invitations_on_invitee_id", using: :btree
+  add_index "ship_invitations", ["shipment_id"], name: "index_ship_invitations_on_shipment_id", using: :btree
 
   create_table "shipment_feedbacks", force: :cascade do |t|
     t.string   "description"

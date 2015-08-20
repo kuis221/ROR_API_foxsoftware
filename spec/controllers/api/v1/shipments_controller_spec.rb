@@ -62,12 +62,15 @@ describe Api::V1::ShipmentsController do
     context 'saving' do
       before do
         @attrs = {dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at: 2.days.from_now.to_s, arrive_at: 3.days.from_now.to_s}
+        allow(InviteCarriers).to receive(:perform_async)
       end
 
-      it 'should let client create new shipment' do
+      it 'should let client create new shipment with invitations' do
+        invs = ['some@email.com', 'other@email.com']
         expect {
-          json_query :post, :create, shipment: @attrs
-          expect(@json[:status]).to eq 'ok'
+          json_query :post, :create, shipment: @attrs, invitations: {emails: invs}
+          expect(@json[:secret_id]).not_to be blank?
+          expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], invs)
         }.to change{Shipment.count}
       end
 
@@ -77,6 +80,7 @@ describe Api::V1::ShipmentsController do
           json_query :post, :create, shipment: @attrs
           expect(@json[:error]).not_to be blank?
           expect(@json[:text][0]).to eq "Price can't be blank"
+          expect(InviteCarriers).not_to have_received(:perform_async)
         }.not_to change{Shipment.count}
       end
 
@@ -94,19 +98,34 @@ describe Api::V1::ShipmentsController do
         end
 
         it 'should not let client save bad details' do
-
+          expect {
+            json_query :put, :update, id: @shipment.id, shipment: {price: ''}
+            expect(@json[:error]).to eq 'not_saved'
+            @shipment.reload
+          }.not_to change(@shipment, :price)
         end
 
         it "should not let client edit someone's shipment" do
-
+          shipment = create :shipment
+          expect {
+            json_query :put, :update, id: shipment.id, shipment: {price: '22222.22'}
+            expect(@json[:error]).to eq 'not_found'
+            shipment.reload
+          }.not_to change(shipment, :price)
         end
 
         it 'should delete shipment' do
-
+          expect {
+           json_query :delete, :destroy, id: @shipment.id
+            expect(@json[:status]).to eq 'ok'
+          }.to change{Shipment.count}.by(-1)
         end
 
         it 'should make inactive shipment' do
-
+          expect {
+            json_query :post, :toggle_active, id: @shipment.id
+            @shipment.reload
+          }.to change(@shipment, :active)
         end
 
       end

@@ -1,0 +1,13 @@
+AuthType Basic
+AuthName "Fox Logistics API"
+AuthUserFile .htpasswd
+Require valid-user
+
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+<Files .htpasswd>
+order allow,deny
+deny from all
+</Files>

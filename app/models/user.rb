@@ -56,6 +56,7 @@ class User < ActiveRecord::Base
   mount_uploader :avatar, UserAvatarUploader
 
   scope :active, ->() {where(blocked: false)}
+  scope :with_email, ->(email) {where(email: email)}
 
   before_create -> do
     assign_user_role

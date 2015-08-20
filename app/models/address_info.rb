@@ -20,7 +20,7 @@ class AddressInfo < ActiveRecord::Base
   belongs_to :user
   has_many :shipments
 
-  validates_presence_of :city, :state, :house
+  validates_presence_of :city, :state, :address1, :state, :zip_code, :contact_name
 end
 
 class ShipperInfo < AddressInfo; end

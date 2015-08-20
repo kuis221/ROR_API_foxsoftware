@@ -21,4 +21,4 @@ pickle-email-*.html
 .rvmrc
 
 # swagger docs
-/public/apidocs/
+#/public/apidocs/

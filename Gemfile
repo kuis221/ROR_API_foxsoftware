@@ -9,7 +9,8 @@ gem 'versionist'
 gem 'swagger-docs'
 # gem 'jbuilder', '~> 2.2.16'
 # gem 'oj'
-
+gem 'sidekiq'
+gem 'haml'
 
 # Security
 gem 'rack-cors', require: 'rack/cors'

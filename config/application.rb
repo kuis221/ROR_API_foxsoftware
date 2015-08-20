@@ -39,6 +39,8 @@ module FoxSoftware
       g.integration_tool :rspec
     end
 
+    config.action_mailer.default_url_options = { host: Settings.host }
+
     config.middleware.use Rack::Cors do
       allow do
         origins '*'
