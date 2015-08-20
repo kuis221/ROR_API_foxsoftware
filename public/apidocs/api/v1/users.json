@@ -20,14 +20,14 @@
           ],
           "responseMessages": [
             {
-              "code": 500,
-              "responseModel": null,
-              "message": "Not found"
-            },
-            {
-              "code": 500,
+              "code": 200,
               "responseModel": null,
               "message": "{'zip':'20636','state':'MD','city':'Hollywood','lat':'38.352356','lon':'-76.562644'}"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not found"
             }
           ],
           "method": "post",

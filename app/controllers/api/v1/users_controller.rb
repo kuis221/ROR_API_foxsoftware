@@ -31,12 +31,12 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
   swagger_api :get_address_by_zip do
     summary 'Find State and City by Zip code (USA)'
     param :query, :zip, :string, :required, 'Zip'
-    response :nil, 'Not found'
-    response :result, "{'zip':'20636','state':'MD','city':'Hollywood','lat':'38.352356','lon':'-76.562644'}"
+    response :not_found, 'Not found'
+    response :ok, "{'zip':'20636','state':'MD','city':'Hollywood','lat':'38.352356','lon':'-76.562644'}"
   end
   def get_address_by_zip
-    zip = params[:zip]
-    render json: {result: FindByZip.find(zip)}
+    result = FindByZip.find(params[:zip])
+    result ? render(json: {result: result}) : raise(ActiveRecord::RecordNotFound)
   end
 
   private
