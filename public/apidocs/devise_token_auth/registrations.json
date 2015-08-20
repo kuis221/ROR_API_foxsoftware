@@ -60,6 +60,18 @@
               "required": true
             }
           ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "User",
+              "message": "Success"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "not_valid"
+            }
+          ],
           "method": "post",
           "nickname": "DeviseTokenAuth::Registrations#create"
         }

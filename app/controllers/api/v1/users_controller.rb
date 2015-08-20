@@ -22,7 +22,7 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
     param :form, 'user[email]', :string, :optional, 'Email'
     response :ok, 'Success', :User
     response :unauthorized
-    response :errors
+    response :not_valid
   end
   def update
     # TODO

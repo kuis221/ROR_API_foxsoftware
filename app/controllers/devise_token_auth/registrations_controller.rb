@@ -17,6 +17,8 @@ module DeviseTokenAuth
       param :form, :about, :string, :optional, 'About me'
       param :form, :user_type, :string, :required, "User type, 'carrier' or 'client'"
       # param :form, :provider, :string, :required, "Provider, one of: (email,facebook,google_oauth2,linkedin)", {defaultValue: 'email'}
+      response 500, :not_valid
+      response :ok, 'Success', :User
     end
     def create
 

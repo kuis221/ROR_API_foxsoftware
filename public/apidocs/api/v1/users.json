@@ -235,7 +235,7 @@
             {
               "code": 500,
               "responseModel": null,
-              "message": "Errors"
+              "message": "Not Valid"
             }
           ],
           "method": "patch",

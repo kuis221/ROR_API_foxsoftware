@@ -58,6 +58,14 @@ class User < ActiveRecord::Base
   scope :active, ->() {where(blocked: false)}
   scope :with_email, ->(email) {where(email: email)}
 
+  ATTRS = {
+      first_name: {desc: 'First name', required: :required, type: :string},
+      last_name: {desc: 'Last name', required: :optional, type: :string},
+      about: {desc: 'About', required: :optional, type: :string},
+      email: {desc: 'Email', required: :required, type: :string},
+      provider: {desc: 'Registration provider, email of oauth', required: :required, type: :string}
+  }
+
   before_create -> do
     assign_user_role
     # skip_confirmation!
