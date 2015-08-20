@@ -52,7 +52,7 @@ class Api::V1::ApiBaseController < ApplicationController
               param :form, "#{class_name.downcase}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
             end
             response :ok, 'Success', class_name
-            response :not_saved
+            response :not_acceptable
           end
         end
       end

@@ -10,7 +10,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       @attrs = {password: '123123', password_confirmation: '123123', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email}
     end
 
-    it 'should properly register user' do
+    it 'should properly register user with client role' do
       expect {
         json_query :post, :create, @attrs
       }.to change{User.count}.by(1)
@@ -20,10 +20,21 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       expect(user.uid).to eq response.headers['uid']
       expect(user.tokens[token_client]['expiry'].to_s).to eq response.headers['expiry']
       expect(user.has_role?(:user)).to eq true
+      expect(user.has_role?(:client)).to eq true
       @attrs.each_pair do |k,v|
         next if [:password, :password_confirmation].include?(k)
         expect(user[k]).to eq v
       end
+    end
+
+    it 'should register carrier user' do
+      expect {
+        json_query :post, :create, @attrs.merge({user_type: 'carrier'})
+      }.to change{User.count}.by(1)
+      user = User.last
+      expect(user.has_role?(:user)).to eq true
+      expect(user.has_role?(:carrier)).to eq true
+      expect(user.has_role?(:client)).to eq false
     end
 
     it 'should not let with blank password' do
@@ -54,8 +65,9 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
   context 'client user with oauth' do
     before do
       @attrs = {provider: 'facebook', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email}
-
     end
+
+    # TODO
   end
 
 end

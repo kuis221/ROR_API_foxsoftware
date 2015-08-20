@@ -5,10 +5,23 @@ module DeviseTokenAuth
     before_filter :validate_account_update_params, :only => :update
     skip_after_filter :update_auth_header, :only => [:create, :destroy]
 
+    swagger_controller :registrations, 'User email registration'
+
+    swagger_api :create do
+      summary 'Create user with email'
+      param :form, :first_name, :string, :required, 'First Name'
+      param :form, :last_name, :string, :required, 'Last Name'
+      param :form, :email, :string, :required, 'Email'
+      param :form, :password, :string, :required, 'Password'
+      param :form, :password_confirmation, :string, :required, 'Password confirmation'
+      param :form, :about, :string, :optional, 'About me'
+      param :form, :user_type, :string, :required, "User type, 'carrier' or 'client'"
+      # param :form, :provider, :string, :required, "Provider, one of: (email,facebook,google_oauth2,linkedin)", {defaultValue: 'email'}
+    end
     def create
 
       @resource            = resource_class.new(sign_up_params)
-      @resource.provider   = "email"
+      @resource.provider   = 'email'
 
       # honor devise configuration for case_insensitive_keys
       if resource_class.case_insensitive_keys.include?(:email)
@@ -66,6 +79,7 @@ module DeviseTokenAuth
               expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
             }
 
+            @resource.assign_role_by_param(params[:user_type])
             @resource.save!
 
             update_auth_header

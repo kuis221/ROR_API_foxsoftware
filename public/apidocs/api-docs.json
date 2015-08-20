@@ -4,6 +4,10 @@
   "basePath": "http://localhost:3000/",
   "apis": [
     {
+      "path": "http://localhost:3000/apidocs/devise_token_auth/registrations.{format}",
+      "description": "User email registration"
+    },
+    {
       "path": "http://localhost:3000/apidocs/authentication.{format}",
       "description": "Authenticating Fox Software API"
     },

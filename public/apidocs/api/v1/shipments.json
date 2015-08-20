@@ -264,9 +264,9 @@
               "message": "Success"
             },
             {
-              "code": 500,
+              "code": 406,
               "responseModel": null,
-              "message": "Not Saved"
+              "message": "Not Acceptable"
             }
           ],
           "method": "post",
@@ -504,9 +504,9 @@
               "message": "Success"
             },
             {
-              "code": 500,
+              "code": 406,
               "responseModel": null,
-              "message": "Not Saved"
+              "message": "Not Acceptable"
             },
             {
               "code": 404,

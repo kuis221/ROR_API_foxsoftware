@@ -139,7 +139,7 @@ module DeviseTokenAuth
       sign_in(:user, @resource, store: false, bypass: false)
 
       @resource.save!
-
+      @resource.assign_role_by_param(params[:user_type])
       yield if block_given?
 
       render_data_or_redirect('deliverCredentials', @resource.as_json.merge(@auth_params.as_json))

@@ -6,7 +6,14 @@ class AuthenticationController < ApplicationController
   swagger_api :auth do
     summary 'This part explain how authentication should be make'
     notes <<-N
-        <h2>Token Header Format</h2>
+        <h2>Registration overall</h2>
+        <p>
+          User can have access in two ways, by email+password registration and by oauth registration(facebook, google, linkedin), so
+          there are two endpoints for each way.
+        </p>
+
+        <h2>Authorization registered users</h2>
+        <h3>Token Header Format</h2>
 
         <p>The authentication information should be included by the client in the headers or query params of <strong>EACH</strong> request. The headers follow the RFC 6750 Bearer Token format:</p>
 

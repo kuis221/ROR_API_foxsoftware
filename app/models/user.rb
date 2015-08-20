@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
   has_many :bids, dependent: :destroy
   has_many :address_infos, dependent: :destroy
 
-  validates_presence_of :email
+  validates_presence_of :email, :first_name
   validates_presence_of :password, :password_confirmation, confirmation: true
   validates_confirmation_of :password
 
@@ -61,6 +61,12 @@ class User < ActiveRecord::Base
   before_create -> do
     assign_user_role
     # skip_confirmation!
+  end
+
+  def assign_role_by_param(user_type)
+    role = :client # by default all users get :client and :user roles
+    role = :carrier if user_type == 'carrier'
+    add_role role
   end
 
   def assign_user_role
