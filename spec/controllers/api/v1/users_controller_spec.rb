@@ -36,7 +36,6 @@ describe Api::V1::UsersController, type: :controller do
 
     it 'should not find anything in get_address_by_zip' do
       json_query :post, :get_address_by_zip, zip: '1234'
-      ap @json
       expect(@json[:result]).to be nil
     end
   end

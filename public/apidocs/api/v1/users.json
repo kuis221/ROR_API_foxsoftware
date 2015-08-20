@@ -5,6 +5,37 @@
   "resourcePath": "users",
   "apis": [
     {
+      "path": "api/v1/users/get_address_by_zip.json",
+      "operations": [
+        {
+          "summary": "Find State and City by Zip code (USA)",
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "zip",
+              "type": "string",
+              "description": "Zip",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "Not found"
+            },
+            {
+              "code": 500,
+              "responseModel": null,
+              "message": "{'zip':'20636','state':'MD','city':'Hollywood','lat':'38.352356','lon':'-76.562644'}"
+            }
+          ],
+          "method": "post",
+          "nickname": "Api::V1::Users#get_address_by_zip"
+        }
+      ]
+    },
+    {
       "path": "api/v1/users.json",
       "operations": [
         {

@@ -167,7 +167,7 @@
             },
             {
               "paramType": "form",
-              "name": "shipment[n_or_cartons]",
+              "name": "shipment[n_of_cartons]",
               "type": "integer",
               "description": "Number of cartons",
               "required": true,
@@ -407,7 +407,7 @@
             },
             {
               "paramType": "form",
-              "name": "shipment[n_or_cartons]",
+              "name": "shipment[n_of_cartons]",
               "type": "integer",
               "description": "Number of cartons",
               "required": true,
@@ -561,7 +561,7 @@
         "dim_l",
         "distance",
         "price",
-        "n_or_cartons",
+        "n_of_cartons",
         "cubic_feet",
         "unit_count",
         "skids_count",
@@ -593,7 +593,7 @@
           "type": "double",
           "description": "Price"
         },
-        "n_or_cartons": {
+        "n_of_cartons": {
           "type": "integer",
           "description": "Number of cartons"
         },
