@@ -12,6 +12,7 @@ unless User.exists?(email: email)
   puts 'Create a user with admin role'
   user = User.new
   user.email = email
+  user.first_name = 'Admin'
   user.password = '123qweasd'
   user.password_confirmation = '123qweasd'
   user.confirmed_at = Time.now
