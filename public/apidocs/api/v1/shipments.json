@@ -1,0 +1,640 @@
+{
+  "apiVersion": "1.0",
+  "swaggerVersion": "1.2",
+  "basePath": "http://foxsoftware.herokuapp.com/",
+  "resourcePath": "shipments",
+  "apis": [
+    {
+      "path": "api/v1/shipments/{id}/toggle_active.json",
+      "operations": [
+        {
+          "summary": "Toggle shipment active state",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Shipment ID",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "Shipment",
+              "message": "Success"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            }
+          ],
+          "method": "post",
+          "nickname": "Api::V1::Shipments#toggle_active"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments.json",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "access-token",
+              "type": "string",
+              "description": "Logged in user access token",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "uid",
+              "type": "string",
+              "description": "Logged in user UID(uid from oauth or email)",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "client",
+              "type": "string",
+              "description": "Cliend ID",
+              "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "page",
+              "type": "integer",
+              "description": "Page",
+              "required": false,
+              "defaultValue": 1
+            },
+            {
+              "paramType": "query",
+              "name": "limit",
+              "type": "integer",
+              "description": "Results limit",
+              "required": false,
+              "defaultValue": 10
+            }
+          ],
+          "summary": "Return all current user shipments",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "Shipment",
+              "message": "Success"
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::Shipments#index"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments.json",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "access-token",
+              "type": "string",
+              "description": "Logged in user access token",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "uid",
+              "type": "string",
+              "description": "Logged in user UID(uid from oauth or email)",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "client",
+              "type": "string",
+              "description": "Cliend ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[dim_w]",
+              "type": "double",
+              "description": "Width",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[dim_h]",
+              "type": "double",
+              "description": "Height",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[dim_l]",
+              "type": "double",
+              "description": "Length",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[distance]",
+              "type": "integer",
+              "description": "Distance",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[notes]",
+              "type": "string",
+              "description": "Notes",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[price]",
+              "type": "double",
+              "description": "Price",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[n_of_cartons]",
+              "type": "integer",
+              "description": "Number of cartons",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[cubic_feet]",
+              "type": "integer",
+              "description": "Cubic feet",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[unit_count]",
+              "type": "integer",
+              "description": "Unit count",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[skids_count]",
+              "type": "integer",
+              "description": "Skids count",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[hazard]",
+              "type": "boolean",
+              "description": "Is hazard",
+              "required": false,
+              "defaultValue": "false"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[private_bidding]",
+              "type": "boolean",
+              "description": "Is private bidding by link",
+              "required": false,
+              "defaultValue": "false"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[active]",
+              "type": "boolean",
+              "description": "Is active",
+              "required": false,
+              "defaultValue": "true"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[stackable]",
+              "type": "boolean",
+              "description": "Is stackable",
+              "required": false,
+              "defaultValue": "true"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[pickup_at]",
+              "type": "datetime",
+              "description": "Pickup time",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[arrive_at]",
+              "type": "datetime",
+              "description": "Arrive time",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "invitations[emails]",
+              "type": "array",
+              "description": "Array of emails to invite carriers",
+              "required": false,
+              "items": {
+                "$ref": "email"
+              }
+            }
+          ],
+          "summary": "CREATE Shipment",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "Shipment",
+              "message": "Success"
+            },
+            {
+              "code": 406,
+              "responseModel": null,
+              "message": "Not Acceptable"
+            }
+          ],
+          "method": "post",
+          "nickname": "Api::V1::Shipments#create"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/{id}.json",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "access-token",
+              "type": "string",
+              "description": "Logged in user access token",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "uid",
+              "type": "string",
+              "description": "Logged in user UID(uid from oauth or email)",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "client",
+              "type": "string",
+              "description": "Cliend ID",
+              "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Shipment ID",
+              "required": true
+            }
+          ],
+          "summary": "Fetches shipment",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "Shipment",
+              "message": "Success"
+            },
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::Shipments#show"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/{id}.json",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "access-token",
+              "type": "string",
+              "description": "Logged in user access token",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "uid",
+              "type": "string",
+              "description": "Logged in user UID(uid from oauth or email)",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "client",
+              "type": "string",
+              "description": "Cliend ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[dim_w]",
+              "type": "double",
+              "description": "Width",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[dim_h]",
+              "type": "double",
+              "description": "Height",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[dim_l]",
+              "type": "double",
+              "description": "Length",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[distance]",
+              "type": "integer",
+              "description": "Distance",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[notes]",
+              "type": "string",
+              "description": "Notes",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[price]",
+              "type": "double",
+              "description": "Price",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[n_of_cartons]",
+              "type": "integer",
+              "description": "Number of cartons",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[cubic_feet]",
+              "type": "integer",
+              "description": "Cubic feet",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[unit_count]",
+              "type": "integer",
+              "description": "Unit count",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[skids_count]",
+              "type": "integer",
+              "description": "Skids count",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[hazard]",
+              "type": "boolean",
+              "description": "Is hazard",
+              "required": false,
+              "defaultValue": "false"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[private_bidding]",
+              "type": "boolean",
+              "description": "Is private bidding by link",
+              "required": false,
+              "defaultValue": "false"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[active]",
+              "type": "boolean",
+              "description": "Is active",
+              "required": false,
+              "defaultValue": "true"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[stackable]",
+              "type": "boolean",
+              "description": "Is stackable",
+              "required": false,
+              "defaultValue": "true"
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[pickup_at]",
+              "type": "datetime",
+              "description": "Pickup time",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[arrive_at]",
+              "type": "datetime",
+              "description": "Arrive time",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "invitations[emails]",
+              "type": "array",
+              "description": "Array of emails to update list of invitations",
+              "required": false,
+              "items": {
+                "$ref": "email"
+              }
+            }
+          ],
+          "summary": "UPDATE Shipment",
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "Shipment",
+              "message": "Success"
+            },
+            {
+              "code": 406,
+              "responseModel": null,
+              "message": "Not Acceptable"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            }
+          ],
+          "notes": "Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them",
+          "method": "patch",
+          "nickname": "Api::V1::Shipments#update"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/{id}.json",
+      "operations": [
+        {
+          "summary": "Delete a shipment",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Shipment ID",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": null,
+              "message": "Success"
+            },
+            {
+              "code": 404,
+              "responseModel": null,
+              "message": "Not Found"
+            }
+          ],
+          "method": "delete",
+          "nickname": "Api::V1::Shipments#destroy"
+        }
+      ]
+    }
+  ],
+  "models": {
+    "Shipment": {
+      "id": "Shipment",
+      "required": [
+        "dim_w",
+        "dim_h",
+        "dim_l",
+        "distance",
+        "price",
+        "n_of_cartons",
+        "cubic_feet",
+        "unit_count",
+        "skids_count",
+        "pickup_at",
+        "arrive_at"
+      ],
+      "properties": {
+        "dim_w": {
+          "type": "double",
+          "description": "Width"
+        },
+        "dim_h": {
+          "type": "double",
+          "description": "Height"
+        },
+        "dim_l": {
+          "type": "double",
+          "description": "Length"
+        },
+        "distance": {
+          "type": "integer",
+          "description": "Distance"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Notes"
+        },
+        "price": {
+          "type": "double",
+          "description": "Price"
+        },
+        "n_of_cartons": {
+          "type": "integer",
+          "description": "Number of cartons"
+        },
+        "cubic_feet": {
+          "type": "integer",
+          "description": "Cubic feet"
+        },
+        "unit_count": {
+          "type": "integer",
+          "description": "Unit count"
+        },
+        "skids_count": {
+          "type": "integer",
+          "description": "Skids count"
+        },
+        "hazard": {
+          "type": "boolean",
+          "description": "Is hazard"
+        },
+        "private_bidding": {
+          "type": "boolean",
+          "description": "Is private bidding by link"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Is active"
+        },
+        "stackable": {
+          "type": "boolean",
+          "description": "Is stackable"
+        },
+        "pickup_at": {
+          "type": "datetime",
+          "description": "Pickup time"
+        },
+        "arrive_at": {
+          "type": "datetime",
+          "description": "Arrive time"
+        }
+      },
+      "description": "Shipment object"
+    }
+  }
+}
