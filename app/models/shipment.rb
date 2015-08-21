@@ -45,8 +45,9 @@ class Shipment < ActiveRecord::Base
   resourcify
 
 
-  # Used for validation here, and in swagger doc generation
-  # :required or :optional for swagger !
+  # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
+  # -> :required or :optional for swagger
+  # -> for_model: true > only use in swagger_model
   ATTRS = {dim_w: {desc: 'Width', required: :required, type: :double},
            dim_h: {desc: 'Height', required: :required, type: :double},
            dim_l: {desc: 'Length', required: :required, type: :double},
@@ -62,7 +63,9 @@ class Shipment < ActiveRecord::Base
            active: {desc: 'Is active', required: :optional, type: :boolean, default: :true},
            stackable: {desc: 'Is stackable', required: :optional, type: :boolean, default: :true},
            pickup_at: {desc: 'Pickup time', required: :required, type: :datetime},
-           arrive_at: {desc: 'Arrive time', required: :required, type: :datetime}
+           arrive_at: {desc: 'Arrive time', required: :required, type: :datetime},
+           original_shipment_id: {desc: 'Repeated from shipment', type: :integer, for_model: true},
+           secret_id: {desc: 'Part for private url', type: :string, for_model: true}
   }
 
   before_create :set_secret_id

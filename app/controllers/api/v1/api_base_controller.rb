@@ -49,10 +49,11 @@ class Api::V1::ApiBaseController < ApplicationController
             summary "#{action.to_s.upcase} #{class_name}"
             attrs.each_pair do |k,v|
               # TODO maybe it should populate allowed params ? or modify ATTRS with new property - allowed_param: true
+              next if v[:for_model] # skip, if attribute is for swagger_model only
               param :form, "#{class_name.downcase}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
             end
             response :ok, 'Success', class_name
-            response :not_acceptable
+            response :not_valid
           end
         end
       end
