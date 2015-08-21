@@ -7,7 +7,7 @@
 
 class Swagger::Docs::Config
     def self.transform_path(path, api_version)
-        "http://localhost:3000/apidocs/#{path}"
+        "#{Settings.host}/apidocs/#{path}"
     end
 end
 Swagger::Docs::Config.register_apis({
@@ -17,7 +17,7 @@ Swagger::Docs::Config.register_apis({
         # the output location where your .json files are written to
         api_file_path: "public/apidocs",
         # the URL base path to your API
-        base_path: 'http://localhost:3000',
+        base_path: Settings.host,
         # controller_base_path: '',
         # if you want to delete all .json files at each generation
         clean_directory: true,
