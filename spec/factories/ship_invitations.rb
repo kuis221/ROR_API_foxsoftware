@@ -18,6 +18,7 @@
 FactoryGirl.define do
   factory :ship_invitation do
     shipment
+    invitee factory: :user
     invitee_email {FFaker::Internet.email}
   end
 

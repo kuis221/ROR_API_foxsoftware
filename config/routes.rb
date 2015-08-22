@@ -15,6 +15,9 @@ Rails.application.routes.draw do
         member do
           post :toggle_active
         end
+        collection do
+          get :my_listing
+        end
       end
       resources :bids
       resources :shipment_feedbacks

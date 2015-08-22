@@ -1,5 +1,8 @@
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_filter 'config/'
+  add_filter 'spec/'
+end
 
 RSpec.configure do |config|
   config.before(:each) { ActionMailer::Base.deliveries.clear }

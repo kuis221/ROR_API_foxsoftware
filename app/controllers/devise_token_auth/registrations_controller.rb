@@ -5,6 +5,7 @@ module DeviseTokenAuth
     before_filter :validate_account_update_params, :only => :update
     skip_after_filter :update_auth_header, :only => [:create, :destroy]
 
+    # :nocov:
     swagger_controller :registrations, 'User email registration'
 
     swagger_api :create do
@@ -20,6 +21,7 @@ module DeviseTokenAuth
       response 500, :not_valid
       response :ok, 'Success', :User
     end
+    # :nocov:
     def create
 
       @resource            = resource_class.new(sign_up_params)
@@ -48,15 +50,15 @@ module DeviseTokenAuth
       end
 
       # if whitelist is set, validate redirect_url against whitelist
-      if DeviseTokenAuth.redirect_whitelist
-        unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
-          return render json: {
-            status: 'error',
-            data:   @resource.as_json,
-            errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: redirect_url)]
-          }, status: 403
-        end
-      end
+      # if DeviseTokenAuth.redirect_whitelist
+      #   unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
+      #     return render json: {
+      #       status: 'error',
+      #       data:   @resource.as_json,
+      #       errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: redirect_url)]
+      #     }, status: 403
+      #   end
+      # end
 
       begin
         # override email confirmation, must be sent manually from ctrl

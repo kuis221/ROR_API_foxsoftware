@@ -44,6 +44,8 @@ class Shipment < ActiveRecord::Base
   mount_uploader :picture, ShipmentPictureUploader
   resourcify
 
+  scope :active, ->() {where(active: true)}
+  scope :public_only, ->() {where(private_bidding: false)}
 
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
   # -> :required or :optional for swagger
@@ -72,6 +74,10 @@ class Shipment < ActiveRecord::Base
 
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required
+  end
+
+  def eligible_for_render?(param_secret_id, current_user)
+    (!private_bidding && active?) || (private_bidding? && secret_id == param_secret_id && active?) || user == current_user
   end
 
   # Manage ship_invitations here. delete all when [], replace if size>0, or ignore if nil.

@@ -17,21 +17,58 @@ describe Api::V1::ShipmentsController do
   context 'Carrier browsing shipments' do
     login_user
 
-
     before do
       @logged_in_user.add_role :carrier
+      @shipment = create :shipment, private_bidding: true # secret_id
     end
 
-    it 'should let authorized carrier to read invited shipment' do
-      # TODO Check with Matt, if way by invited shipment or ANY shipment upon inv'
+    it 'check carrier ability' do
+      expect(@logged_in_user.has_role?(:carrier)).to eq true
     end
 
-    it 'should not let carrier see inactive shipments' do
-      # TODO same as others
+    it 'should read invited shipment' do
+      json_query :get, :show, id: @shipment.id, invitation: @shipment.secret_id
+      expect(@json[:id]).to eq @shipment.id
+      # check for proper hash respond(should not return all attrs like for owner of shipment)
+      expect(@json[:private_bidding]).to be nil
     end
 
-    it "should not let carrier read someone's shipment" do
-      ## TODO check with Matt about permitting carriers to look on any shipment/shipment
+    it 'should not read invited shipment with wrong secret_id' do
+      # ship_invs = create_list :ship_invitation, 2
+      inv = create :ship_invitation, shipment: @shipment
+      json_query :get, :show, id: @shipment.id, invitation: '!@#fokd'
+      expect(@json[:error]).to eq 'unauthorized'
+    end
+
+    it 'should display only my invites in my_listing' do
+      other_ship_invs = create_list :ship_invitation, 2
+      my_ship_invs = create_list :ship_invitation, 3, invitee: @logged_in_user # with related shipments
+      json_query :get, :my_listing
+      expect(@json[:results].size).to eq 3
+      my_ships = my_ship_invs.map &:shipment_id
+      expect(@json[:results].collect{|x| x['id']}).to eq my_ships
+    end
+
+    context 'inactive shipment' do
+      before do
+        @shipment.inactive!
+        create :ship_invitation, shipment: @shipment
+      end
+
+      it 'should not show' do
+        json_query :get, :show, id: @shipment.id, invitation: @shipment.secret_id
+        expect(@json[:error]).to eq 'not_eligible'
+      end
+
+      it 'should exclude from index' do
+        json_query :get, :index
+        expect(@json[:results]).to eq []
+      end
+
+      it 'should exclude from my_listing' do
+        json_query :get, :my_listing
+        expect(@json[:results]).to eq []
+      end
     end
 
   end

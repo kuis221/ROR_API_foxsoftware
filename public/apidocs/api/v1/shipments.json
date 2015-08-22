@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://localhost:3000/",
   "resourcePath": "shipments",
   "apis": [
     {
@@ -32,6 +32,42 @@
           ],
           "method": "post",
           "nickname": "Api::V1::Shipments#toggle_active"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/my_listing.json",
+      "operations": [
+        {
+          "summary": "Return all private shipments for carrier user",
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "page",
+              "type": "integer",
+              "description": "Page",
+              "required": false,
+              "defaultValue": 1
+            },
+            {
+              "paramType": "query",
+              "name": "limit",
+              "type": "integer",
+              "description": "Results limit",
+              "required": false,
+              "defaultValue": 10
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": "Shipment",
+              "message": "Success"
+            }
+          ],
+          "notes": "Only for carrier user and only private shipments",
+          "method": "get",
+          "nickname": "Api::V1::Shipments#my_listing"
         }
       ]
     },
@@ -76,6 +112,13 @@
               "description": "Results limit",
               "required": false,
               "defaultValue": 10
+            },
+            {
+              "paramType": "query",
+              "name": "user_id",
+              "type": "integer",
+              "description": "User ID, if not set then scope by current_user",
+              "required": false
             }
           ],
           "summary": "Return all current user shipments",
@@ -264,9 +307,9 @@
               "message": "Success"
             },
             {
-              "code": 406,
+              "code": 500,
               "responseModel": null,
-              "message": "Not Acceptable"
+              "message": "Not Valid"
             }
           ],
           "method": "post",
@@ -306,6 +349,20 @@
               "type": "integer",
               "description": "Shipment ID",
               "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "invitation",
+              "type": "string",
+              "description": "Shipment secret code for private shipments",
+              "required": false
+            },
+            {
+              "paramType": "query",
+              "name": "user_id",
+              "type": "integer",
+              "description": "User ID, if not set then scope by current_user",
+              "required": false
             }
           ],
           "summary": "Fetches shipment",
@@ -326,6 +383,7 @@
               "message": "Not Found"
             }
           ],
+          "notes": "Only active shipments will be displayed for carriers, or any shipment for shipment user",
           "method": "get",
           "nickname": "Api::V1::Shipments#show"
         }
@@ -504,9 +562,9 @@
               "message": "Success"
             },
             {
-              "code": 406,
+              "code": 500,
               "responseModel": null,
-              "message": "Not Acceptable"
+              "message": "Not Valid"
             },
             {
               "code": 404,
@@ -632,6 +690,14 @@
         "arrive_at": {
           "type": "datetime",
           "description": "Arrive time"
+        },
+        "original_shipment_id": {
+          "type": "integer",
+          "description": "Repeated from shipment"
+        },
+        "secret_id": {
+          "type": "string",
+          "description": "Part for private url"
         }
       },
       "description": "Shipment object"

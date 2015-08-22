@@ -45,9 +45,6 @@
     )
   end
 
-  def cu
-    current_user
-  end
   def check_registration
     if current_user && current_user.blocked?
       render_error :user_not_valid_or_blocked, 403

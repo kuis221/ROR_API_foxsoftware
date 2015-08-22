@@ -48,6 +48,7 @@ class User < ActiveRecord::Base
   has_many :shipments, dependent: :destroy
   has_many :bids, dependent: :destroy
   has_many :address_infos, dependent: :destroy
+  has_many :ship_invitations, foreign_key: :invitee_id, dependent: :destroy
 
   validates_presence_of :email, :first_name
   validates_presence_of :password, :password_confirmation, confirmation: true
