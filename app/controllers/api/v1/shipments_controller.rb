@@ -46,8 +46,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :my_listing do |api|
-    summary 'Return all private shipments for carrier user'
-    notes 'Only for carrier user and only private shipments'
+    summary 'Return all private shipments for carrier user (current_user)'
     Api::V1::ApiBaseController.add_pagination_params(api)
     response :ok, 'Success', :Shipment
   end
