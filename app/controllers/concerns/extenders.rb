@@ -18,7 +18,8 @@
   end
 
   # Render JSON from a single AR object or and array/relation
-  def render_json(object)
+  # Return inline string or render json directly
+  def render_json(object, inline=false)
     if object.is_a?(Array) || object.is_a?(ActiveRecord::Relation)
       json = []
       object.each do |obj|
@@ -30,7 +31,7 @@
     else
       json = render_single_object(object)
     end
-    render json: json
+    inline ? json : (render json: json)
   end
 
   def render_single_object(object)

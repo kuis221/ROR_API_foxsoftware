@@ -1,9 +1,7 @@
 class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   # only for current user with client permission
-
   # load_and_authorize_resource
-  before_filter :find_address_info, except: [:index, :create]
-
+  before_filter :find_address_info, except: [:index, :create, :my_defaults]
 
   # :nocov:
   swagger_controller :address_info, 'User addresses management'
@@ -92,6 +90,22 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
     else
       render_error :not_valid
     end
+  end
+
+  # :nocov:
+  swagger_api :my_defaults do
+    summary "Return user's default addresses"
+    notes 'Can be in any combination found/not found'
+    response :ok, "{'shipper_info':'not_found', 'receiver_info': {AddressInfoResponseModel}}"
+    response :ok, "{'shipper_info':{AddressInfoResponseModel}, 'receiver_info': {AddressInfoResponseModel}"
+  end
+  # :nocov:
+  def my_defaults
+    shipper_info = current_user.shipper_infos.default.first
+    receiver_info = current_user.receiver_infos.default.first
+    shipper = shipper_info ? render_json(shipper_info, true) : 'not_found'
+    receiver = receiver_info ? render_json(receiver_info, true) : 'not_found'
+    render json: {shipper_info: shipper, receiver_info: receiver}
   end
 
   # :nocov:

@@ -31,6 +31,9 @@ Rails.application.routes.draw do
           post :set_as_default_shipper
           post :set_as_default_receiver
         end
+        collection do
+          get :my_defaults
+        end
       end
     end
 

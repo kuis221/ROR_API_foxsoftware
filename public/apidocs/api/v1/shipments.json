@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://localhost:3000/",
+  "basePath": "http://foxsoftware.herokuapp.com/",
   "resourcePath": "shipments",
   "apis": [
     {
@@ -289,6 +289,22 @@
             },
             {
               "paramType": "form",
+              "name": "shipment[shipper_info_id]",
+              "type": "integer",
+              "description": "ShipperInfo address ID",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[receiver_info_id]",
+              "type": "integer",
+              "description": "ReceiverInfo address ID",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
               "name": "invitations[emails]",
               "type": "array",
               "description": "Array of emails to invite carriers",
@@ -542,6 +558,22 @@
             },
             {
               "paramType": "form",
+              "name": "shipment[shipper_info_id]",
+              "type": "integer",
+              "description": "ShipperInfo address ID",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[receiver_info_id]",
+              "type": "integer",
+              "description": "ReceiverInfo address ID",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
               "name": "invitations[emails]",
               "type": "array",
               "description": "Array of emails to update list of invitations",
@@ -621,7 +653,9 @@
         "unit_count",
         "skids_count",
         "pickup_at",
-        "arrive_at"
+        "arrive_at",
+        "shipper_info_id",
+        "receiver_info_id"
       ],
       "properties": {
         "dim_w": {
@@ -691,6 +725,14 @@
         "original_shipment_id": {
           "type": "integer",
           "description": "Repeated from shipment"
+        },
+        "shipper_info_id": {
+          "type": "integer",
+          "description": "ShipperInfo address ID"
+        },
+        "receiver_info_id": {
+          "type": "integer",
+          "description": "ReceiverInfo address ID"
         },
         "secret_id": {
           "type": "string",

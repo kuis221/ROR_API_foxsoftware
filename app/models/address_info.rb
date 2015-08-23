@@ -40,10 +40,13 @@ class AddressInfo < ActiveRecord::Base
   # validated on class object initialization
   ## validates_format_of :type, with: /(ShipperInfo)|(ReceiverInfo)/, message: 'should be ShipperInfo or AddressInfo'
 
+  scope :default, -> {where(is_default: true)}
+
   # Reset all same 'type' address_infos for current_user and set new default 'type' address
   def default!
     self.class.where(user_id: user_id).update_all(is_default: false)
-    update_attribute(:is_default, true)
+    self.is_default = true
+    save!
   end
 
 end
