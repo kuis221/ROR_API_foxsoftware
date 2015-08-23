@@ -2,14 +2,15 @@ require 'rails_helper'
 
 describe Api::V1::ShipmentsController do
 
-  before do
-    @user = create :user
-    @shipment = create :shipment, user: @user
-  end
+  # before do
+  #   @user = create :user
+  #   @shipment = create :shipment, user: @user
+  # end
 
   context 'unauthorized browsing' do
     it 'should not let visitors read shipment(s)' do
-      json_query :get, :show, id: @shipment.id
+      shipment = create :shipment
+      json_query :get, :show, id: shipment.id
       expect(@json[:errors].size).to eq 1
     end
   end
@@ -98,17 +99,40 @@ describe Api::V1::ShipmentsController do
 
     context 'saving' do
       before do
-        @attrs = {dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at: 2.days.from_now.to_s, arrive_at: 3.days.from_now.to_s}
+        @shipper_info = create :shipper_info, user: @logged_in_user
+        @receiver_info = create :receiver_info, user: @logged_in_user
+        @attrs = {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at: 2.days.from_now.to_s, arrive_at: 3.days.from_now.to_s}
         allow(InviteCarriers).to receive(:perform_async)
+        @invs = ['some@email.com', 'other@email.com']
       end
 
       it 'should let client create new shipment with invitations' do
-        invs = ['some@email.com', 'other@email.com']
         expect {
-          json_query :post, :create, shipment: @attrs, invitations: {emails: invs}
-          expect(@json[:secret_id]).not_to be blank?
-          expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], invs)
+          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], @invs)
         }.to change{Shipment.count}
+        expect(@json[:secret_id]).not_to be blank?
+      end
+
+      it 'cant accept without ShipperInfo or ReceiverInfo' do
+        @attrs[:shipper_info_id] = nil
+        expect {
+          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          expect(InviteCarriers).not_to have_received(:perform_async)
+          expect(@json[:error]).to eq 'not_saved'
+          expect(@json[:text].size).to eq 2 # blank and bad association
+        }.not_to change{Shipment.count}
+      end
+
+      it "can't assign someone's else addesses" do
+        someone_shipper_info = create :shipper_info
+        @attrs[:shipper_info_id] = someone_shipper_info.id
+        expect {
+          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          expect(InviteCarriers).not_to have_received(:perform_async)
+          expect(@json[:error]).to eq 'not_saved'
+          expect(@json[:text].size).to eq 1 # bad association
+        }.not_to change{Shipment.count}
       end
 
       it 'should not let client create invalid shipment' do
@@ -132,6 +156,25 @@ describe Api::V1::ShipmentsController do
             expect(@json[:status]).to eq 'ok'
             @shipment.reload
           }.to change(@shipment, :price)
+        end
+
+        it 'should change ReceiverInfo' do
+          new_receiver_info = create :receiver_info, user: @logged_in_user
+          expect {
+            json_query :put, :update, id: @shipment.id, shipment: {receiver_info_id: new_receiver_info.id}
+            expect(@json[:status]).to eq 'ok'
+            @shipment.reload
+          }.to change(@shipment, :receiver_info_id)
+        end
+
+        it 'should not change ReceiverInfo for not owned object' do
+          new_receiver_info = create :receiver_info
+          expect {
+            json_query :put, :update, id: @shipment.id, shipment: {receiver_info_id: new_receiver_info.id}
+            expect(@json[:error]).to eq 'not_saved'
+            expect(@json[:text].size).to eq 1 # bad association labeling
+            @shipment.reload
+          }.not_to change(@shipment, :price)
         end
 
         it 'should not let client save bad details' do

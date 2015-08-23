@@ -71,15 +71,23 @@ class Shipment < ActiveRecord::Base
            pickup_at: {desc: 'Pickup time', required: :required, type: :datetime},
            arrive_at: {desc: 'Arrive time', required: :required, type: :datetime},
            original_shipment_id: {desc: 'Repeated from shipment', type: :integer, for_model: true},
+           shipper_info_id: {desc: 'ShipperInfo address ID', type: :integer, required: :required},
+           receiver_info_id: {desc: 'ReceiverInfo address ID', type: :integer, required: :required},
            secret_id: {desc: 'Part for private url', type: :string, for_model: true}
   }
 
   before_create :set_secret_id
 
-  validates_associated :shipper_info, :receiver_info
-
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required
+  end
+  # should be after validates_presence_of shipper_info_id and receiver_info_id
+  after_validation :validate_addresses
+
+  # Check that associated addresses belongs to that user
+  def validate_addresses
+    self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
+    self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
   end
 
   def eligible_for_render?(param_secret_id, current_user)
