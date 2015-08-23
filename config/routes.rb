@@ -26,6 +26,12 @@ Rails.application.routes.draw do
           post :get_address_by_zip
         end
       end
+      resources :address_infos do
+        member do
+          post :set_as_default_shipper
+          post :set_as_default_receiver
+        end
+      end
     end
 
     # api_version(module: 'V2', path: {value: 'v2'}, default: true) do

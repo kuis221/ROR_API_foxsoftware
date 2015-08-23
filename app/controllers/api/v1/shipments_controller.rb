@@ -6,7 +6,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   swagger_controller :shipments, 'Shipment resource'
 
   swagger_api :show do
-    summary 'Fetches shipment'
+    summary 'LOAD shipment'
     param :path, :id, :integer, :required, 'Shipment ID'
     param :query, :invitation, :string, :optional, 'Shipment secret code for private shipments'
     # param :query, :user_id, :integer, :optional, 'User ID, if not set then scope by current_user(find his created shipment)'
@@ -32,7 +32,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :index do
-    summary 'Return all user shipments'
+    summary 'LIST all user shipments'
     param :query, :user_id, :integer, :optional, 'User ID, if not set then scope by currently logged in user.'
     response :ok, 'Success', :Shipment
   end
@@ -46,7 +46,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :my_listing do |api|
-    summary 'Return all private shipments for carrier user (current_user)'
+    summary 'LIST all private shipments for carrier user (current_user)'
     Api::V1::ApiBaseController.add_pagination_params(api)
     response :ok, 'Success', :Shipment
   end
@@ -102,7 +102,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :destroy do
-    summary 'Delete a shipment'
+    summary 'DELETE a shipment'
     param :path, :id, :integer, :required, 'Shipment ID'
     response :ok, 'Success'
     response :not_found

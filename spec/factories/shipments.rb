@@ -26,11 +26,15 @@
 #  arrive_at            :datetime         not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  shipper_info_id      :integer
+#  receiver_info_id     :integer
 #
 # Indexes
 #
-#  index_shipments_on_active   (active)
-#  index_shipments_on_user_id  (user_id)
+#  index_shipments_on_active            (active)
+#  index_shipments_on_receiver_info_id  (receiver_info_id)
+#  index_shipments_on_shipper_info_id   (shipper_info_id)
+#  index_shipments_on_user_id           (user_id)
 #
 
 FactoryGirl.define do

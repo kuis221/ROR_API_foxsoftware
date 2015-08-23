@@ -13,8 +13,9 @@ class ApplicationController < ActionController::Base
     render_error :not_found, 404
   end
 
+  # raise activerecord erorr or string(used from AddressInfoController)
   rescue_from ActiveRecord::RecordInvalid do |e|
-    render_error :not_saved, 500, e.record.errors.full_messages
+    render_error :not_saved, 500, (e.is_a?(String) ? e : e.record.errors.full_messages)
   end
 
   rescue_from CanCan::AccessDenied do |exception|

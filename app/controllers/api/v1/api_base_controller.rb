@@ -33,7 +33,7 @@ class Api::V1::ApiBaseController < ApplicationController
       ## Populate Response model here
       # Add models here which has ATTRS constants in it (see Shipment for details).
 
-      [Shipment].each do |s_model|
+      [Shipment, AddressInfo].each do |s_model|
         # because all setup_basic_api_documentation rendered for each controller
         # we make a little hack to render only models we include in [].each
         next if s_model.table_name != controller_name
@@ -51,10 +51,10 @@ class Api::V1::ApiBaseController < ApplicationController
             summary "#{action.to_s.upcase} #{class_name}"
             attrs.each_pair do |k,v|
               # TODO maybe it should populate allowed params ? or modify ATTRS with new property - allowed_param: true
-              next if v[:for_model] # skip, if attribute is for swagger_model only, looks like it doesnt really works
-              param :form, "#{class_name.downcase}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
+              next if v[:for_model] # skip, if attribute is for swagger_model only, looks like it DOESNT really works
+              param :form, "#{s_model.table_name.singularize}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
             end
-            response :ok, 'Success', class_name
+            response :ok, 'Success', class_name.to_sym
             response :not_valid
           end
         end

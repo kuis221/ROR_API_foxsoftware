@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150813141232) do
+ActiveRecord::Schema.define(version: 20150822152208) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,13 +22,16 @@ ActiveRecord::Schema.define(version: 20150813141232) do
     t.string   "city",                                   null: false
     t.string   "zip_code",                               null: false
     t.string   "address1",                               null: false
-    t.string   "address2",                               null: false
     t.string   "state",        limit: 2,                 null: false
     t.boolean  "appointment",            default: false
     t.integer  "user_id"
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
+    t.boolean  "is_default",             default: false
+    t.string   "address2"
   end
+
+  add_index "address_infos", ["is_default"], name: "index_address_infos_on_is_default", using: :btree
 
   create_table "bids", force: :cascade do |t|
     t.integer  "user_id"
@@ -117,10 +120,21 @@ ActiveRecord::Schema.define(version: 20150813141232) do
     t.datetime "arrive_at",                                                     null: false
     t.datetime "created_at",                                                    null: false
     t.datetime "updated_at",                                                    null: false
+    t.integer  "shipper_info_id"
+    t.integer  "receiver_info_id"
   end
 
   add_index "shipments", ["active"], name: "index_shipments_on_active", using: :btree
+  add_index "shipments", ["receiver_info_id"], name: "index_shipments_on_receiver_info_id", using: :btree
+  add_index "shipments", ["shipper_info_id"], name: "index_shipments_on_shipper_info_id", using: :btree
   add_index "shipments", ["user_id"], name: "index_shipments_on_user_id", using: :btree
+
+  create_table "shipments_ship_invitations", id: false, force: :cascade do |t|
+    t.integer "shipment_id"
+    t.integer "ship_invitations_id"
+  end
+
+  add_index "shipments_ship_invitations", ["shipment_id", "ship_invitations_id"], name: "ship_invitations_habtm", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email"

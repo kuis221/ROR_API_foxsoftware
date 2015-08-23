@@ -18,7 +18,21 @@
 
 FactoryGirl.define do
   factory :address_info do
-    
+    # type {%w(ShipperInfo ReceiverInfo).sample}
+    contact_name {FFaker::Conference.name}
+    city {FFaker::Address.city}
+    address1 {FFaker::Address.street_address}
+    zip_code {FFaker::AddressUS.state_abbr}
+    state {FFaker::AddressUS.state_abbr}
+    appointment true
+    user
   end
 
+  factory :shipper_info, parent: :address_info do
+    type 'ShipperInfo'
+  end
+
+  factory :receiver_info, parent: :address_info do
+    type 'ReceiverInfo'
+  end
 end

@@ -26,11 +26,15 @@
 #  arrive_at            :datetime         not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  shipper_info_id      :integer
+#  receiver_info_id     :integer
 #
 # Indexes
 #
-#  index_shipments_on_active   (active)
-#  index_shipments_on_user_id  (user_id)
+#  index_shipments_on_active            (active)
+#  index_shipments_on_receiver_info_id  (receiver_info_id)
+#  index_shipments_on_shipper_info_id   (shipper_info_id)
+#  index_shipments_on_user_id           (user_id)
 #
 
 class Shipment < ActiveRecord::Base
@@ -71,6 +75,8 @@ class Shipment < ActiveRecord::Base
   }
 
   before_create :set_secret_id
+
+  validates_associated :shipper_info, :receiver_info
 
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required

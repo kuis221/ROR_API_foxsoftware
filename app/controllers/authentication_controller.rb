@@ -55,6 +55,6 @@ class AuthenticationController < ApplicationController
     N
   end
   def auth
-    render json: {text: 'nothing here'}
+    render json: {text: 'Nothing here, this was just created for auth documentation.'}
   end
 end
