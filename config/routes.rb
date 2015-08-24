@@ -19,7 +19,9 @@ Rails.application.routes.draw do
           get :my_listing
         end
       end
-      resources :bids
+      resources :bids, except: [:destroy] do
+
+      end
       resources :shipment_feedbacks
       resources :users do
         collection do

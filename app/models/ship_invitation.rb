@@ -20,6 +20,8 @@ class ShipInvitation < ActiveRecord::Base
   # Invitee user, may be blank if user not available in our users yet.
   belongs_to :invitee, class_name: 'User', foreign_key: :invitee_id
 
+  scope :for_user, ->(invitee_id) {where(invitee_id: invitee_id)}
+
   validates_format_of :invitee_email, with: /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
   validates_presence_of :shipment_id
 

@@ -2,41 +2,10 @@
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
   "basePath": "http://localhost:3000/",
-  "resourcePath": "users",
+  "resourcePath": "bids",
   "apis": [
     {
-      "path": "api/v1/users/get_address_by_zip.json",
-      "operations": [
-        {
-          "summary": "Find State and City by Zip code (USA)",
-          "parameters": [
-            {
-              "paramType": "query",
-              "name": "zip",
-              "type": "string",
-              "description": "Zip",
-              "required": true
-            }
-          ],
-          "responseMessages": [
-            {
-              "code": "not_found",
-              "responseModel": null,
-              "message": "Not found"
-            },
-            {
-              "code": "ok",
-              "responseModel": null,
-              "message": "{'zip':'20636','state':'MD','city':'Hollywood','lat':'38.352356','lon':'-76.562644'}"
-            }
-          ],
-          "method": "post",
-          "nickname": "Api::V1::Users#get_address_by_zip"
-        }
-      ]
-    },
-    {
-      "path": "api/v1/users.json",
+      "path": "api/v1/bids.json",
       "operations": [
         {
           "parameters": [
@@ -76,15 +45,47 @@
               "description": "Results limit",
               "required": false,
               "defaultValue": 10
+            },
+            {
+              "paramType": "query",
+              "name": "shipment_id",
+              "type": "string",
+              "description": "Scope by shipment ID",
+              "required": false
+            },
+            {
+              "paramType": "query",
+              "name": "page",
+              "type": "integer",
+              "description": "Page",
+              "required": false,
+              "defaultValue": 1
+            },
+            {
+              "paramType": "query",
+              "name": "limit",
+              "type": "integer",
+              "description": "Results limit",
+              "required": false,
+              "defaultValue": 10
             }
           ],
+          "summary": "LIST all current user bids",
+          "responseMessages": [
+            {
+              "code": "ok",
+              "responseModel": "Bid",
+              "message": "Success"
+            }
+          ],
+          "notes": "Sorted by newest at the top",
           "method": "get",
-          "nickname": "Api::V1::Users#index"
+          "nickname": "Api::V1::Bids#index"
         }
       ]
     },
     {
-      "path": "api/v1/users.json",
+      "path": "api/v1/bids.json",
       "operations": [
         {
           "parameters": [
@@ -108,15 +109,52 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "bid[price]",
+              "type": "double",
+              "description": {
+                "desc": "Offered price"
+              },
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "bid[shipment_id]",
+              "type": "integer",
+              "description": {
+                "desc": "Shipment ID"
+              },
+              "required": true
             }
           ],
+          "summary": "CREATE a Bid",
+          "responseMessages": [
+            {
+              "code": "limit_reached",
+              "responseModel": null,
+              "message": "When user reached bid limit on this shipment. Current quota: 99999"
+            },
+            {
+              "code": "no_access",
+              "responseModel": null,
+              "message": "User can't bid on this shipment, no invitation for private bidding"
+            },
+            {
+              "code": "not_saved",
+              "responseModel": null,
+              "message": "Bad price or shipment is not active"
+            }
+          ],
+          "notes": "This endpoint provide creation of new bid for shipment. Only user with <b>carrier</b> role can do this.",
           "method": "post",
-          "nickname": "Api::V1::Users#create"
+          "nickname": "Api::V1::Bids#create"
         }
       ]
     },
     {
-      "path": "api/v1/users/{id}.json",
+      "path": "api/v1/bids/{id}.json",
       "operations": [
         {
           "parameters": [
@@ -145,35 +183,25 @@
               "paramType": "path",
               "name": "id",
               "type": "integer",
-              "description": "User ID",
+              "description": "Bid ID",
               "required": true
             }
           ],
-          "summary": "Fetches a single User item",
+          "summary": "LOAD a bid",
           "responseMessages": [
             {
-              "code": "not_found",
-              "responseModel": null,
-              "message": null
-            },
-            {
               "code": "ok",
-              "responseModel": "User",
+              "responseModel": "Bid",
               "message": "Success"
-            },
-            {
-              "code": "unauthorized",
-              "responseModel": null,
-              "message": null
             }
           ],
           "method": "get",
-          "nickname": "Api::V1::Users#show"
+          "nickname": "Api::V1::Bids#show"
         }
       ]
     },
     {
-      "path": "api/v1/users/{id}.json",
+      "path": "api/v1/bids/{id}.json",
       "operations": [
         {
           "parameters": [
@@ -197,49 +225,10 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true
-            },
-            {
-              "paramType": "form",
-              "name": "user[first_name]",
-              "type": "string",
-              "description": "First Name",
-              "required": false
-            },
-            {
-              "paramType": "form",
-              "name": "user[last_name]",
-              "type": "string",
-              "description": "Last Name",
-              "required": false
-            },
-            {
-              "paramType": "form",
-              "name": "user[email]",
-              "type": "string",
-              "description": "Email",
-              "required": false
-            }
-          ],
-          "summary": "Update user details",
-          "responseMessages": [
-            {
-              "code": "not_valid",
-              "responseModel": null,
-              "message": null
-            },
-            {
-              "code": "ok",
-              "responseModel": "User",
-              "message": "Success"
-            },
-            {
-              "code": "unauthorized",
-              "responseModel": null,
-              "message": null
             }
           ],
           "method": "patch",
-          "nickname": "Api::V1::Users#update"
+          "nickname": "Api::V1::Bids#update"
         }
       ]
     }

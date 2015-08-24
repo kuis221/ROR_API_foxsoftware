@@ -74,6 +74,10 @@ class User < ActiveRecord::Base
     # skip_confirmation!
   end
 
+  def invitation_for?(shipment)
+    shipment ? (ship_invitations.where(shipment_id: shipment.id).first && shipment.active?) : nil
+  end
+
   def assign_role_by_param(user_type)
     role = :client # by default all users get :client and :user roles
     role = :carrier if user_type == 'carrier'

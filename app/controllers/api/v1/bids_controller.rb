@@ -1,2 +1,73 @@
 class Api::V1::BidsController < Api::V1::ApiBaseController
+
+  authorize_resource # so only carrier can get in. TEST IT
+  before_filter :find_bid, only: [:show]
+
+  # :nocov:
+  swagger_controller :bids, 'Bids resource'
+  swagger_api :index do |api|
+    summary 'LIST all current user bids'
+    notes 'Sorted by newest at the top'
+    param :query, :shipment_id, :string, :optional, 'Scope by shipment ID'
+    Api::V1::ApiBaseController.add_pagination_params(api)
+    response 'ok', 'Success', :Bid
+  end
+  # :nocov:
+  def index
+    @bids = current_user.bids.order('bids.created_at DESC')
+    @bids = @bids.with_shipment(params[:shipment_id]) if params[:shipment_id]
+    render_json @bids.page(page).per(limit)
+  end
+
+  # :nocov:
+  swagger_api :show do
+    summary 'LOAD a bid'
+    param :path, :id, :integer, :required, 'Bid ID'
+    response 'ok', 'Success', :Bid
+  end
+  # :nocov:
+  def show
+    render_json @bid
+  end
+
+  # :nocov:
+  swagger_api :create do
+    summary 'CREATE a Bid'
+    notes 'This endpoint provide creation of new bid for shipment. Only user with <strong>carrier</strong> role can do this.'
+    param :form, 'bid[price]', :double, :required, desc: 'Offered price'
+    param :form, 'bid[shipment_id]', :integer, :required, desc: 'Shipment ID'
+    response 'limit_reached', "When user reached bid limit on this shipment. Current quota: #{Settings.bid_limit}"
+    response 'no_access', "User can't bid on this shipment, no invitation for private bidding"
+    response 'not_saved', 'Bad price or shipment is not active'
+    # TODO maybe use invitation code ? OR validate by ship_invitation presence
+  end
+  # :nocov:
+  def create
+    bid = current_user.bids.new allowed_params
+    bid.ip = detect_ip
+    shipment = bid.shipment
+    if shipment
+      if current_user.bids.with_shipment(shipment.id).count >= Settings.bid_limit
+        render_error :limit_reached
+      else
+        if !current_user.invitation_for?(shipment).nil? || shipment.public_active?
+          bid.save!
+          render_ok
+        else
+          render_error :no_access
+        end
+      end
+    else
+      render_error :not_saved
+    end
+  end
+
+  private
+  def find_bid
+    @bid = current_user.bids.find params[:id]
+  end
+
+  def allowed_params
+    params.require(:bid).permit(:price, :shipment_id)
+  end
 end

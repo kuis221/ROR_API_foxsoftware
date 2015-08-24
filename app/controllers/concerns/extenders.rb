@@ -41,8 +41,7 @@
 
   def detect_ip
     env['HTTP_X_REAL_IP'] || (
-    env['HTTP_X_FORWARDED_FOR'] &&
-        env['HTTP_X_FORWARDED_FOR'].split(',').first.strip
+    env['HTTP_X_FORWARDED_FOR'] &&  env['HTTP_X_FORWARDED_FOR'].split(',').first.strip
     )
   end
 

@@ -54,8 +54,8 @@ class Api::V1::ApiBaseController < ApplicationController
               next if v[:for_model] # skip, if attribute is for swagger_model only, looks like it DOESNT really works
               param :form, "#{s_model.table_name.singularize}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
             end
-            response :ok, 'Success', class_name.to_sym
-            response :not_valid
+            response 'ok', 'Success', class_name.to_sym
+            response 'not_valid', "{'text': [ArrayOfErrors]}"
           end
         end
       end

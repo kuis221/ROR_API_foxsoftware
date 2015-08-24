@@ -1,6 +1,6 @@
 class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   # only for current user with client permission
-  # load_and_authorize_resource
+  # load_and_authorize_resource # probably only authorize_resource (we use our loads)
   before_filter :find_address_info, except: [:index, :create, :my_defaults]
 
   # :nocov:
@@ -8,7 +8,7 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   swagger_api :index do |api|
     summary 'LIST all AddressInfos'
     Api::V1::ApiBaseController.add_pagination_params(api)
-    response :ok, 'Success', :AddressInfo
+    response 'ok', 'Success', :AddressInfo
   end
   # :nocov:
   def index
@@ -19,7 +19,7 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :show do
     summary 'LOAD AddressInfo'
-    response :ok, 'Success', :AddressInfo
+    response 'ok', 'Success', :AddressInfo
   end
   # :nocov:
   def show
@@ -61,8 +61,8 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
     summary 'Set address as default ShipperInfo'
     notes 'Will be used for all new shipments, can be only one default shipper address'
     param :path, :id, :integer, :required, 'AddressInfo ID'
-    response :ok, 'Success'
-    response :not_valid, 'When trying to set receiver address'
+    response 'ok', 'Success'
+    response 'not_valid', 'When trying to set receiver address'
   end
   # :nocov:
   def set_as_default_shipper
@@ -79,8 +79,8 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
     summary 'Set address as default ReceiverInfo'
     notes 'Will be used for all new shipments, can be only one default receiver address'
     param :path, :id, :integer, :required, 'AddressInfo ID'
-    response :ok, 'Success'
-    response :not_valid, 'When trying to set shipper address'
+    response 'ok', 'Success'
+    response 'not_valid', 'When trying to set shipper address'
   end
   # :nocov:
   def set_as_default_receiver
@@ -96,8 +96,8 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   swagger_api :my_defaults do
     summary "Return user's default addresses"
     notes 'Can be in any combination found/not found'
-    response :ok, "{'shipper_info':'not_found', 'receiver_info': {AddressInfoResponseModel}}"
-    response :ok, "{'shipper_info':{AddressInfoResponseModel}, 'receiver_info': {AddressInfoResponseModel}"
+    response 'ok', "{'shipper_info':'not_found', 'receiver_info': {AddressInfoResponseModel}}"
+    response 'ok', "{'shipper_info':{AddressInfoResponseModel}, 'receiver_info': {AddressInfoResponseModel}"
   end
   # :nocov:
   def my_defaults
@@ -112,7 +112,7 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   swagger_api :destroy do
     summary 'DELETE an AddressInfo'
     param :path, :id, :integer, :required, 'AddressInfo ID'
-    response :ok, 'Success'
+    response 'ok', 'Success'
   end
   # :nocov:
   def destroy

@@ -10,12 +10,13 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     param :path, :id, :integer, :required, 'Shipment ID'
     param :query, :invitation, :string, :optional, 'Shipment secret code for private shipments'
     # param :query, :user_id, :integer, :optional, 'User ID, if not set then scope by current_user(find his created shipment)'
-    notes "Only active shipments will be displayed for carriers, or any shipment for shipment user"
-    response :ok, 'Success', :Shipment
-    response :unauthorized, 'No access to this shipment'
-    response :not_found
-    response :not_eligible, 'Same as not found but means that shipment active'
+    notes 'Only active shipments will be displayed for carriers, or any shipment for shipment user'
+    response 'ok', 'Success', :Shipment
+    response 'unauthorized', 'No access to this shipment'
+    response 'not_found'
+    response 'not_eligible', 'Same as not found but means that shipment active'
   end
+
   # :nocov:
   def show
     # shipment = @user.shipments.find params[:id]
@@ -34,7 +35,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   swagger_api :index do
     summary 'LIST all user shipments'
     param :query, :user_id, :integer, :optional, 'User ID, if not set then scope by currently logged in user.'
-    response :ok, 'Success', :Shipment
+    response 'ok', 'Success', :Shipment
   end
   # :nocov:
   # render all current_user shipments or publicity active shipments.
@@ -48,7 +49,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   swagger_api :my_listing do |api|
     summary 'LIST all private shipments for carrier user (current_user)'
     Api::V1::ApiBaseController.add_pagination_params(api)
-    response :ok, 'Success', :Shipment
+    response 'ok', 'Success', :Shipment
   end
   # :nocov:
   # This action render shipments when current_user having invitation for it.
@@ -77,7 +78,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   swagger_api :update do
     param :form, 'invitations[emails]', :array, :optional, 'Array of emails to update list of invitations', {items: {:'$ref' => 'email'}}
     notes "Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them"
-    response :not_found
+    response 'not_found'
   end
   # :nocov:
   def update
@@ -91,8 +92,8 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   swagger_api :toggle_active do
     summary 'Toggle shipment active state'
     param :path, :id, :integer, :required, 'Shipment ID'
-    response :ok, 'Success', :Shipment
-    response :not_found
+    response 'ok', 'Success', :Shipment
+    response 'not_found'
   end
   # :nocov:
   def toggle_active
@@ -104,8 +105,8 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   swagger_api :destroy do
     summary 'DELETE a shipment'
     param :path, :id, :integer, :required, 'Shipment ID'
-    response :ok, 'Success'
-    response :not_found
+    response 'ok', 'Success'
+    response 'not_found'
   end
   # :nocov:
   def destroy
