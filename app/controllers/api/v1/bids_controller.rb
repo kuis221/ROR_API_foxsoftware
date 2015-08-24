@@ -1,6 +1,6 @@
 class Api::V1::BidsController < Api::V1::ApiBaseController
 
-  authorize_resource # so only carrier can get in. TEST IT
+  authorize_resource # so only carrier can get in, part of cancan
   before_filter :find_bid, only: [:show]
 
   # :nocov:
@@ -48,6 +48,7 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     response 'limit_reached', "When user reached bid limit on this shipment. Current quota: #{Settings.bid_limit}"
     response 'no_access', "User can't bid on this shipment, no invitation for private bidding"
     response 'not_saved', 'Bad price or shipment is not active'
+    response 'too_low', 'Price lower than offered maximum price'
     response 'ok'
     # TODO maybe use invitation code ? OR validate by ship_invitation presence
   end
@@ -57,6 +58,9 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     bid.ip = detect_ip
     shipment = bid.shipment
     if shipment
+      status = shipment.status_for_bidding(bid.price, current_user)
+
+
       if current_user.bids.with_shipment(shipment.id).count >= Settings.bid_limit
         render_error :limit_reached
       else

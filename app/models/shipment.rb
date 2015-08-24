@@ -84,11 +84,27 @@ class Shipment < ActiveRecord::Base
   end
   # should be after validates_presence_of shipper_info_id and receiver_info_id
   after_validation :validate_addresses
-
   # Check that associated addresses belongs to that user
   def validate_addresses
     self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
+  end
+
+  def status_for_bidding(price, user)
+    status = nil
+    if user.bids.with_shipment(id).count >= Settings.bid_limit
+      status = :limit_reached
+    else
+      if bids.by_highest.first
+
+      end
+      if !current_user.invitation_for?(shipment).nil? || shipment.public_active?
+        status = :ok
+      else
+        status = :no_access
+      end
+    end
+    status
   end
 
   def eligible_for_render?(param_secret_id, current_user)
