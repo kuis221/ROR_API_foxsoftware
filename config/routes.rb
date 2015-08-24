@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       resources :shipments do
         member do
           post :toggle_active
+          get :highest_bid
+          get :current_bids
         end
         collection do
           get :my_listing

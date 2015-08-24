@@ -95,6 +95,80 @@ describe Api::V1::ShipmentsController do
         json_query :get, :index
         expect(@json[:results].size).to eq 0
       end
+
+      context 'highest_bid action' do
+        before do
+          @ship_inv = create :ship_invitation, invitee: @logged_in_user
+          @shipment = @ship_inv.shipment
+          @shipment.private!
+          @bid = create :bid, shipment: @shipment, price: 100.55, user: @logged_in_user
+        end
+
+        it 'should show' do
+          json_query :get, :highest_bid, id: @shipment.id
+          expect(@json[:price]).to eq '100.55'
+          expect(@json[:user]['id']).to eq @logged_in_user.id
+        end
+
+        it 'should render 404 for non existent shipment' do
+          @shipment.destroy
+          json_query :get, :highest_bid, id: @shipment.id
+          expect(@json[:error]).to eq 'not_found'
+        end
+
+        it 'should not show for other private shipment' do
+          @ship_inv.destroy
+          json_query :get, :highest_bid, id: @shipment.id
+          expect(@json[:error]).to eq 'no_access'
+        end
+
+        it 'should not show inactive shipment' do
+          @shipment.inactive!
+          json_query :get, :highest_bid, id: @shipment.id
+          expect(@json[:error]).to eq 'not_found'
+        end
+      end
+
+      context 'current_bids action' do
+        before do
+          @ship_inv = create :ship_invitation, invitee: @logged_in_user
+          @shipment = @ship_inv.shipment
+          @shipment.private!
+          @bids = []
+          4.times do |b|
+            @bids << (create :bid, shipment: @shipment, price: rand(9999), user: @logged_in_user)
+          end
+        end
+
+        it 'should list' do
+          json_query :get, :current_bids, id: @shipment.id
+          expect(@json[:results].size).to eq 4
+          last = 10000.0 # shouldnot be more than rand 9999
+          # check that results sorted by price :)
+          @json[:results].each do |res|
+            expect(res['price'].to_f < last).to be true
+            last = res['price'].to_f
+          end
+        end
+
+        it 'should render 404 for non existent shipment' do
+          @shipment.destroy
+          json_query :get, :current_bids, id: @shipment.id
+          expect(@json[:error]).to eq 'not_found'
+        end
+
+        it 'should not show for other private shipment' do
+          @ship_inv.destroy
+          json_query :get, :current_bids, id: @shipment.id
+          expect(@json[:error]).to eq 'no_access'
+        end
+
+        it 'should not show inactive shipment' do
+          @shipment.inactive!
+          json_query :get, :current_bids, id: @shipment.id
+          expect(@json[:error]).to eq 'not_found'
+        end
+      end
     end
 
     context 'saving' do

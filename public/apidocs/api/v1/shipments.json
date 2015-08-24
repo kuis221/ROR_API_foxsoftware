@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://localhost:3000/",
   "resourcePath": "shipments",
   "apis": [
     {
@@ -32,6 +32,99 @@
           ],
           "method": "post",
           "nickname": "Api::V1::Shipments#toggle_active"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/{id}/highest_bid.json",
+      "operations": [
+        {
+          "summary": "LOAD highest bid for this shipment",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Shipment ID",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "no_access",
+              "responseModel": null,
+              "message": "Shipping private and user has no access to it"
+            },
+            {
+              "code": "no_bids",
+              "responseModel": null,
+              "message": "No bids yet"
+            },
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "No active shipment with this ID"
+            },
+            {
+              "code": "ok",
+              "responseModel": "Bid",
+              "message": "Success"
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::Shipments#highest_bid"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/{id}/current_bids.json",
+      "operations": [
+        {
+          "summary": "LIST all current bids for shipment",
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "page",
+              "type": "integer",
+              "description": "Page",
+              "required": false,
+              "defaultValue": 1
+            },
+            {
+              "paramType": "query",
+              "name": "limit",
+              "type": "integer",
+              "description": "Results limit",
+              "required": false,
+              "defaultValue": 10
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "no_access",
+              "responseModel": null,
+              "message": "Shipping private and user has no access to it"
+            },
+            {
+              "code": "no_bids",
+              "responseModel": null,
+              "message": "No bids yet"
+            },
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "No active shipment with this ID"
+            },
+            {
+              "code": "ok",
+              "responseModel": [
+                "Bid"
+              ],
+              "message": "Success"
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::Shipments#current_bids"
         }
       ]
     },

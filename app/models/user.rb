@@ -74,6 +74,15 @@ class User < ActiveRecord::Base
     # skip_confirmation!
   end
 
+  # Return active shipment which has invitation
+  # def invited_shipment(shipment_id)
+  #   Shipment.active.joins(:ship_invitations).where('shipments.id = ? AND ship_invitations.invitee_id IN (?)', shipment_id, id).first
+  # end
+
+  def name
+    "#{first_name} #{last_name[0].to_s.upcase}."
+  end
+
   def invitation_for?(shipment)
     shipment ? (ship_invitations.where(shipment_id: shipment.id).first && shipment.active?) : nil
   end

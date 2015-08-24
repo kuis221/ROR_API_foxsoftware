@@ -18,7 +18,9 @@
 
 FactoryGirl.define do
   factory :bid do
-    
+    price {FFaker.numerify("##.##")}
+    user
+    shipment
   end
 
 end

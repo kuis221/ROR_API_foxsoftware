@@ -16,7 +16,6 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     response 'not_found'
     response 'not_eligible', 'Same as not found but means that shipment active'
   end
-
   # :nocov:
   def show
     # shipment = @user.shipments.find params[:id]
@@ -57,6 +56,58 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   def my_listing
     shipments = Shipment.active.joins(:ship_invitations).where('ship_invitations.invitee_id IN (?)', current_user.id).page(page).per(limit)
     render_json shipments
+  end
+
+  # :nocov:
+  swagger_api :highest_bid do
+    summary 'LOAD highest bid for this shipment'
+    param :path, :id, :integer, :required, 'Shipment ID'
+    response 'ok', 'Success', :Bid
+    response 'not_found', 'No active shipment with this ID'
+    response 'no_bids', 'No bids yet'
+    response 'no_access', 'Shipping private and user has no access to it'
+  end
+  # :nocov:
+  def highest_bid
+    shipment = Shipment.active.find params[:id] # 404 rescued_from by before_filter
+    # shipment active and found beyond this point
+    can = false
+    if shipment.private_bidding?
+      can = true if current_user.invitation_for?(shipment)
+    else
+      can = true
+    end
+    if can # render
+      bid = shipment.bids.by_highest.first
+      bid ? render_json(bid) : render(json:{status: 'no_bids'})
+      return
+    end
+    render_error 'no_access'
+  end
+
+  # :nocov:
+  swagger_api :current_bids do |api|
+    summary 'LIST all current bids for shipment'
+    Api::V1::ApiBaseController.add_pagination_params(api)
+    response 'ok', 'Success', [:Bid] # TRY ARRAY TODO
+    response 'not_found', 'No active shipment with this ID'
+    response 'no_bids', 'No bids yet'
+    response 'no_access', 'Shipping private and user has no access to it'
+  end
+  # :nocov:
+  def current_bids
+    shipment = Shipment.active.find params[:id] # 404 rescued_from by before_filter
+    if shipment.private_bidding?
+      can = true if current_user.invitation_for?(shipment)
+    else
+      can = true
+    end
+    if can # render
+      bids = shipment.bids.by_highest.page(page).per(limit)
+      bids.count > 0 ? render_json(bids) : render(json:{status: 'no_bids'})
+      return
+    end
+    render_error 'no_access'
   end
 
   # :nocov:

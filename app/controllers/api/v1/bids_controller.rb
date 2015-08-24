@@ -5,6 +5,14 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_controller :bids, 'Bids resource'
+
+  swagger_model :Bid do
+    description 'Bid object'
+    property :shipment_id, :integer, :required, 'Shipment ID'
+    property :price, :double, :required, 'Offered price'
+    property 'user[id]', :integer, :optional, 'ID'
+    property 'user[name]', :string, :optional, 'NAME'
+  end
   swagger_api :index do |api|
     summary 'LIST all current user bids'
     notes 'Sorted by newest at the top'
@@ -24,6 +32,7 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     summary 'LOAD a bid'
     param :path, :id, :integer, :required, 'Bid ID'
     response 'ok', 'Success', :Bid
+    response 'not_found'
   end
   # :nocov:
   def show
@@ -39,6 +48,7 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     response 'limit_reached', "When user reached bid limit on this shipment. Current quota: #{Settings.bid_limit}"
     response 'no_access', "User can't bid on this shipment, no invitation for private bidding"
     response 'not_saved', 'Bad price or shipment is not active'
+    response 'ok'
     # TODO maybe use invitation code ? OR validate by ship_invitation presence
   end
   # :nocov:
