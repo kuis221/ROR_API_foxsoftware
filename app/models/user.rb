@@ -74,6 +74,10 @@ class User < ActiveRecord::Base
     # skip_confirmation!
   end
 
+  after_create -> do
+    ShipInvitation.where(invitee_email: email).update_all(invitee_id: id)
+  end
+
   # Return active shipment which has invitation
   # def invited_shipment(shipment_id)
   #   Shipment.active.joins(:ship_invitations).where('shipments.id = ? AND ship_invitations.invitee_id IN (?)', shipment_id, id).first

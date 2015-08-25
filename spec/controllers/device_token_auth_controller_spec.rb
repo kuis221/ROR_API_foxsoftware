@@ -27,14 +27,28 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       end
     end
 
-    it 'should register carrier user' do
-      expect {
-        json_query :post, :create, @attrs.merge({user_type: 'carrier'})
-      }.to change{User.count}.by(1)
-      user = User.last
-      expect(user.has_role?(:user)).to eq true
-      expect(user.has_role?(:carrier)).to eq true
-      expect(user.has_role?(:client)).to eq false
+    context 'should register carrier user' do
+      it 'and check assigned invitations' do
+        ship_invitation = create :ship_invitation, invitee_email: @attrs[:email]
+        expect {
+          json_query :post, :create, @attrs.merge({user_type: 'carrier'})
+        }.to change{User.count}.by(1)
+        user = User.last
+        expect(user.ship_invitations.size).to eq 1
+        expect(user.ship_invitations.first.id).to eq ship_invitation.id
+        expect(user.has_role?(:user)).to eq true
+        expect(user.has_role?(:carrier)).to eq true
+        expect(user.has_role?(:client)).to eq false
+      end
+
+      it "and has no someone's else invitation" do
+        ship_invitation = create :ship_invitation, invitee_email: FFaker::Internet.email
+        expect {
+          json_query :post, :create, @attrs.merge({user_type: 'carrier'})
+        }.to change{User.count}.by(1)
+        user = User.last
+        expect(user.ship_invitations.size).to eq 0
+      end
     end
 
     it 'should not let with blank password' do

@@ -10,6 +10,7 @@ module DeviseTokenAuth
 
     swagger_api :create do
       summary 'Create user with email'
+      notes 'When invited user register, we will find and assign all shipment invitations by email, so later you can load them from <strong>my_invitations</strong> query'
       param :form, :first_name, :string, :required, 'First Name'
       param :form, :last_name, :string, :required, 'Last Name'
       param :form, :email, :string, :required, 'Email'

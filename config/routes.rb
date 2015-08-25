@@ -18,7 +18,7 @@ Rails.application.routes.draw do
           get :current_bids
         end
         collection do
-          get :my_listing
+          get :my_invitations
         end
       end
       resources :bids, except: [:destroy] do

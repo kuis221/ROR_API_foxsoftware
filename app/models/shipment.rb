@@ -50,11 +50,12 @@ class Shipment < ActiveRecord::Base
   resourcify
 
   scope :active, ->() {where(active: true)}
+  # dont use :public name as scope name :) unless you want be deep in shit
   scope :public_only, ->() {where(private_bidding: false)}
 
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
   # -> :required or :optional for swagger
-  # -> for_model: true > only use in swagger_model
+  # -> for_model: true > only use in swagger_model, looks like its not working as desired.
   ATTRS = {dim_w: {desc: 'Width', required: :required, type: :double},
            dim_h: {desc: 'Height', required: :required, type: :double},
            dim_l: {desc: 'Length', required: :required, type: :double},

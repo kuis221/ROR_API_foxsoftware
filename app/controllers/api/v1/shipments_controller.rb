@@ -33,6 +33,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :index do
     summary 'LIST all user shipments'
+    notes 'For client user, list his created shipments. When listing with user_id - only public and active shipments will be shown'
     param :query, :user_id, :integer, :optional, 'User ID, if not set then scope by currently logged in user.'
     response 'ok', 'Success', :Shipment
   end
@@ -45,15 +46,16 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   end
 
   # :nocov:
-  swagger_api :my_listing do |api|
-    summary 'LIST all private shipments for carrier user (current_user)'
+  swagger_api :my_invitations do |api|
+    summary 'LIST all invited shipments for carrier user'
+    notes 'Find and display all shipments with invitations only'
     Api::V1::ApiBaseController.add_pagination_params(api)
     response 'ok', 'Success', :Shipment
   end
   # :nocov:
   # This action render shipments when current_user having invitation for it.
   # -> while :index action render @user related shipment
-  def my_listing
+  def my_invitations
     shipments = Shipment.active.joins(:ship_invitations).where('ship_invitations.invitee_id IN (?)', current_user.id).page(page).per(limit)
     render_json shipments
   end

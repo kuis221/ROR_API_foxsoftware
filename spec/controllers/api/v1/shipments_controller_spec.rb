@@ -41,10 +41,10 @@ describe Api::V1::ShipmentsController do
       expect(@json[:error]).to eq 'unauthorized'
     end
 
-    it 'should display only my invites in my_listing' do
+    it 'should display only my invites in my_invitations' do
       other_ship_invs = create_list :ship_invitation, 2
       my_ship_invs = create_list :ship_invitation, 3, invitee: @logged_in_user # with related shipments
-      json_query :get, :my_listing
+      json_query :get, :my_invitations
       expect(@json[:results].size).to eq 3
       my_ships = my_ship_invs.map &:shipment_id
       expect(@json[:results].collect{|x| x['id']}).to eq my_ships
@@ -66,8 +66,8 @@ describe Api::V1::ShipmentsController do
         expect(@json[:results]).to eq []
       end
 
-      it 'should exclude from my_listing' do
-        json_query :get, :my_listing
+      it 'should exclude from my_invitations' do
+        json_query :get, :my_invitations
         expect(@json[:results]).to eq []
       end
     end
