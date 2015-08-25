@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Api::V1::BidsController do
   let(:attrs) { {price: 22.11, shipment_id: @shipment.id} }
 
-  [:private, :public].each do |way|
+  [:private, :public].each do |way| # for shipment types
     context "Create a new [#{way.to_s.upcase}] bid" do
       login_user
       before do
@@ -17,6 +17,14 @@ describe Api::V1::BidsController do
           json_query :post, :create, bid: attrs
           expect(@json[:status]).to eq 'ok'
         }.to change{Bid.count}.by(1)
+      end
+
+      it "can't create when higher bid present" do
+        higher = create :bid, shipment: @shipment, price: 9999, user: @logged_in_user
+        expect {
+          json_query :post, :create, bid: attrs
+          expect(@json[:error]).to eq 'price_too_low'
+        }.not_to change{Bid.count}
       end
 
       it 'should not create without price' do

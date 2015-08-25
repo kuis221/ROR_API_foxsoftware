@@ -136,7 +136,7 @@ describe Api::V1::ShipmentsController do
           @shipment.private!
           @bids = []
           4.times do |b|
-            @bids << (create :bid, shipment: @shipment, price: rand(9999), user: @logged_in_user)
+            @bids << (create :bid, shipment: @shipment, price: b*10, user: @logged_in_user)
           end
         end
 

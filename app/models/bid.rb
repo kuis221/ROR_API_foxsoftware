@@ -36,6 +36,6 @@ class Bid < ActiveRecord::Base
 
   # Check that associated shipment has ship invitation
   def validate_shipment
-    self.errors.add(:shipment_id, 'has no invitation for current user') if shipment.try(:private_bidding?) && user.invitation_for?(shipment).blank?
+    self.errors.add(:shipment_id, 'has no invitation for current user (Bid model)') if shipment.try(:private_bidding?) && user.invitation_for?(shipment).blank?
   end
 end

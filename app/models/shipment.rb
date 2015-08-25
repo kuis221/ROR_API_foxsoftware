@@ -90,18 +90,20 @@ class Shipment < ActiveRecord::Base
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
   end
 
+  # Check for:
+  # -> user has not reached limit of bids
+  # -> price is not lower than existing highest bid
+  # -> user has invitation_for? shipment if private, or shipment active+public
   def status_for_bidding(price, user)
-    status = nil
+    status = :no_access # default if user has no invitation or not_active+public
     if user.bids.with_shipment(id).count >= Settings.bid_limit
       status = :limit_reached
     else
-      if bids.by_highest.first
-
-      end
-      if !current_user.invitation_for?(shipment).nil? || shipment.public_active?
-        status = :ok
+      highest_bid = bids.by_highest.first
+      if highest_bid && highest_bid.price > price
+        status = :price_too_low
       else
-        status = :no_access
+        status = :ok if !user.invitation_for?(self).nil? || public_active?
       end
     end
     status

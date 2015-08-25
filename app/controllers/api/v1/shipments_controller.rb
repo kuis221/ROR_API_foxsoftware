@@ -104,7 +104,6 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     end
     if can # render
       bids = shipment.bids.by_highest.page(page).per(limit)
-      byebug
       bids.count > 0 ? render_json(bids) : render(json:{status: 'no_bids'})
       return
     end

@@ -48,7 +48,7 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     response 'limit_reached', "When user reached bid limit on this shipment. Current quota: #{Settings.bid_limit}"
     response 'no_access', "User can't bid on this shipment, no invitation for private bidding"
     response 'not_saved', 'Bad price or shipment is not active'
-    response 'too_low', 'Price lower than offered maximum price'
+    response 'price_too_low', 'Price lower than offered maximum price'
     response 'ok'
     # TODO maybe use invitation code ? OR validate by ship_invitation presence
   end
@@ -59,17 +59,11 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     shipment = bid.shipment
     if shipment
       status = shipment.status_for_bidding(bid.price, current_user)
-
-
-      if current_user.bids.with_shipment(shipment.id).count >= Settings.bid_limit
-        render_error :limit_reached
+      if status == :ok
+        bid.save!
+        render_ok
       else
-        if !current_user.invitation_for?(shipment).nil? || shipment.public_active?
-          bid.save!
-          render_ok
-        else
-          render_error :no_access
-        end
+        render_error status
       end
     else
       render_error :not_saved
