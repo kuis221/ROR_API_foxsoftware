@@ -145,6 +145,16 @@
               "code": "not_saved",
               "responseModel": null,
               "message": "Bad price or shipment is not active"
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": null
+            },
+            {
+              "code": "price_too_low",
+              "responseModel": null,
+              "message": "Price lower than offered maximum price"
             }
           ],
           "notes": "This endpoint provide creation of new bid for shipment. Only user with <strong>carrier</strong> role can do this.",
@@ -259,7 +269,7 @@
           "description": "ID"
         },
         "user[name]": {
-          "type": "integer",
+          "type": "string",
           "description": "NAME"
         }
       },
