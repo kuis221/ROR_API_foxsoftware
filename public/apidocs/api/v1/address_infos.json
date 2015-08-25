@@ -9,6 +9,7 @@
       "operations": [
         {
           "summary": "Set address as default ShipperInfo",
+          "notes": "Will be used for all new shipments, can be only one default shipper address",
           "parameters": [
             {
               "paramType": "path",
@@ -30,7 +31,6 @@
               "message": "Success"
             }
           ],
-          "notes": "Will be used for all new shipments, can be only one default shipper address",
           "method": "post",
           "nickname": "Api::V1::AddressInfos#set_as_default_shipper"
         }
@@ -41,6 +41,7 @@
       "operations": [
         {
           "summary": "Set address as default ReceiverInfo",
+          "notes": "Will be used for all new shipments, can be only one default receiver address",
           "parameters": [
             {
               "paramType": "path",
@@ -62,7 +63,6 @@
               "message": "Success"
             }
           ],
-          "notes": "Will be used for all new shipments, can be only one default receiver address",
           "method": "post",
           "nickname": "Api::V1::AddressInfos#set_as_default_receiver"
         }
@@ -73,6 +73,7 @@
       "operations": [
         {
           "summary": "Return user's default addresses",
+          "notes": "Can be in any combination found/not found",
           "responseMessages": [
             {
               "code": "ok",
@@ -85,7 +86,6 @@
               "message": "{'shipper_info':{AddressInfoResponseModel}, 'receiver_info': {AddressInfoResponseModel}"
             }
           ],
-          "notes": "Can be in any combination found/not found",
           "method": "get",
           "nickname": "Api::V1::AddressInfos#my_defaults"
         }

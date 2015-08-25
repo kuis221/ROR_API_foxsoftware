@@ -71,6 +71,7 @@
             }
           ],
           "summary": "LIST all current user bids",
+          "notes": "Sorted by newest at the top",
           "responseMessages": [
             {
               "code": "ok",
@@ -78,7 +79,6 @@
               "message": "Success"
             }
           ],
-          "notes": "Sorted by newest at the top",
           "method": "get",
           "nickname": "Api::V1::Bids#index"
         }
@@ -130,6 +130,7 @@
             }
           ],
           "summary": "CREATE a Bid",
+          "notes": "This endpoint provide creation of new bid for shipment. Only user with <strong>carrier</strong> role can do this.",
           "responseMessages": [
             {
               "code": "limit_reached",
@@ -157,7 +158,6 @@
               "message": "Price lower than offered maximum price"
             }
           ],
-          "notes": "This endpoint provide creation of new bid for shipment. Only user with <strong>carrier</strong> role can do this.",
           "method": "post",
           "nickname": "Api::V1::Bids#create"
         }

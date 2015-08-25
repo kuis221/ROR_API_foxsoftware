@@ -129,10 +129,11 @@
       ]
     },
     {
-      "path": "api/v1/shipments/my_listing.json",
+      "path": "api/v1/shipments/my_invitations.json",
       "operations": [
         {
-          "summary": "LIST all private shipments for carrier user (current_user)",
+          "summary": "LIST all invited shipments for carrier user",
+          "notes": "Find and display all shipments with invitations only",
           "parameters": [
             {
               "paramType": "query",
@@ -159,7 +160,7 @@
             }
           ],
           "method": "get",
-          "nickname": "Api::V1::Shipments#my_listing"
+          "nickname": "Api::V1::Shipments#my_invitations"
         }
       ]
     },
@@ -214,6 +215,7 @@
             }
           ],
           "summary": "LIST all user shipments",
+          "notes": "For client user, list his created shipments. When listing with user_id - only public and active shipments will be shown",
           "responseMessages": [
             {
               "code": "ok",
@@ -467,6 +469,7 @@
             }
           ],
           "summary": "LOAD shipment",
+          "notes": "Only active shipments will be displayed for carriers, or any shipment for shipment user",
           "responseMessages": [
             {
               "code": "not_eligible",
@@ -489,7 +492,6 @@
               "message": "No access to this shipment"
             }
           ],
-          "notes": "Only active shipments will be displayed for carriers, or any shipment for shipment user",
           "method": "get",
           "nickname": "Api::V1::Shipments#show"
         }
