@@ -4,7 +4,8 @@ class Api::V1::BidPresenter < Api::V1::JsonPresenter
   def self.minimal_hash(bid, current_user)
     hash = %w(id shipment_id price created_at)
     node = hash_for(bid, hash)
-    node[:user] = {id: bid.user_id, name: bid.user.name}
+    shipment = bid.shipment
+    node[:user] = shipment.private_bidding? ? {id: 0, name: ''} : {id: bid.user_id, name: bid.user.name}
     node
   end
 

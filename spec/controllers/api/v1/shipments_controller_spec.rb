@@ -105,10 +105,19 @@ describe Api::V1::ShipmentsController do
           @bid = create :bid, shipment: @shipment, price: 100.55, user: @logged_in_user
         end
 
-        it 'should show' do
+        it 'should show it, and hide bidder' do
           json_query :get, :highest_bid, id: @shipment.id
           expect(@json[:price]).to eq '100.55'
+          expect(@json[:user]['id']).to eq 0
+          expect(@json[:user]['name']).to eq ''
+
+        end
+
+        it 'show it and show bidder' do
+          @shipment.update_attribute :private_bidding, false
+          json_query :get, :highest_bid, id: @shipment.id
           expect(@json[:user]['id']).to eq @logged_in_user.id
+          expect(@json[:user]['name']).to eq @logged_in_user.name
         end
 
         it 'should render 404 for non existent shipment' do
@@ -142,14 +151,23 @@ describe Api::V1::ShipmentsController do
           end
         end
 
-        it 'should list' do
+        it 'should list and not disclose bidders' do
           json_query :get, :current_bids, id: @shipment.id
           expect(@json[:results].size).to eq 4
           last = 10000.0 # shouldnot be more than rand 9999
           # check that results sorted by price :)
           @json[:results].each do |res|
+            expect(res['user']['name']).to eq ''
             expect(res['price'].to_f < last).to be true
             last = res['price'].to_f
+          end
+        end
+
+        it 'should render bidder names for public auction' do
+          @shipment.update_attribute :private_bidding, false
+          json_query :get, :current_bids, id: @shipment.id
+          @json[:results].each do |res|
+            expect(res['user']['name']).not_to eq ''
           end
         end
 
