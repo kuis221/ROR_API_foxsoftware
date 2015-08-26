@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150822152208) do
+ActiveRecord::Schema.define(version: 20150825151935) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,8 +122,10 @@ ActiveRecord::Schema.define(version: 20150822152208) do
     t.datetime "updated_at",                                                    null: false
     t.integer  "shipper_info_id"
     t.integer  "receiver_info_id"
+    t.string   "aasm_state",                                                    null: false
   end
 
+  add_index "shipments", ["aasm_state"], name: "index_shipments_on_aasm_state", using: :btree
   add_index "shipments", ["active"], name: "index_shipments_on_active", using: :btree
   add_index "shipments", ["receiver_info_id"], name: "index_shipments_on_receiver_info_id", using: :btree
   add_index "shipments", ["shipper_info_id"], name: "index_shipments_on_shipper_info_id", using: :btree

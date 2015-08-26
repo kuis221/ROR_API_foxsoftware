@@ -28,9 +28,11 @@
 #  updated_at           :datetime         not null
 #  shipper_info_id      :integer
 #  receiver_info_id     :integer
+#  aasm_state           :string           not null
 #
 # Indexes
 #
+#  index_shipments_on_aasm_state        (aasm_state)
 #  index_shipments_on_active            (active)
 #  index_shipments_on_receiver_info_id  (receiver_info_id)
 #  index_shipments_on_shipper_info_id   (shipper_info_id)
@@ -38,6 +40,8 @@
 #
 
 class Shipment < ActiveRecord::Base
+  include AASM
+
   belongs_to :user
   belongs_to :shipper_info
   belongs_to :receiver_info
@@ -78,6 +82,23 @@ class Shipment < ActiveRecord::Base
            secret_id: {desc: 'Part for private url', type: :string, for_model: true}
   }
 
+  aasm do # add whiny_transitions: true to return true/false
+    state :pending, initial: true
+    state :bidding
+    state :picked_up
+    state :delivered
+    state :completed
+
+    event :auction do
+      transitions from: :pending, to: :bidding
+    end
+
+    event :shipped do
+      transitions from: :bidding, to: :picked_up
+    end
+
+  end
+
   before_create :set_secret_id
 
   ATTRS.each_pair do |k,v|
@@ -89,6 +110,10 @@ class Shipment < ActiveRecord::Base
   def validate_addresses
     self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
+  end
+
+  def state
+    aasm_state.to_sym
   end
 
   # Check for:

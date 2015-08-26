@@ -28,9 +28,11 @@
 #  updated_at           :datetime         not null
 #  shipper_info_id      :integer
 #  receiver_info_id     :integer
+#  aasm_state           :string           not null
 #
 # Indexes
 #
+#  index_shipments_on_aasm_state        (aasm_state)
 #  index_shipments_on_active            (active)
 #  index_shipments_on_receiver_info_id  (receiver_info_id)
 #  index_shipments_on_shipper_info_id   (shipper_info_id)

@@ -8,12 +8,17 @@
 #  city         :string           not null
 #  zip_code     :string           not null
 #  address1     :string           not null
-#  address2     :string           not null
 #  state        :string(2)        not null
 #  appointment  :boolean          default(FALSE)
 #  user_id      :integer
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  is_default   :boolean          default(FALSE)
+#  address2     :string
+#
+# Indexes
+#
+#  index_address_infos_on_is_default  (is_default)
 #
 
 FactoryGirl.define do

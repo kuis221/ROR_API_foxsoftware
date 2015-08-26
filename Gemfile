@@ -11,6 +11,7 @@ gem 'swagger-docs'
 # gem 'oj'
 gem 'sidekiq'
 gem 'haml'
+gem 'aasm'
 
 # Security
 gem 'rack-cors', require: 'rack/cors'
