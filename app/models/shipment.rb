@@ -85,9 +85,10 @@ class Shipment < ActiveRecord::Base
   aasm do # add whiny_transitions: true to return true/false
     state :pending, initial: true
     state :bidding
-    state :picked_up
+    state :in_transit
     state :delivered
     state :completed
+    state :cancelled
 
     event :auction do
       transitions from: :pending, to: :bidding
