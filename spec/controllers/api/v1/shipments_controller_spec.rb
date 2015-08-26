@@ -100,6 +100,7 @@ describe Api::V1::ShipmentsController do
         before do
           @ship_inv = create :ship_invitation, invitee: @logged_in_user
           @shipment = @ship_inv.shipment
+          @shipment.auction!
           @shipment.private!
           @bid = create :bid, shipment: @shipment, price: 100.55, user: @logged_in_user
         end
@@ -134,6 +135,7 @@ describe Api::V1::ShipmentsController do
           @ship_inv = create :ship_invitation, invitee: @logged_in_user
           @shipment = @ship_inv.shipment
           @shipment.private!
+          @shipment.auction!
           @bids = []
           4.times do |b|
             @bids << (create :bid, shipment: @shipment, price: b*10, user: @logged_in_user)
@@ -185,6 +187,7 @@ describe Api::V1::ShipmentsController do
           json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
           expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], @invs)
         }.to change{Shipment.count}
+        expect(Shipment.find(@json[:id]).state).to eq :pending
         expect(@json[:secret_id]).not_to be blank?
       end
 

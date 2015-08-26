@@ -49,6 +49,7 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     response 'no_access', "User can't bid on this shipment, no invitation for private bidding"
     response 'not_saved', 'Bad price or shipment is not active'
     response 'price_too_low', 'Price lower than offered maximum price'
+    response 'not_in_auction', 'Shipping not in auction state'
     response 'ok'
     # TODO maybe use invitation code ? OR validate by ship_invitation presence
   end

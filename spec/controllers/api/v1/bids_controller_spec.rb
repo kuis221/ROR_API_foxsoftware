@@ -9,6 +9,7 @@ describe Api::V1::BidsController do
       before do
         @logged_in_user.add_role :carrier
         @shipment = create :shipment, private_bidding: way == :private
+        @shipment.auction!
         @invitation = create :ship_invitation, shipment: @shipment, invitee: @logged_in_user
       end
 
@@ -17,6 +18,14 @@ describe Api::V1::BidsController do
           json_query :post, :create, bid: attrs
           expect(@json[:status]).to eq 'ok'
         }.to change{Bid.count}.by(1)
+      end
+
+      it 'should not allow when shipment not in correct state' do
+        @shipment.update_attribute :aasm_state, 'pending'
+        expect {
+          json_query :post, :create, bid: attrs
+          expect(@json[:error]).to eq 'not_in_auction'
+        }.not_to change{Bid.count}
       end
 
       it "can't create when higher bid present" do

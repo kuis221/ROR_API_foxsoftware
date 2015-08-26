@@ -129,7 +129,12 @@ class Shipment < ActiveRecord::Base
       if highest_bid && highest_bid.price > price
         status = :price_too_low
       else
-        status = :ok if !user.invitation_for?(self).nil? || public_active?
+        if state != :bidding
+          status = :not_in_auction
+        else
+          status = :ok if !user.invitation_for?(self).nil? || public_active?
+        end
+
       end
     end
     status
