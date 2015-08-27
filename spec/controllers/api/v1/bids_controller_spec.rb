@@ -44,6 +44,13 @@ describe Api::V1::BidsController do
         }.not_to change{Bid.count}
       end
 
+      it 'should not create when auction_end_at reached' do
+        @shipment.update_attribute :auction_end_at, 10.minute.ago
+        expect {
+          json_query :post, :create, bid: attrs
+          expect(@json[:error]).to eq 'end_auction_date'
+        }.not_to change{Bid.count}
+      end
 
       it 'should not create on :limit_reached' do
         # TODO when needed

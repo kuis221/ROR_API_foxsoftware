@@ -29,6 +29,7 @@
 #  shipper_info_id      :integer
 #  receiver_info_id     :integer
 #  aasm_state           :string           not null
+#  auction_end_at       :datetime
 #
 # Indexes
 #
@@ -50,6 +51,7 @@ FactoryGirl.define do
     user
     price {FFaker.numerify("###.##")}
     pickup_at 20.hours.from_now
+    auction_end_at 2.days.from_now
     arrive_at 40.hours.from_now
     stackable true
     n_of_cartons {rand(10)}

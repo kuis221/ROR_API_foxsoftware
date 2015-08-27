@@ -184,6 +184,6 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   end
 
   def allowed_params
-    params.require(:shipment).permit(:dim_w, :dim_h, :dim_l, :distance, :notes, :price, :pickup_at, :arrive_at, :active, :stackable, :n_of_cartons, :cubic_feet, :unit_count, :skids_count, :private_bidding, :shipper_info_id, :receiver_info_id)
+    params.require(:shipment).permit(:dim_w, :dim_h, :dim_l, :distance, :notes, :price, :pickup_at, :arrive_at, :active, :stackable, :n_of_cartons, :cubic_feet, :unit_count, :skids_count, :private_bidding, :shipper_info_id, :receiver_info_id, :auction_end_at)
   end
 end

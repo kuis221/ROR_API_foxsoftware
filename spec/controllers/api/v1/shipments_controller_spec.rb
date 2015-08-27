@@ -192,7 +192,7 @@ describe Api::V1::ShipmentsController do
       before do
         @shipper_info = create :shipper_info, user: @logged_in_user
         @receiver_info = create :receiver_info, user: @logged_in_user
-        @attrs = {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at: 2.days.from_now.to_s, arrive_at: 3.days.from_now.to_s}
+        @attrs = {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at: 2.days.from_now.to_s, arrive_at: 3.days.from_now.to_s, auction_end_at: 2.days.from_now.to_s}
         allow(InviteCarriers).to receive(:perform_async)
         @invs = ['some@email.com', 'other@email.com']
       end
@@ -204,6 +204,16 @@ describe Api::V1::ShipmentsController do
         }.to change{Shipment.count}
         expect(Shipment.find(@json[:id]).state).to eq :pending
         expect(@json[:secret_id]).not_to be blank?
+      end
+
+      it "can't create without auction_end_date" do
+        @attrs[:auction_end_at] = nil
+        expect {
+          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          expect(InviteCarriers).not_to have_received(:perform_async)
+          expect(@json[:error]).to eq 'not_saved'
+          expect(@json[:text].size).to eq 1 # blank and bad association
+        }.not_to change{Shipment.count}
       end
 
       it 'cant accept without ShipperInfo or ReceiverInfo' do

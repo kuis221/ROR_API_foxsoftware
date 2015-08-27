@@ -29,6 +29,7 @@
 #  shipper_info_id      :integer
 #  receiver_info_id     :integer
 #  aasm_state           :string           not null
+#  auction_end_at       :datetime
 #
 # Indexes
 #
@@ -57,6 +58,8 @@ class Shipment < ActiveRecord::Base
   # dont use :public name as scope name :) unless you want be deep in shit
   scope :public_only, ->() {where(private_bidding: false)}
 
+  before_create :set_secret_id
+
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
   # -> :required or :optional for swagger
   # -> for_model: true > only use in swagger_model, looks like its not working as desired.
@@ -79,8 +82,12 @@ class Shipment < ActiveRecord::Base
            original_shipment_id: {desc: 'Repeated from shipment', type: :integer, for_model: true},
            shipper_info_id: {desc: 'ShipperInfo address ID', type: :integer, required: :required},
            receiver_info_id: {desc: 'ReceiverInfo address ID', type: :integer, required: :required},
-           secret_id: {desc: 'Part for private url', type: :string, for_model: true}
+           secret_id: {desc: 'Part for private url', type: :string, for_model: true},
+           auction_end_at: {desc: 'When shipment end taking any bids', type: :datetime, required: :required, for_model: true}
   }
+  ATTRS.each_pair do |k,v|
+    validates_presence_of k if v[:required] == :required
+  end
 
   aasm do # add whiny_transitions: true to return true/false
     state :pending, initial: true
@@ -100,11 +107,6 @@ class Shipment < ActiveRecord::Base
 
   end
 
-  before_create :set_secret_id
-
-  ATTRS.each_pair do |k,v|
-    validates_presence_of k if v[:required] == :required
-  end
   # should be after validates_presence_of shipper_info_id and receiver_info_id
   after_validation :validate_addresses
   # Check that associated addresses belongs to that user
@@ -130,10 +132,14 @@ class Shipment < ActiveRecord::Base
     if user.bids.with_shipment(id).count >= Settings.bid_limit
       status = :limit_reached
     else
-      if state != :bidding
-        status = :not_in_auction
+      if auction_end_at <= Time.zone.now
+        status = :end_auction_date
       else
-        status = :ok if !user.invitation_for?(self).nil? || public_active?
+        if state != :bidding
+          status = :not_in_auction
+        else
+          status = :ok if !user.invitation_for?(self).nil? || public_active?
+        end
       end
     end
     status
