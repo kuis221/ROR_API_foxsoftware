@@ -22,8 +22,6 @@
 #  active               :boolean          default(TRUE)
 #  stackable            :boolean          default(TRUE)
 #  price                :decimal(10, 2)
-#  pickup_at            :datetime         not null
-#  arrive_at            :datetime         not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  shipper_info_id      :integer
@@ -33,6 +31,10 @@
 #  po                   :string
 #  pe                   :string
 #  del                  :string
+#  pickup_at_from       :datetime
+#  pickup_at_to         :datetime
+#  arrive_at_from       :datetime
+#  arrive_at_to         :datetime
 #
 # Indexes
 #
@@ -84,8 +86,10 @@ class Shipment < ActiveRecord::Base
            private_bidding: {desc: 'Is private bidding by link', required: :optional, type: :boolean, default: :false},
            active: {desc: 'Is active', required: :optional, type: :boolean, default: :true},
            stackable: {desc: 'Is stackable', required: :optional, type: :boolean, default: :true},
-           pickup_at: {desc: 'Pickup time', required: :required, type: :datetime},
-           arrive_at: {desc: 'Arrive time', required: :required, type: :datetime},
+           pickup_at_from: {desc: 'Pickup time(from)', required: :required, type: :datetime},
+           arrive_at_from: {desc: 'Arrive time(from)', required: :required, type: :datetime},
+           pickup_at_to: {desc: 'Pickup time(to), for range', required: :optional, type: :datetime},
+           arrive_at_to: {desc: 'Arrive time(to), for range', required: :optional, type: :datetime},
            original_shipment_id: {desc: 'Repeated from shipment', type: :integer, for_model: true},
            shipper_info_id: {desc: 'ShipperInfo address ID', type: :integer, required: :required},
            receiver_info_id: {desc: 'ReceiverInfo address ID', type: :integer, required: :required},

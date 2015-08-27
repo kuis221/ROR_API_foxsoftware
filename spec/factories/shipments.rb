@@ -22,8 +22,6 @@
 #  active               :boolean          default(TRUE)
 #  stackable            :boolean          default(TRUE)
 #  price                :decimal(10, 2)
-#  pickup_at            :datetime         not null
-#  arrive_at            :datetime         not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  shipper_info_id      :integer
@@ -33,6 +31,10 @@
 #  po                   :string
 #  pe                   :string
 #  del                  :string
+#  pickup_at_from       :datetime
+#  pickup_at_to         :datetime
+#  arrive_at_from       :datetime
+#  arrive_at_to         :datetime
 #
 # Indexes
 #
@@ -53,9 +55,11 @@ FactoryGirl.define do
     weight {FFaker.numerify("##.##")}
     user
     price {FFaker.numerify("###.##")}
-    pickup_at 20.hours.from_now
+    pickup_at_from 20.hours.from_now
+    arrive_at_from 40.hours.from_now
+    # pickup_at_to
+    # arrive_at_to
     auction_end_at 2.days.from_now
-    arrive_at 40.hours.from_now
     stackable true
     n_of_cartons {rand(10)}
     cubic_feet {rand(10)}

@@ -2,11 +2,6 @@ require 'rails_helper'
 
 describe Api::V1::ShipmentsController do
 
-  # before do
-  #   @user = create :user
-  #   @shipment = create :shipment, user: @user
-  # end
-
   context 'unauthorized browsing' do
     it 'should not let visitors read shipment(s)' do
       shipment = create :shipment
@@ -192,7 +187,7 @@ describe Api::V1::ShipmentsController do
       before do
         @shipper_info = create :shipper_info, user: @logged_in_user
         @receiver_info = create :receiver_info, user: @logged_in_user
-        @attrs = {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at: 2.days.from_now.to_s, arrive_at: 3.days.from_now.to_s, auction_end_at: 2.days.from_now.to_s}
+        @attrs = {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at_from: 2.days.from_now.to_s, arrive_at_from: 3.days.from_now.to_s, auction_end_at: 2.days.from_now.to_s}
         allow(InviteCarriers).to receive(:perform_async)
         @invs = ['some@email.com', 'other@email.com']
       end
@@ -215,6 +210,11 @@ describe Api::V1::ShipmentsController do
           expect(@json[:text].size).to eq 1 # blank and bad association
         }.not_to change{Shipment.count}
       end
+
+      # it "cant't create with messed dates" do
+      #  TODO test that its not possible to cross the dates of shipment, for example when any arrive at earlier that pickup
+      #   at this stage its not needed
+      # end
 
       it 'cant accept without ShipperInfo or ReceiverInfo' do
         @attrs[:shipper_info_id] = nil

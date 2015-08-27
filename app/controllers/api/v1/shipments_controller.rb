@@ -62,7 +62,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :lowest_bid do
-    summary 'LOAD lowest bid for this shipment'
+    summary 'LOAD bid with lowest price'
     param :path, :id, :integer, :required, 'Shipment ID'
     response 'ok', 'Success', :Bid
     response 'not_found', 'No active shipment with this ID'
@@ -122,8 +122,8 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :create do
     param :form, 'invitations[emails]', :array, :optional, 'Array of emails to invite carriers', {items: {:'$ref' => 'email'}}
-    ## TODO maybe later
-    # param :form, 'invitations[user_ids]', :array, :optional, 'Array of user ids from list of past user carriers'
+    notes 'If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)'
+    # TODO maybe later(for update too): param :form, 'invitations[user_ids]', :array, :optional, 'Array of user ids from list of past user carriers'
   end
   # :nocov:
   def create
@@ -137,7 +137,8 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :update do
     param :form, 'invitations[emails]', :array, :optional, 'Array of emails to update list of invitations', {items: {:'$ref' => 'email'}}
-    notes "Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them"
+    notes 'Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them.<br/>
+           If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)'
     response 'not_found'
   end
   # :nocov:
@@ -184,6 +185,10 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   end
 
   def allowed_params
-    params.require(:shipment).permit(:dim_w, :dim_h, :dim_l, :distance, :notes, :price, :pickup_at, :arrive_at, :active, :stackable, :n_of_cartons, :cubic_feet, :unit_count, :skids_count, :private_bidding, :shipper_info_id, :receiver_info_id, :auction_end_at, :po, :pe, :del)
+    params.require(:shipment).permit(:dim_w, :dim_h, :dim_l, :distance, :notes, :price,
+                                     :pickup_at_from, :arrive_at_from, :pickup_at_to, :arrive_at_to,
+                                     :active, :stackable, :n_of_cartons, :cubic_feet, :unit_count, :skids_count,
+                                     :private_bidding, :shipper_info_id, :receiver_info_id, :auction_end_at,
+                                     :po, :pe, :del)
   end
 end

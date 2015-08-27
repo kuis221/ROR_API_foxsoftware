@@ -22,8 +22,6 @@
 #  active               :boolean          default(TRUE)
 #  stackable            :boolean          default(TRUE)
 #  price                :decimal(10, 2)
-#  pickup_at            :datetime         not null
-#  arrive_at            :datetime         not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  shipper_info_id      :integer
@@ -33,6 +31,10 @@
 #  po                   :string
 #  pe                   :string
 #  del                  :string
+#  pickup_at_from       :datetime
+#  pickup_at_to         :datetime
+#  arrive_at_from       :datetime
+#  arrive_at_to         :datetime
 #
 # Indexes
 #

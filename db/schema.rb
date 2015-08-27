@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150827154300) do
+ActiveRecord::Schema.define(version: 20150827194617) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,8 +116,6 @@ ActiveRecord::Schema.define(version: 20150827154300) do
     t.boolean  "active",                                        default: true
     t.boolean  "stackable",                                     default: true
     t.decimal  "price",                precision: 10, scale: 2
-    t.datetime "pickup_at",                                                     null: false
-    t.datetime "arrive_at",                                                     null: false
     t.datetime "created_at",                                                    null: false
     t.datetime "updated_at",                                                    null: false
     t.integer  "shipper_info_id"
@@ -127,6 +125,10 @@ ActiveRecord::Schema.define(version: 20150827154300) do
     t.string   "po"
     t.string   "pe"
     t.string   "del"
+    t.datetime "pickup_at_from"
+    t.datetime "pickup_at_to"
+    t.datetime "arrive_at_from"
+    t.datetime "arrive_at_to"
   end
 
   add_index "shipments", ["aasm_state"], name: "index_shipments_on_aasm_state", using: :btree
