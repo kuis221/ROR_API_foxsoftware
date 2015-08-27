@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150827151733) do
+ActiveRecord::Schema.define(version: 20150827154300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,6 +124,9 @@ ActiveRecord::Schema.define(version: 20150827151733) do
     t.integer  "receiver_info_id"
     t.string   "aasm_state",                                                    null: false
     t.datetime "auction_end_at"
+    t.string   "po"
+    t.string   "pe"
+    t.string   "del"
   end
 
   add_index "shipments", ["aasm_state"], name: "index_shipments_on_aasm_state", using: :btree

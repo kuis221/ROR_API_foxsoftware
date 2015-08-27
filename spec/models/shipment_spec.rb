@@ -30,6 +30,9 @@
 #  receiver_info_id     :integer
 #  aasm_state           :string           not null
 #  auction_end_at       :datetime
+#  po                   :string
+#  pe                   :string
+#  del                  :string
 #
 # Indexes
 #

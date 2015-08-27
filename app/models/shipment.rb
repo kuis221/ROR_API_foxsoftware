@@ -30,6 +30,9 @@
 #  receiver_info_id     :integer
 #  aasm_state           :string           not null
 #  auction_end_at       :datetime
+#  po                   :string
+#  pe                   :string
+#  del                  :string
 #
 # Indexes
 #
@@ -63,7 +66,11 @@ class Shipment < ActiveRecord::Base
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
   # -> :required or :optional for swagger
   # -> for_model: true > only use in swagger_model, looks like its not working as desired.
-  ATTRS = {dim_w: {desc: 'Width', required: :required, type: :double},
+  ATTRS = {
+           po: {desc: 'PO', required: :optional, type: :string},
+           pe: {desc: 'PE', required: :optional, type: :string},
+           del: {desc: 'Del', required: :optional, type: :string},
+           dim_w: {desc: 'Width', required: :required, type: :double},
            dim_h: {desc: 'Height', required: :required, type: :double},
            dim_l: {desc: 'Length', required: :required, type: :double},
            distance: {desc: 'Distance', required: :required, type: :integer},
