@@ -37,6 +37,7 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
     begin
       address_info = current_user.address_infos.create!(allowed_params)
     rescue Exception => e
+      # We need this block to have class validation workaround.
       if e.is_a?(ActiveRecord::SubclassNotFound)
         render_error :not_saved, 500, 'type is invalid, must be ShipperInfo or ReceiverInfo'
         return
@@ -126,6 +127,7 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   end
 
   def allowed_params
-    params.require(:address_info).permit(:city, :state, :address1, :address2, :zip_code, :contact_name, :appointment, :type)
+    params.require(:address_info).permit(:city, :state, :address1, :address2, :zip_code, :contact_name, :appointment,
+                                         :type, :is_default, :title)
   end
 end

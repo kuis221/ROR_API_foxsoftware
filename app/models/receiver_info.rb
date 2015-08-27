@@ -15,6 +15,7 @@
 #  updated_at   :datetime         not null
 #  is_default   :boolean          default(FALSE)
 #  address2     :string
+#  title        :string
 #
 # Indexes
 #

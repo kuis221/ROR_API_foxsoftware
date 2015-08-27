@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150827194617) do
+ActiveRecord::Schema.define(version: 20150827201957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20150827194617) do
     t.datetime "updated_at",                             null: false
     t.boolean  "is_default",             default: false
     t.string   "address2"
+    t.string   "title"
   end
 
   add_index "address_infos", ["is_default"], name: "index_address_infos_on_is_default", using: :btree

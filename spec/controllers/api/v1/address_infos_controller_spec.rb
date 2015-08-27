@@ -7,7 +7,7 @@ RSpec.describe Api::V1::AddressInfosController, type: :controller do
 
     before do
       @attrs = {state: 'CA', zip_code: '20860', city: 'Palm Springs', address1: 'Lake street 21',
-                appointment: true, contact_name: 'Alex', type: 'ShipperInfo'}
+                appointment: true, contact_name: 'Alex', type: 'ShipperInfo', is_default: false, title: 'Zooloo'}
     end
 
     it 'create an AddressInfo of ShipperInfo type' do

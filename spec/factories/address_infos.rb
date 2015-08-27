@@ -15,6 +15,7 @@
 #  updated_at   :datetime         not null
 #  is_default   :boolean          default(FALSE)
 #  address2     :string
+#  title        :string
 #
 # Indexes
 #
@@ -30,7 +31,9 @@ FactoryGirl.define do
     zip_code {FFaker::AddressUS.zip_code}
     state {FFaker::AddressUS.state_abbr}
     appointment true
+    is_default false
     user
+    title {FFaker::Company.name}
   end
 
   factory :shipper_info, parent: :address_info do

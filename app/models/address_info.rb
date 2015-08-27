@@ -15,6 +15,7 @@
 #  updated_at   :datetime         not null
 #  is_default   :boolean          default(FALSE)
 #  address2     :string
+#  title        :string
 #
 # Indexes
 #
@@ -36,12 +37,16 @@ class AddressInfo < ActiveRecord::Base
       zip_code: {desc: 'ZIP code(USA 5 digits)', required: :required, type: :string},
       contact_name: {desc: 'Contact name', required: :required, type: :string},
       appointment: {desc: 'Need to schedule appointment for shipment pickup/receive?', required: :optional, type: :boolean, default: :false},
-      type: {desc: 'Address type, one of: ShipperInfo, AddressInfo', required: :required, type: :string}
+      type: {desc: 'Address type, one of: ShipperInfo, AddressInfo', required: :required, type: :string},
+      is_default: {desc: 'Set as a default, other objects of same class(ShipperInfo, AddressInfo) will be not default, obv.', required: :optional, type: :string, default: :false},
+      title: {desc: "Some title for this address, eg: 'My warehouse'", required: :required, type: :string}
   }
 
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required
   end
+  validates :is_default, inclusion: [true, false]
+
   # validated on class object initialization
   ## validates_format_of :type, with: /(ShipperInfo)|(ReceiverInfo)/, message: 'should be ShipperInfo or AddressInfo'
 
