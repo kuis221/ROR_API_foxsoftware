@@ -36,10 +36,10 @@
       ]
     },
     {
-      "path": "api/v1/shipments/{id}/highest_bid.json",
+      "path": "api/v1/shipments/{id}/lowest_bid.json",
       "operations": [
         {
-          "summary": "LOAD highest bid for this shipment",
+          "summary": "LOAD lowest bid for this shipment",
           "parameters": [
             {
               "paramType": "path",
@@ -72,7 +72,7 @@
             }
           ],
           "method": "get",
-          "nickname": "Api::V1::Shipments#highest_bid"
+          "nickname": "Api::V1::Shipments#lowest_bid"
         }
       ]
     },
@@ -97,6 +97,15 @@
               "description": "Results limit",
               "required": false,
               "defaultValue": 10
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": {
+                "desc": "Shipment ID"
+              },
+              "required": true
             }
           ],
           "responseMessages": [

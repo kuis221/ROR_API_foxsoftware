@@ -143,6 +143,11 @@
               "message": "User can't bid on this shipment, no invitation for private bidding"
             },
             {
+              "code": "not_in_auction",
+              "responseModel": null,
+              "message": "Shipping not in auction state"
+            },
+            {
               "code": "not_saved",
               "responseModel": null,
               "message": "Bad price or shipment is not active"
@@ -151,11 +156,6 @@
               "code": "ok",
               "responseModel": null,
               "message": null
-            },
-            {
-              "code": "price_too_low",
-              "responseModel": null,
-              "message": "Price lower than offered maximum price"
             }
           ],
           "method": "post",

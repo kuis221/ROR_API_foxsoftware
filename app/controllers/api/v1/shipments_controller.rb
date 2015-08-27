@@ -62,7 +62,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :lowest_bid do
-    summary 'LOAD highest bid for this shipment'
+    summary 'LOAD lowest bid for this shipment'
     param :path, :id, :integer, :required, 'Shipment ID'
     response 'ok', 'Success', :Bid
     response 'not_found', 'No active shipment with this ID'
@@ -87,22 +87,29 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     render_error 'no_access'
   end
 
+
   # :nocov:
   swagger_api :current_bids do |api|
     summary 'LIST all current bids for shipment'
+    notes "For author of shipment will render all bids, and for viewers will render non-private active shipment bids"
     Api::V1::ApiBaseController.add_pagination_params(api)
-    response 'ok', 'Success', [:Bid] # TRY ARRAY TODO
-    response 'not_found', 'No active shipment with this ID'
+    param :path, :id, :integer, :required, 'Shipment ID'
+    response 'ok', 'Success', :Bid
+    response 'not_found', 'No shipment with this ID'
     response 'no_bids', 'No bids yet'
-    response 'no_access', 'Shipping private and user has no access to it'
+    response 'no_access', 'Shipping private/hidden and user has no access to it'
   end
   # :nocov:
   def current_bids
-    shipment = Shipment.active.find params[:id] # 404 rescued_from by before_filter
-    if shipment.private_bidding?
-      can = true if current_user.invitation_for?(shipment)
-    else
+    shipment = Shipment.find params[:id]
+    if shipment.owned_by?(current_user)
       can = true
+    else
+      if shipment.private_bidding? && shipment.active?
+        can = true if current_user.invitation_for?(shipment)
+      else
+        can = true if shipment.active?
+      end
     end
     if can # render
       bids = shipment.bids.by_highest.page(page).per(limit)

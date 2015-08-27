@@ -117,9 +117,13 @@ class Shipment < ActiveRecord::Base
     aasm_state.to_sym
   end
 
+  # Check if shipment create by user
+  def owned_by?(some_user)
+    user == some_user
+  end
+
   # Check for:
   # -> user has not reached limit of bids
-  # -> price is not lower than existing highest bid
   # -> user has invitation_for? shipment if private, or shipment active+public
   def status_for_bidding(price, user)
     status = :no_access # default if user has no invitation or not_active+public

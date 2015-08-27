@@ -90,6 +90,18 @@ describe Api::V1::ShipmentsController do
         expect(@json[:results].first['active']).to eq true
       end
 
+      it 'should let client list his shipment with bids, even not active' do
+        shipment = create :shipment, user: @logged_in_user, private_bidding: false, active: false
+        shipment.auction!
+        bids_count = (rand*10).to_i
+        bids_count.times do |bids|
+          create :bid, shipment: shipment
+        end
+        json_query :get, :current_bids, id: shipment.id
+        expect(@json[:results].size).to eq bids_count
+        expect(@json[:results][0]['user']['name']).not_to eq ''
+      end
+
       it 'should not let client list other shipments' do
         create_list :shipment, 2
         json_query :get, :index
@@ -110,14 +122,6 @@ describe Api::V1::ShipmentsController do
           expect(@json[:price]).to eq '100.55'
           expect(@json[:user]['id']).to eq 0
           expect(@json[:user]['name']).to eq ''
-
-        end
-
-        it 'show it and show bidder' do
-          @shipment.update_attribute :private_bidding, false
-          json_query :get, :lowest_bid, id: @shipment.id
-          expect(@json[:user]['id']).to eq @logged_in_user.id
-          expect(@json[:user]['name']).to eq @logged_in_user.name
         end
 
         it 'should render 404 for non existent shipment' do
@@ -139,7 +143,8 @@ describe Api::V1::ShipmentsController do
         end
       end
 
-      context 'current_bids action' do
+
+      context 'current_bids action for viewer' do
         before do
           @ship_inv = create :ship_invitation, invitee: @logged_in_user
           @shipment = @ship_inv.shipment
@@ -163,14 +168,6 @@ describe Api::V1::ShipmentsController do
           end
         end
 
-        it 'should render bidder names for public auction' do
-          @shipment.update_attribute :private_bidding, false
-          json_query :get, :current_bids, id: @shipment.id
-          @json[:results].each do |res|
-            expect(res['user']['name']).not_to eq ''
-          end
-        end
-
         it 'should render 404 for non existent shipment' do
           @shipment.destroy
           json_query :get, :current_bids, id: @shipment.id
@@ -186,7 +183,7 @@ describe Api::V1::ShipmentsController do
         it 'should not show inactive shipment' do
           @shipment.inactive!
           json_query :get, :current_bids, id: @shipment.id
-          expect(@json[:error]).to eq 'not_found'
+          expect(@json[:error]).to eq 'no_access'
         end
       end
     end
