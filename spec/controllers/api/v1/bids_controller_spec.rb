@@ -28,14 +28,6 @@ describe Api::V1::BidsController do
         }.not_to change{Bid.count}
       end
 
-      it "can't create when higher bid present" do
-        higher = create :bid, shipment: @shipment, price: 9999, user: @logged_in_user
-        expect {
-          json_query :post, :create, bid: attrs
-          expect(@json[:error]).to eq 'price_too_low'
-        }.not_to change{Bid.count}
-      end
-
       it 'should not create without price' do
         attrs[:price] = nil
         expect {
@@ -79,7 +71,7 @@ describe Api::V1::BidsController do
 
     end
   end
-  context 'not carrier user' do
+  context 'not a carrier user' do
     login_user
     before do
       @logged_in_user.add_role :client

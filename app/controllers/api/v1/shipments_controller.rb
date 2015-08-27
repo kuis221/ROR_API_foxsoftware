@@ -61,7 +61,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   end
 
   # :nocov:
-  swagger_api :highest_bid do
+  swagger_api :lowest_bid do
     summary 'LOAD highest bid for this shipment'
     param :path, :id, :integer, :required, 'Shipment ID'
     response 'ok', 'Success', :Bid
@@ -70,7 +70,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     response 'no_access', 'Shipping private and user has no access to it'
   end
   # :nocov:
-  def highest_bid
+  def lowest_bid
     shipment = Shipment.active.find params[:id] # 404 rescued_from by before_filter
     # shipment active and found beyond this point
     can = false
@@ -80,7 +80,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
       can = true
     end
     if can # render
-      bid = shipment.bids.by_highest.first
+      bid = shipment.bids.by_lowest.first
       bid ? render_json(bid) : render(json:{status: 'no_bids'})
       return
     end

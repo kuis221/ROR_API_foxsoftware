@@ -126,16 +126,10 @@ class Shipment < ActiveRecord::Base
     if user.bids.with_shipment(id).count >= Settings.bid_limit
       status = :limit_reached
     else
-      highest_bid = bids.by_highest.first
-      if highest_bid && highest_bid.price > price
-        status = :price_too_low
+      if state != :bidding
+        status = :not_in_auction
       else
-        if state != :bidding
-          status = :not_in_auction
-        else
-          status = :ok if !user.invitation_for?(self).nil? || public_active?
-        end
-
+        status = :ok if !user.invitation_for?(self).nil? || public_active?
       end
     end
     status

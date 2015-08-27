@@ -22,6 +22,7 @@ class Bid < ActiveRecord::Base
 
   scope :with_shipment, ->(shipment_id) {where(shipment_id: shipment_id)}
   scope :by_highest, ->() {order('bids.price DESC')}
+  scope :by_lowest, ->() {order('bids.price ASC')}
 
   resourcify
 
