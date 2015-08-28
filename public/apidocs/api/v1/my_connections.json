@@ -52,12 +52,65 @@
           "responseMessages": [
             {
               "code": "ok",
-              "responseModel": "User",
-              "message": "{'results': ArrayOfConnection}"
+              "responseModel": null,
+              "message": "{'results': ArrayOfConnectionObject}"
             }
           ],
           "method": "get",
           "nickname": "Api::V1::MyConnections#index"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/my_connections.json",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "access-token",
+              "type": "string",
+              "description": "Logged in user access token",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "uid",
+              "type": "string",
+              "description": "Logged in user UID(uid from oauth or email)",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "client",
+              "type": "string",
+              "description": "Cliend ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "friend_id",
+              "type": "string",
+              "description": "Opposite user ID",
+              "required": true
+            }
+          ],
+          "summary": "CREATE a connection",
+          "notes": "Create connection between current user and other user, Users must have opposite roles. For example, current_user(client) add carrier.",
+          "responseMessages": [
+            {
+              "code": "not_saved",
+              "responseModel": null,
+              "message": null
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": "ConnectionObject"
+            }
+          ],
+          "method": "post",
+          "nickname": "Api::V1::MyConnections#create"
         }
       ]
     },
@@ -86,6 +139,13 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Connection ID",
+              "required": true
             }
           ],
           "summary": "LOAD a connection",
@@ -97,8 +157,8 @@
             },
             {
               "code": "ok",
-              "responseModel": "User",
-              "message": "{'id': N, 'type_of': carrier_or_client, 'user': {UserModel}"
+              "responseModel": null,
+              "message": "{'id': N, 'type_of': carrier_or_client, 'friend': {UserModel}"
             }
           ],
           "method": "get",
@@ -111,6 +171,15 @@
       "operations": [
         {
           "summary": "DELETE a connection",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Connection ID",
+              "required": true
+            }
+          ],
           "responseMessages": [
             {
               "code": "not_found",
