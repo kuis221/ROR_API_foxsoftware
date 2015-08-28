@@ -39,6 +39,11 @@ Rails.application.routes.draw do
           get :my_defaults
         end
       end
+
+      # belongs_to current_user
+      resources :my_connections, except: [:new, :update, :edit] do
+
+      end
     end
 
     # api_version(module: 'V2', path: {value: 'v2'}, default: true) do

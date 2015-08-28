@@ -39,7 +39,7 @@
       "path": "api/v1/shipments/{id}/lowest_bid.json",
       "operations": [
         {
-          "summary": "LOAD lowest bid for this shipment",
+          "summary": "LOAD bid with lowest price",
           "parameters": [
             {
               "paramType": "path",
@@ -81,6 +81,7 @@
       "operations": [
         {
           "summary": "LIST all current bids for shipment",
+          "notes": "For author of shipment will render all bids, and for viewers will render non-private active shipment bids",
           "parameters": [
             {
               "paramType": "query",
@@ -102,9 +103,7 @@
               "paramType": "path",
               "name": "id",
               "type": "integer",
-              "description": {
-                "desc": "Shipment ID"
-              },
+              "description": "Shipment ID",
               "required": true
             }
           ],
@@ -112,7 +111,7 @@
             {
               "code": "no_access",
               "responseModel": null,
-              "message": "Shipping private and user has no access to it"
+              "message": "Shipping private/hidden and user has no access to it"
             },
             {
               "code": "no_bids",
@@ -122,13 +121,11 @@
             {
               "code": "not_found",
               "responseModel": null,
-              "message": "No active shipment with this ID"
+              "message": "No shipment with this ID"
             },
             {
               "code": "ok",
-              "responseModel": [
-                "Bid"
-              ],
+              "responseModel": "Bid",
               "message": "Success"
             }
           ],
@@ -265,6 +262,30 @@
             },
             {
               "paramType": "form",
+              "name": "shipment[po]",
+              "type": "string",
+              "description": "PO",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[pe]",
+              "type": "string",
+              "description": "PE",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[del]",
+              "type": "string",
+              "description": "Del",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
               "name": "shipment[dim_w]",
               "type": "double",
               "description": "Width",
@@ -377,18 +398,34 @@
             },
             {
               "paramType": "form",
-              "name": "shipment[pickup_at]",
+              "name": "shipment[pickup_at_from]",
               "type": "datetime",
-              "description": "Pickup time",
+              "description": "Pickup time(from)",
               "required": true,
               "defaultValue": null
             },
             {
               "paramType": "form",
-              "name": "shipment[arrive_at]",
+              "name": "shipment[arrive_at_from]",
               "type": "datetime",
-              "description": "Arrive time",
+              "description": "Arrive time(from)",
               "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[pickup_at_to]",
+              "type": "datetime",
+              "description": "Pickup time(to), for range",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[arrive_at_to]",
+              "type": "datetime",
+              "description": "Arrive time(to), for range",
+              "required": false,
               "defaultValue": null
             },
             {
@@ -431,6 +468,7 @@
               "message": "Success"
             }
           ],
+          "notes": "If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)",
           "method": "post",
           "nickname": "Api::V1::Shipments#create"
         }
@@ -534,6 +572,30 @@
             },
             {
               "paramType": "form",
+              "name": "shipment[po]",
+              "type": "string",
+              "description": "PO",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[pe]",
+              "type": "string",
+              "description": "PE",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[del]",
+              "type": "string",
+              "description": "Del",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
               "name": "shipment[dim_w]",
               "type": "double",
               "description": "Width",
@@ -646,18 +708,34 @@
             },
             {
               "paramType": "form",
-              "name": "shipment[pickup_at]",
+              "name": "shipment[pickup_at_from]",
               "type": "datetime",
-              "description": "Pickup time",
+              "description": "Pickup time(from)",
               "required": true,
               "defaultValue": null
             },
             {
               "paramType": "form",
-              "name": "shipment[arrive_at]",
+              "name": "shipment[arrive_at_from]",
               "type": "datetime",
-              "description": "Arrive time",
+              "description": "Arrive time(from)",
               "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[pickup_at_to]",
+              "type": "datetime",
+              "description": "Pickup time(to), for range",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "shipment[arrive_at_to]",
+              "type": "datetime",
+              "description": "Arrive time(to), for range",
+              "required": false,
               "defaultValue": null
             },
             {
@@ -705,7 +783,7 @@
               "message": null
             }
           ],
-          "notes": "Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them",
+          "notes": "Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them.<br/>\n           If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)",
           "method": "patch",
           "nickname": "Api::V1::Shipments#update"
         }
@@ -756,12 +834,25 @@
         "cubic_feet",
         "unit_count",
         "skids_count",
-        "pickup_at",
-        "arrive_at",
+        "pickup_at_from",
+        "arrive_at_from",
         "shipper_info_id",
-        "receiver_info_id"
+        "receiver_info_id",
+        "auction_end_at"
       ],
       "properties": {
+        "po": {
+          "type": "string",
+          "description": "PO"
+        },
+        "pe": {
+          "type": "string",
+          "description": "PE"
+        },
+        "del": {
+          "type": "string",
+          "description": "Del"
+        },
         "dim_w": {
           "type": "double",
           "description": "Width"
@@ -818,13 +909,21 @@
           "type": "boolean",
           "description": "Is stackable"
         },
-        "pickup_at": {
+        "pickup_at_from": {
           "type": "datetime",
-          "description": "Pickup time"
+          "description": "Pickup time(from)"
         },
-        "arrive_at": {
+        "arrive_at_from": {
           "type": "datetime",
-          "description": "Arrive time"
+          "description": "Arrive time(from)"
+        },
+        "pickup_at_to": {
+          "type": "datetime",
+          "description": "Pickup time(to), for range"
+        },
+        "arrive_at_to": {
+          "type": "datetime",
+          "description": "Arrive time(to), for range"
         },
         "original_shipment_id": {
           "type": "integer",
@@ -841,6 +940,10 @@
         "secret_id": {
           "type": "string",
           "description": "Part for private url"
+        },
+        "auction_end_at": {
+          "type": "datetime",
+          "description": "When shipment end taking any bids"
         }
       },
       "description": "Shipment object"

@@ -52,6 +52,9 @@ class User < ActiveRecord::Base
   has_many :receiver_infos, dependent: :destroy
   has_many :ship_invitations, foreign_key: :invitee_id, dependent: :destroy
 
+  has_many :friendships, dependent: :destroy
+  has_many :friends, through: :friendships
+
   validates_presence_of :email, :first_name
   validates_presence_of :password, :password_confirmation, confirmation: true
   validates_confirmation_of :password

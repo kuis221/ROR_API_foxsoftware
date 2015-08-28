@@ -4,7 +4,7 @@ ruby '2.2.2'
 gem 'rails', '4.2.1'
 ## Core components
 gem 'pg'
-gem 'unicorn'
+gem 'unicorn' # maybe puma ?? TODO check that.
 gem 'versionist'
 gem 'swagger-docs'
 # gem 'jbuilder', '~> 2.2.16'
@@ -41,8 +41,9 @@ gem 'open_uri_redirections'
 gem 'rails_admin'
 gem 'rails_config'
 
-## Assets
 
+## Assets
+# not needed.
 
 group :development do
   gem 'rubycritic', require: false

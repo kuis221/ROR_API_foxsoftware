@@ -252,6 +252,22 @@
               "description": "Address type, one of: ShipperInfo, AddressInfo",
               "required": true,
               "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[is_default]",
+              "type": "string",
+              "description": "Set as a default, other objects of same class(ShipperInfo, AddressInfo) will be not default, obv.",
+              "required": false,
+              "defaultValue": "false"
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[title]",
+              "type": "string",
+              "description": "Some title for this address, eg: 'My warehouse'",
+              "required": true,
+              "defaultValue": null
             }
           ],
           "summary": "CREATE AddressInfo",
@@ -401,6 +417,22 @@
               "description": "Address type, one of: ShipperInfo, AddressInfo",
               "required": true,
               "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[is_default]",
+              "type": "string",
+              "description": "Set as a default, other objects of same class(ShipperInfo, AddressInfo) will be not default, obv.",
+              "required": false,
+              "defaultValue": "false"
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[title]",
+              "type": "string",
+              "description": "Some title for this address, eg: 'My warehouse'",
+              "required": true,
+              "defaultValue": null
             }
           ],
           "summary": "UPDATE AddressInfo",
@@ -457,7 +489,8 @@
         "address1",
         "zip_code",
         "contact_name",
-        "type"
+        "type",
+        "title"
       ],
       "properties": {
         "city": {
@@ -491,6 +524,14 @@
         "type": {
           "type": "string",
           "description": "Address type, one of: ShipperInfo, AddressInfo"
+        },
+        "is_default": {
+          "type": "string",
+          "description": "Set as a default, other objects of same class(ShipperInfo, AddressInfo) will be not default, obv."
+        },
+        "title": {
+          "type": "string",
+          "description": "Some title for this address, eg: 'My warehouse'"
         }
       },
       "description": "AddressInfo object"

@@ -133,6 +133,11 @@
           "notes": "This endpoint provide creation of new bid for shipment. Only user with <strong>carrier</strong> role can do this.",
           "responseMessages": [
             {
+              "code": "end_auction_date",
+              "responseModel": null,
+              "message": "Shipment auction date due"
+            },
+            {
               "code": "limit_reached",
               "responseModel": null,
               "message": "When user reached bid limit on this shipment. Current quota: 99999"
@@ -145,7 +150,7 @@
             {
               "code": "not_in_auction",
               "responseModel": null,
-              "message": "Shipping not in auction state"
+              "message": "Shipment not in auction state"
             },
             {
               "code": "not_saved",

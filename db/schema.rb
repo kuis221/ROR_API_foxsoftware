@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150827201957) do
+ActiveRecord::Schema.define(version: 20150828104442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,17 @@ ActiveRecord::Schema.define(version: 20150827201957) do
 
   add_index "bids", ["shipment_id"], name: "index_bids_on_shipment_id", using: :btree
   add_index "bids", ["user_id"], name: "index_bids_on_user_id", using: :btree
+
+  create_table "friendships", force: :cascade do |t|
+    t.integer  "friend_id"
+    t.integer  "user_id"
+    t.string   "type_of"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "friendships", ["friend_id"], name: "index_friendships_on_friend_id", using: :btree
+  add_index "friendships", ["user_id"], name: "index_friendships_on_user_id", using: :btree
 
   create_table "identities", force: :cascade do |t|
     t.string   "uid"

@@ -26,6 +26,10 @@
     {
       "path": "http://localhost:3000/apidocs/api/v1/address_infos.{format}",
       "description": "User addresses management"
+    },
+    {
+      "path": "http://localhost:3000/apidocs/api/v1/my_connections.{format}",
+      "description": "User connections"
     }
   ],
   "info": {
