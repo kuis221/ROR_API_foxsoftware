@@ -1,4 +1,8 @@
- module Extenders
+module Extenders
+
+  def validate_role(role)
+    raise CanCan::AccessDenied unless current_user.has_role?(role)
+  end
 
   def limit
     @limit ||= params[:limit]||Settings.index_list

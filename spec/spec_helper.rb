@@ -2,6 +2,7 @@ require 'simplecov'
 SimpleCov.start do
   add_filter 'config/'
   add_filter 'spec/'
+  add_filter 'app/models/ability.rb'
 end
 
 RSpec.configure do |config|

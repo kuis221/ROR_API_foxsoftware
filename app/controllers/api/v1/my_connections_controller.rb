@@ -2,6 +2,8 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   before_filter :set_connection_type
   before_filter :find_connection, only: [:show, :destroy]
 
+  # authorize_resource only: [:invite_carrier] cant use because we dont have MyConnection AR class
+
   # :nocov:
   swagger_controller :my_connection, 'User connections'
   swagger_api :index do
@@ -39,6 +41,31 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   def create
     connection = current_user.friendships.create! type_of: @conn_type, friend_id: params[:friend_id]
     render_json connection
+  end
+
+  # :nocov:
+  swagger_api :invite_carrier do
+    summary 'Invite carriers to bid on specific shipment'
+    notes 'And email will be send to each email inviting people to our system.'
+    param :form, :shipment_id, :integer, :required, 'Shipment ID from user scope'
+    param :form, :emails, :array, :required, 'Carrier emails'
+    response 'ok', 'Number of invitations created'
+    response 'not_saved'
+    response 'email_invalid', 'One of emails blank or not valid'
+  end
+  # :nocov:
+  def invite_carrier
+    validate_role(:client)
+    emails = params[:emails]
+    emails_ok = true
+    emails.each {|e| emails_ok = false unless e.valid_email? }
+    if emails_ok
+      shipment = current_user.shipments.find params[:shipment_id]
+      created = ShipInvitation.invite_by_emails! shipment, emails
+      render_ok created
+    else
+      render_error 'email_invalid'
+    end
   end
 
   # :nocov:

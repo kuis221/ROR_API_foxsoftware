@@ -21,6 +21,7 @@ class Ability
     can :read, Bid do |bid|
       user.shipment_ids.include?(bid.shipment_id)
     end
+    can :manage, ShipInvitation, user_id: user.id
   elsif user.carrier?
     # can create bid for invited shipments ?? check with Matt
     can :manage, Bid, user_id: user.id

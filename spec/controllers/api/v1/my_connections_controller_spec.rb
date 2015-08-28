@@ -46,7 +46,57 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
         expect(@json[:error]).to eq 'not_saved'
       end
 
+      if user_role == :client
+        before do
+          @shipment = create :shipment, user: @logged_in_user
+          @emails = []
+          5.times{|e| @emails << FFaker::Internet.email }
+        end
+
+        it 'should invite carriers' do
+          expect {
+            json_query :post, :invite_carrier, shipment_id: @shipment.id, emails: @emails
+          }.to change{ShipInvitation.count}.by(5)
+          expect(@json[:message]).to eq 5
+          expect(ActionMailer::Base.deliveries.size).to eq 5
+        end
+
+        it 'should not invite with wrong email' do
+          @emails << 'bademail'
+          expect {
+            json_query :post, :invite_carrier, shipment_id: @shipment.id, emails: @emails
+          }.not_to change{ShipInvitation.count}
+          expect(ActionMailer::Base.deliveries.size).to eq 0
+        end
+
+        it 'should not invite without shipment_id' do
+          expect {
+            json_query :post, :invite_carrier, emails: @emails
+          }.not_to change{ShipInvitation.count}
+          expect(ActionMailer::Base.deliveries.size).to eq 0
+        end
+
+        it 'should not invite with someone else shipment_id' do
+          shipment = create :shipment
+          expect {
+            json_query :post, :invite_carrier, shipment_id: shipment.id, emails: @emails
+          }.not_to change{ShipInvitation.count}
+          expect(ActionMailer::Base.deliveries.size).to eq 0
+        end
+
+      else
+
+        it 'should not let carrier invite_carrier' do
+          expect {
+            json_query :post, :invite_carrier
+          }.not_to change{ShipInvitation.count}
+          expect(@json[:error]).to eq 'access_denied_with_role'
+          expect(ActionMailer::Base.deliveries.size).to eq 0
+        end
+
+      end
     end
+
   end
 
   def opposite_role(role)

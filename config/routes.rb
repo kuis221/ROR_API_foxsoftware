@@ -42,7 +42,9 @@ Rails.application.routes.draw do
 
       # belongs_to current_user
       resources :my_connections, except: [:new, :update, :edit] do
-
+        collection do
+          post :invite_carrier
+        end
       end
     end
 
