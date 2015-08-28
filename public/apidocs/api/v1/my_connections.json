@@ -5,6 +5,50 @@
   "resourcePath": "my_connections",
   "apis": [
     {
+      "path": "api/v1/my_connections/invite_carrier.json",
+      "operations": [
+        {
+          "summary": "Invite carriers to bid on specific shipment",
+          "notes": "And email will be send to each email inviting people to our system.",
+          "parameters": [
+            {
+              "paramType": "form",
+              "name": "shipment_id",
+              "type": "integer",
+              "description": "Shipment ID from user scope",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "emails",
+              "type": "array",
+              "description": "Carrier emails",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "email_invalid",
+              "responseModel": null,
+              "message": "One of emails blank or not valid"
+            },
+            {
+              "code": "not_saved",
+              "responseModel": null,
+              "message": null
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": "Number of invitations created"
+            }
+          ],
+          "method": "post",
+          "nickname": "Api::V1::MyConnections#invite_carrier"
+        }
+      ]
+    },
+    {
       "path": "api/v1/my_connections.json",
       "operations": [
         {
