@@ -121,14 +121,17 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :create do
-    param :form, 'invitations[emails]', :array, :optional, 'Array of emails to invite carriers', {items: {:'$ref' => 'email'}}
     notes 'If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)'
+    param :form, 'invitations[emails]', :array, :optional, 'Array of emails to invite carriers', {items: {:'$ref' => 'email'}}
+    param :form, :state, :string, :optional, "Initial bidding status, default 'bidding'. For draft set 'pending'", defaultValue: 'bidding'
     # TODO maybe later(for update too): param :form, 'invitations[user_ids]', :array, :optional, 'Array of user ids from list of past user carriers'
   end
   # :nocov:
   def create
     shipment = current_user.shipments.create! allowed_params
     unless shipment.new_record?
+      state = params[:state].to_s
+      shipment.auction! if state != 'pending' # by default set to bidding state
       shipment.invite!(params[:invitations])
     end
     render_json shipment

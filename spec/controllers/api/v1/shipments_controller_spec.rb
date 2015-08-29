@@ -197,8 +197,15 @@ describe Api::V1::ShipmentsController do
           json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
           expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], @invs)
         }.to change{Shipment.count}
-        expect(Shipment.find(@json[:id]).state).to eq :pending
+        expect(Shipment.find(@json[:id]).state).to eq :bidding
         expect(@json[:secret_id]).not_to be blank?
+      end
+
+      it 'should let client create new shipment as draft' do
+        expect {
+          json_query :post, :create, shipment: @attrs, state: 'pending'
+        }.to change{Shipment.count}
+        expect(Shipment.find(@json[:id]).state).to eq :pending
       end
 
       it "can't create without auction_end_date" do
