@@ -10,7 +10,7 @@ module DeviseTokenAuth
 
     swagger_api :create do
       summary 'Create user with email'
-      notes 'When invited user register, we will find and assign all shipment invitations by email, so later you can load them from <strong>my_invitations</strong> query'
+      notes 'When invited by user(url with query string <strong>invitation=</strong>, we will find and assign all shipment invitations by email, so later you can load them from <strong>my_invitations</strong> query'
       param :form, :first_name, :string, :required, 'First Name'
       param :form, :last_name, :string, :required, 'Last Name'
       param :form, :email, :string, :required, 'Email'
@@ -18,6 +18,7 @@ module DeviseTokenAuth
       param :form, :password_confirmation, :string, :required, 'Password confirmation'
       param :form, :about, :string, :optional, 'About me'
       param :form, :user_type, :string, :required, "User type, 'carrier' or 'client'"
+      param :form, :invitation, :string, :optional, 'Invitation code, pass from query string if available. IF invitation present and valid then new user will be assigned with carrier role regardless of user_type field'
       # param :form, :provider, :string, :required, "Provider, one of: (email,facebook,google_oauth2,linkedin)", {defaultValue: 'email'}
       response 'not_valid'
       response 'ok', 'Success', :User
@@ -62,8 +63,16 @@ module DeviseTokenAuth
       begin
         # override email confirmation, must be sent manually from ctrl
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        invitation = params[:invitation]
+        invitation = Shipment.active.where(secret_id: invitation).first if invitation
+        @resource.skip_confirmation! if invitation
         if @resource.save
-          @resource.assign_role_by_param(params[:user_type])
+          if invitation
+            @resource.add_role :carrier
+            # Also user has after_create filter which assign ship_invitations automatically
+          else
+            @resource.assign_role_by_param(params[:user_type])
+          end
 
           yield @resource if block_given?
 

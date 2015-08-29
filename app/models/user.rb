@@ -57,8 +57,8 @@ class User < ActiveRecord::Base
   has_many :friends, through: :friendships
 
   validates_presence_of :email, :first_name
-  validates_presence_of :password, :password_confirmation, confirmation: true
-  validates_confirmation_of :password
+  validates_presence_of :password, :password_confirmation, confirmation: true, on: :create
+  validates_confirmation_of :password, on: :create
 
   mount_uploader :avatar, UserAvatarUploader
 
@@ -75,7 +75,6 @@ class User < ActiveRecord::Base
 
   before_create -> do
     assign_user_role
-    # skip_confirmation!
   end
 
   # Assign all invitations to newly created user

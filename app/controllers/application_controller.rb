@@ -4,7 +4,6 @@ class ApplicationController < ActionController::Base
   # before_filter :dummy_proof_auth_headers
 
   include DeviseTokenAuth::Concerns::SetUserByToken
-
   include Extenders
 
   before_filter :configure_permitted_parameters, if: :devise_controller?
@@ -19,7 +18,7 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from CanCan::AccessDenied do |exception|
-    logger.info 'ROLE DENIED DENIED;0'
+    logger.info "ROLE DENIED DENIED: user: #{current_user.id} roles: #{current_user.roles_name}"
     render_error :access_denied_with_role, 403
   end
 
@@ -33,9 +32,10 @@ class ApplicationController < ActionController::Base
 
   protected
   def configure_permitted_parameters
-    attrs = [:first_name, :last_name, :about, :avatar, :provider]
-    devise_parameter_sanitizer.for(:sign_up) << attrs
-    devise_parameter_sanitizer.for(:account_update) << attrs
+    create_attrs = [:first_name, :last_name, :about, :avatar, :provider]
+    update_attrs = [:first_name, :last_name, :about, :avatar]
+    devise_parameter_sanitizer.for(:sign_up) << create_attrs
+    devise_parameter_sanitizer.for(:account_update) << update_attrs
   end
 
 
