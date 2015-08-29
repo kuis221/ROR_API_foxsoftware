@@ -3,7 +3,7 @@ class AuthenticationController < ApplicationController
 
   swagger_controller :authentication, 'Authenticating Fox Software API'
 
-  swagger_api :auth do
+  swagger_api :registration do
     summary 'This part explain how authentication should be make'
     notes <<-N
         <h2>Registration overall</h2>
@@ -54,7 +54,27 @@ class AuthenticationController < ApplicationController
         <p>The authentication headers required for each request will be available in the response from the previous request. If you are using the <a href="https://github.com/lynndylanhurley/ng-token-auth">ng-token-auth</a> AngularJS module or the <a href="https://github.com/lynndylanhurley/j-toker">jToker</a> jQuery plugin, this functionality is already provided.</p>
     N
   end
-  def auth
+  def registration
     render json: {text: 'Nothing here, this was just created for auth documentation.'}
   end
+
+  swagger_api :confirmation do
+    summary 'Confirming user from email link'
+    notes <<-N
+      <p>When user clicks confirmation link in his email, he lands on <strong>/auth/confirmation</strong> with few params:
+      <strong>confirmation_token</strong> and <strong>config</strong></p>
+      You have to pass two those to the same endpoint in the API.<br/>
+      <p>
+        When the user confirmed successfully you will also receive authentication headers, just like in login procedure(see above example)
+      </p>
+    N
+    param :query, :confirmation_token, :string, :required, 'Confirmation token'
+    param :query, :config, :string, :required, 'Some config needed for API'
+    response 'not_found', 'When we cant find that user'
+    response 'ok', 'UserObject'
+  end
+  def confirmation
+    render json: {text: 'Nothing here, this was just created for auth documentation.'}
+  end
+
 end

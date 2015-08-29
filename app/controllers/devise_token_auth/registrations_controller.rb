@@ -35,21 +35,19 @@ module DeviseTokenAuth
         @resource.email = sign_up_params[:email]
       end
 
+      ### Dont use it. use our - set in devise_token_auth initializer
       # give redirect value from params priority
-      redirect_url = params[:confirm_success_url]
-
+      # redirect_url = params[:confirm_success_url]
       # fall back to default value if provided
-      redirect_url ||= DeviseTokenAuth.default_confirm_success_url
-
+      redirect_url = DeviseTokenAuth.default_confirm_success_url
       # success redirect url is required
-      if resource_class.devise_modules.include?(:confirmable) && !redirect_url
-        return render json: {
-          status: 'error',
-          data:   @resource.as_json,
-          errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
-        }, status: 403
-      end
-
+      # if resource_class.devise_modules.include?(:confirmable) && !redirect_url
+      #   return render json: {
+      #     status: 'error',
+      #     data:   @resource.as_json,
+      #     errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
+      #   }, status: 403
+      # end
       # if whitelist is set, validate redirect_url against whitelist
       # if DeviseTokenAuth.redirect_whitelist
       #   unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
@@ -65,6 +63,8 @@ module DeviseTokenAuth
         # override email confirmation, must be sent manually from ctrl
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
         if @resource.save
+          @resource.assign_role_by_param(params[:user_type])
+
           yield @resource if block_given?
 
           unless @resource.confirmed?
@@ -73,7 +73,6 @@ module DeviseTokenAuth
               client_config: params[:config_name],
               redirect_url: redirect_url
             })
-
           else
             # email auth has been bypassed, authenticate user
             @client_id = SecureRandom.urlsafe_base64(nil, false)
@@ -84,16 +83,16 @@ module DeviseTokenAuth
               expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
             }
 
-            @resource.assign_role_by_param(params[:user_type])
             @resource.save!
 
             update_auth_header
           end
 
-          render json: {
-            status: 'success',
-            data:   @resource.as_json
-          }
+          render_json @resource
+          # render json: {
+          #   status: 'success',
+          #   data:   @resource.as_json
+          # }
         else
           clean_up_passwords @resource
           render json: {

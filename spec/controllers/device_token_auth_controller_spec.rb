@@ -14,11 +14,13 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       expect {
         json_query :post, :create, @attrs
       }.to change{User.count}.by(1)
+      expect(ActionMailer::Base.deliveries.size).to eq 1
       user = User.last
-      token_client = user.tokens.first[0]
-      expect(response.headers['access-token']).not_to be blank?
-      expect(user.uid).to eq response.headers['uid']
-      expect(user.tokens[token_client]['expiry'].to_s).to eq response.headers['expiry']
+      # tokens not generated when need to confirm an email, see devise_token_auth_spec request
+      # token_client = user.tokens.first[0]
+      # expect(response.headers['access-token']).not_to be blank?
+      # expect(user.uid).to eq response.headers['uid']
+      # expect(user.tokens[token_client]['expiry'].to_s).to eq response.headers['expiry']
       expect(user.has_role?(:user)).to eq true
       expect(user.has_role?(:client)).to eq true
       @attrs.each_pair do |k,v|

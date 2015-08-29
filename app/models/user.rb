@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable, :registerable, :recoverable, :rememberable, :trackable
   # , omniauth_providers: [:google_oauth2, :facebook]
-  devise :database_authenticatable, :recoverable, :registerable, :omniauthable, omniauth_providers: [:google_oauth2, :facebook, :linkedin]
+  devise :database_authenticatable, :confirmable, :recoverable, :registerable, :omniauthable, omniauth_providers: [:google_oauth2, :facebook, :linkedin]
   include DeviseTokenAuth::Concerns::User # after devise
 
   # has_many :identities, dependent: :destroy
@@ -78,6 +78,7 @@ class User < ActiveRecord::Base
     # skip_confirmation!
   end
 
+  # Assign all invitations to newly created user
   after_create -> do
     ShipInvitation.where(invitee_email: email).update_all(invitee_id: id)
   end
@@ -95,8 +96,9 @@ class User < ActiveRecord::Base
     shipment ? (ship_invitations.where(shipment_id: shipment.id).first && shipment.active?) : nil
   end
 
+  # by default all users get :user role. second role  depends on params[:user_type]
   def assign_role_by_param(user_type)
-    role = :client # by default all users get :client and :user roles
+    role = :client
     role = :carrier if user_type == 'carrier'
     add_role role
   end

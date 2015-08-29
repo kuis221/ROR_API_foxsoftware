@@ -3,6 +3,7 @@ SimpleCov.start do
   add_filter 'config/'
   add_filter 'spec/'
   add_filter 'app/models/ability.rb'
+  add_filter 'app/controllers/authentication.rb'
 end
 
 RSpec.configure do |config|

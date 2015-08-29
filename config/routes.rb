@@ -5,7 +5,8 @@ Rails.application.routes.draw do
 
   root to: 'home#index'
 
-  get 'authentication/auth' => 'authentication#auth' # stub for documentation
+  get 'auth/registration' => 'authentication#registration' # stub for documentation
+  get 'auth/confirmation' => 'authentication#confirmation' # stub for documentation
 
   # when forwarding to next version set new default: true
   namespace :api, defaults: {format: :json} do

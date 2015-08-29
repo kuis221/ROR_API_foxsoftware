@@ -23,7 +23,10 @@
               "name": "emails",
               "type": "array",
               "description": "Carrier emails",
-              "required": true
+              "required": true,
+              "items": {
+                "$ref": "email"
+              }
             }
           ],
           "responseMessages": [
