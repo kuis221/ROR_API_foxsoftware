@@ -15,6 +15,6 @@ RSpec.describe CarrierMailer, type: :mailer do
 
 
   it 'assigns @link' do
-    expect(mail.body.encoded).to match("/shipments/#{shipment.secret_id}")
+    expect(mail.body.encoded).to include "/shipments/#{shipment.id}?invitation=#{shipment.secret_id}"
   end
 end
