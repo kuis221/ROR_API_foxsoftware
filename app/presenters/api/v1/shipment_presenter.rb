@@ -5,7 +5,7 @@ class Api::V1::ShipmentPresenter < Api::V1::JsonPresenter
     if shipment.user == current_user
       hash = shipment.attributes.except!('created_at', 'updated_at', 'user_id').keys
     else
-      hash = %w(id notes picture_url dim_w dim_h dim_l distance weight hazard pickup_at_from pickup_at_to arrive_at_from arrive_at_to price stackable n_of_cartons cubic_feet unit_count skids_count)
+      hash = %w(id notes picture_url dim_w dim_h dim_l distance weight hazard pickup_at_from pickup_at_to arrive_at_from arrive_at_to price stackable n_of_cartons cubic_feet unit_count skids_count track_frequency)
     end
     json = hash_for(shipment, hash)
     low_bid  = shipment.low_bid

@@ -192,6 +192,6 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
                                      :pickup_at_from, :arrive_at_from, :pickup_at_to, :arrive_at_to,
                                      :active, :stackable, :n_of_cartons, :cubic_feet, :unit_count, :skids_count,
                                      :private_bidding, :shipper_info_id, :receiver_info_id, :auction_end_at,
-                                     :po, :pe, :del, :hide_bids)
+                                     :po, :pe, :del, :hide_bids, :track_frequency)
   end
 end

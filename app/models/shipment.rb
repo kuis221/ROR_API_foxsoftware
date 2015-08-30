@@ -96,7 +96,8 @@ class Shipment < ActiveRecord::Base
            receiver_info_id: {desc: 'ReceiverInfo address ID', type: :integer, required: :required},
            secret_id: {desc: 'Part for private url', type: :string, for_model: true},
            auction_end_at: {desc: 'When shipment end taking any bids', type: :datetime, required: :required, for_model: true},
-           hide_bids: {desc: 'Hide bids for everyone except owner', type: :boolean, default: :false, required: :optional, for_model: true}
+           hide_bids: {desc: 'Hide bids for everyone except owner', type: :boolean, default: :false, required: :optional, for_model: true},
+           track_frequency: {desc: 'Required tracking frequency update, use: X.INTERVAL, like: 2.hours or 1.day ..', type: :string, required: :optional}
   }
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required
