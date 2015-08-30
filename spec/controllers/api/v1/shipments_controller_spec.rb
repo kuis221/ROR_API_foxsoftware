@@ -211,17 +211,17 @@ describe Api::V1::ShipmentsController do
     end
 
     context 'saving' do
+      let(:attrs) { {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at_from: 2.days.from_now.to_s, arrive_at_from: 3.days.from_now.to_s, auction_end_at: 2.days.from_now.to_s} }
       before do
         @shipper_info = create :shipper_info, user: @logged_in_user
         @receiver_info = create :receiver_info, user: @logged_in_user
-        @attrs = {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at_from: 2.days.from_now.to_s, arrive_at_from: 3.days.from_now.to_s, auction_end_at: 2.days.from_now.to_s}
         allow(InviteCarriers).to receive(:perform_async)
         @invs = ['some@email.com', 'other@email.com']
       end
 
       it 'should let client create new shipment with invitations' do
         expect {
-          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          json_query :post, :create, shipment: attrs, invitations: {emails: @invs}
           expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], @invs)
         }.to change{Shipment.count}
         expect(Shipment.find(@json[:id]).state).to eq :bidding
@@ -230,15 +230,15 @@ describe Api::V1::ShipmentsController do
 
       it 'should let client create new shipment as draft' do
         expect {
-          json_query :post, :create, shipment: @attrs, state: 'pending'
+          json_query :post, :create, shipment: attrs, state: 'pending'
         }.to change{Shipment.count}
         expect(Shipment.find(@json[:id]).state).to eq :pending
       end
 
       it "can't create without auction_end_date" do
-        @attrs[:auction_end_at] = nil
+        attrs[:auction_end_at] = nil
         expect {
-          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          json_query :post, :create, shipment: attrs, invitations: {emails: @invs}
           expect(InviteCarriers).not_to have_received(:perform_async)
           expect(@json[:error]).to eq 'not_saved'
           expect(@json[:text].size).to eq 1 # blank and bad association
@@ -251,9 +251,9 @@ describe Api::V1::ShipmentsController do
       # end
 
       it 'cant accept without ShipperInfo or ReceiverInfo' do
-        @attrs[:shipper_info_id] = nil
+        attrs[:shipper_info_id] = nil
         expect {
-          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          json_query :post, :create, shipment: attrs, invitations: {emails: @invs}
           expect(InviteCarriers).not_to have_received(:perform_async)
           expect(@json[:error]).to eq 'not_saved'
           expect(@json[:text].size).to eq 2 # blank and bad association
@@ -262,9 +262,9 @@ describe Api::V1::ShipmentsController do
 
       it "can't assign someone's else addesses" do
         someone_shipper_info = create :shipper_info
-        @attrs[:shipper_info_id] = someone_shipper_info.id
+        attrs[:shipper_info_id] = someone_shipper_info.id
         expect {
-          json_query :post, :create, shipment: @attrs, invitations: {emails: @invs}
+          json_query :post, :create, shipment: attrs, invitations: {emails: @invs}
           expect(InviteCarriers).not_to have_received(:perform_async)
           expect(@json[:error]).to eq 'not_saved'
           expect(@json[:text].size).to eq 1 # bad association
@@ -272,9 +272,9 @@ describe Api::V1::ShipmentsController do
       end
 
       it 'should not let client create invalid shipment' do
-        @attrs[:price] = nil
+        attrs[:price] = nil
         expect {
-          json_query :post, :create, shipment: @attrs
+          json_query :post, :create, shipment: attrs
           expect(@json[:error]).not_to be blank?
           expect(@json[:text][0]).to eq "Price can't be blank"
           expect(InviteCarriers).not_to have_received(:perform_async)

@@ -5,30 +5,29 @@ RSpec.describe Api::V1::AddressInfosController, type: :controller do
 
   context 'CRUD AddressInfo' do
 
-    before do
-      @attrs = {state: 'CA', zip_code: '20860', city: 'Palm Springs', address1: 'Lake street 21',
-                appointment: true, contact_name: 'Alex', type: 'ShipperInfo', is_default: false, title: 'Zooloo'}
-    end
+    let(:attrs) { {state: 'CA', zip_code: '20860', city: 'Palm Springs', address1: 'Lake street 21',
+                appointment: true, contact_name: 'Alex', type: 'ShipperInfo', is_default: false, title: 'Zooloo'} }
+
 
     it 'create an AddressInfo of ShipperInfo type' do
       expect {
-        json_query :post, :create, address_info: @attrs
+        json_query :post, :create, address_info: attrs
         expect(@json[:type]).to eq 'ShipperInfo'
       }.to change{ShipperInfo.count}.by(1)
     end
 
     it 'should not create with bad type' do
-      @attrs[:type] = 'shipperInfo'
+      attrs[:type] = 'shipperInfo'
       expect {
-        json_query :post, :create, address_info: @attrs
+        json_query :post, :create, address_info: attrs
         expect(@json[:error]).to eq 'not_saved'
       }.not_to change{ShipperInfo}
     end
 
     it 'should not create without required detail' do
-      @attrs[:state] = ''
+      attrs[:state] = ''
       expect {
-        json_query :post, :create, address_info: @attrs
+        json_query :post, :create, address_info: attrs
         expect(@json[:error]).to eq 'not_saved'
       }.not_to change{ShipperInfo}
     end
@@ -65,6 +64,12 @@ RSpec.describe Api::V1::AddressInfosController, type: :controller do
           @receiver_info.reload
         }.not_to change(@receiver_info, :city)
       end
+
+      it 'should destroy it' do
+        expect{
+          json_query :delete, :destroy, id: @receiver_info.id
+        }.to change{ReceiverInfo.count}.by(-1)
+      end
     end
   end
 
@@ -81,6 +86,11 @@ RSpec.describe Api::V1::AddressInfosController, type: :controller do
       @shippers = create_list :shipper_info, 3, user: @logged_in_user # false, false, true
       @shipper_default = @logged_in_user.shipper_infos.last
       @shipper_default.default!
+    end
+
+    it 'should load all addresses' do
+      json_query :get, :index
+      expect(@json[:results].size).to eq 8
     end
 
     it 'should load default addresses' do
