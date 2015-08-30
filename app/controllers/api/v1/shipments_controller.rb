@@ -33,9 +33,9 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :index do
     summary 'LIST all user shipments'
-    notes 'For client user, list his created shipments. When listing with user_id - only public and active shipments will be shown'
+    notes 'For current user, list owned shipments. When listing with user_id - only public and active shipments will be shown'
     param :query, :user_id, :integer, :optional, 'User ID, if not set then scope by currently logged in user.'
-    response 'ok', 'Success', :Shipment
+    response 'ok', "{'results': [ShipmentObjects]}", :Shipment
   end
   # :nocov:
   # render all current_user shipments or publicity active shipments.
@@ -50,7 +50,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     summary 'LIST all invited shipments for carrier user'
     notes 'Find and display all shipments with invitations only'
     Api::V1::ApiBaseController.add_pagination_params(api)
-    response 'ok', 'Success', :Shipment
+    response 'ok', "{'results': [ShipmentObjects]}", :Shipment
   end
   # :nocov:
   # This action render shipments when current_user having invitation for it.
@@ -184,7 +184,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   end
 
   def set_user
-    @user = params[:user_id] ? User.find(params[:id]) : current_user
+    @user = params[:user_id] ? User.find(params[:user_id]) : current_user
   end
 
   def allowed_params
@@ -192,6 +192,6 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
                                      :pickup_at_from, :arrive_at_from, :pickup_at_to, :arrive_at_to,
                                      :active, :stackable, :n_of_cartons, :cubic_feet, :unit_count, :skids_count,
                                      :private_bidding, :shipper_info_id, :receiver_info_id, :auction_end_at,
-                                     :po, :pe, :del)
+                                     :po, :pe, :del, :hide_bids)
   end
 end

@@ -7,7 +7,12 @@ class Api::V1::ShipmentPresenter < Api::V1::JsonPresenter
     else
       hash = %w(id notes picture_url dim_w dim_h dim_l distance weight hazard pickup_at_from pickup_at_to arrive_at_from arrive_at_to price stackable n_of_cartons cubic_feet unit_count skids_count)
     end
-    hash_for(shipment, hash)
+    json = hash_for(shipment, hash)
+    low_bid  = shipment.low_bid
+    high_bid = shipment.high_bid
+    avg_bid = shipment.avg_bid
+    json[:bids] = {low: low_bid, high: high_bid, avg: avg_bid} unless shipment.hide_bids?
+    json
   end
 
 end

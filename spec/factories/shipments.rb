@@ -65,6 +65,7 @@ FactoryGirl.define do
     cubic_feet {rand(10)}
     unit_count {rand(10)}
     skids_count {rand(10)}
+    hide_bids false
     before :create do |shipment| # should be before creation to pass validations of model
       shipper_info = create :shipper_info, user: shipment.user
       receiver_info = create :receiver_info, user: shipment.user

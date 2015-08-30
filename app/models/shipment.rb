@@ -62,7 +62,6 @@ class Shipment < ActiveRecord::Base
   scope :active, ->() {where(active: true)}
   # dont use :public name as scope name :) unless you want be deep in shit
   scope :public_only, ->() {where(private_bidding: false)}
-
   before_create :set_secret_id
 
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
@@ -94,11 +93,13 @@ class Shipment < ActiveRecord::Base
            shipper_info_id: {desc: 'ShipperInfo address ID', type: :integer, required: :required},
            receiver_info_id: {desc: 'ReceiverInfo address ID', type: :integer, required: :required},
            secret_id: {desc: 'Part for private url', type: :string, for_model: true},
-           auction_end_at: {desc: 'When shipment end taking any bids', type: :datetime, required: :required, for_model: true}
+           auction_end_at: {desc: 'When shipment end taking any bids', type: :datetime, required: :required, for_model: true},
+           hide_bids: {desc: 'Hide bids for everyone except owner', type: :boolean, default: :false, required: :optional, for_model: true}
   }
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required
   end
+  validates_inclusion_of :hide_bids, in: [true, false]
 
   aasm do # add whiny_transitions: true to return true/false
     state :pending, initial: true
@@ -124,6 +125,22 @@ class Shipment < ActiveRecord::Base
   def validate_addresses
     self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
+  end
+
+  def hide_bids!
+    update_attribute :hide_bids, true
+  end
+
+  def low_bid
+    bids.minimum('bids.price')
+  end
+
+  def high_bid
+    bids.maximum('bids.price')
+  end
+
+  def avg_bid
+    bids.average('bids.price')
   end
 
   def state

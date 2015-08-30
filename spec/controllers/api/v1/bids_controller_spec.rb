@@ -3,16 +3,51 @@ require 'rails_helper'
 describe Api::V1::BidsController do
   let(:attrs) { {price: 22.11, shipment_id: @shipment.id} }
 
-  [:private, :public].each do |way| # for shipment types
-    context "Create a new [#{way.to_s.upcase}] bid" do
-      login_user
-      before do
-        @logged_in_user.add_role :carrier
-        @shipment = create :shipment, private_bidding: way == :private
-        @shipment.auction!
-        @invitation = create :ship_invitation, shipment: @shipment, invitee: @logged_in_user
+  login_user
+
+  shared_examples_for 'bid_private_resource' do
+    before do
+      create_resources(:private)
+    end
+    it 'no invitation' do
+      @invitation.destroy
+      expect {
+        json_query :post, :create, bid: attrs
+        expect(@json[:error]).to eq 'no_access'
+      }.not_to change{Bid.count}
+    end
+
+    it 'not active' do
+      @shipment.inactive!
+      expect {
+        json_query :post, :create, bid: attrs
+        expect(@json[:error]).to eq 'not_saved'
+      }.not_to change{Bid.count}
+    end
+  end
+
+  shared_examples_for 'bid_resources' do
+    before do
+      create_resources(way)
+    end
+    context 'Listing current user bids' do
+      it '- all bids' do
+        bids = create_list :bid, 3, user: @logged_in_user, shipment: @shipment
+        json_query :get, :index
+        expect(@json[:results].size).to eq 3
       end
 
+      it '- scoped by shipment' do
+        shipment = create :shipment
+        shipment.auction!
+        bids = create_list :bid, 2, user: @logged_in_user, shipment: shipment
+        create_list :bid, 3, user: @logged_in_user, shipment: @shipment
+        json_query :get, :index, shipment_id: @shipment.id # for @shipment object only.
+        expect(@json[:results].size).to eq 3
+      end
+    end
+
+    context "Creating a new [{way.to_s.upcase}] bid" do
       it 'normally' do
         expect {
           json_query :post, :create, bid: attrs
@@ -55,29 +90,18 @@ describe Api::V1::BidsController do
       it 'should not create on :limit_reached' do
         # TODO when needed
       end
-
-      if way == :private
-
-        it 'no invitation' do
-          @invitation.destroy
-          expect {
-            json_query :post, :create, bid: attrs
-            expect(@json[:error]).to eq 'no_access'
-          }.not_to change{Bid.count}
-        end
-
-        it 'not active' do
-          @shipment.inactive!
-          expect {
-            json_query :post, :create, bid: attrs
-            expect(@json[:error]).to eq 'not_saved'
-          }.not_to change{Bid.count}
-        end
-
-      end
-
     end
   end
+
+  it_behaves_like 'bid_resources' do
+    let(:way) { :private }
+    let(:way) { :public }
+  end
+
+  it_behaves_like 'bid_private_resource' do
+
+  end
+
   context 'not a carrier user' do
     login_user
     before do
@@ -93,4 +117,10 @@ describe Api::V1::BidsController do
     end
   end
 
+  def create_resources(way)
+    @logged_in_user.add_role :carrier
+    @shipment = create :shipment, private_bidding: way == :private
+    @shipment.auction!
+    @invitation = create :ship_invitation, shipment: @shipment, invitee: @logged_in_user
+  end
 end
