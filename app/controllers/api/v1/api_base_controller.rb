@@ -4,11 +4,20 @@ class Api::V1::ApiBaseController < ApplicationController
   before_filter :check_registration
 
   # :nocov:
-  #for swagger_api methods
+  # Use that with unconventional listing actions
   def self.add_pagination_params(api)
     api.param :query, :page, :integer, :optional, 'Page', {defaultValue: 1}
     api.param :query, :limit, :integer, :optional, 'Results limit', {defaultValue: Settings.index_list}
   end
+
+  # Reuse that method in custom actions, those are out side of regular crud
+  def self.add_authorization_headers(api)
+    # TODO make a some first user with two shipments, bids, auth. so api doc user can see the responces
+    param :header, 'access-token', :string, :required, 'Logged in user access token'
+    param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)'
+    param :header, 'client', :string, :required, 'Cliend ID'
+  end
+
   # do not put code between nocov tags
   class << self
     Swagger::Docs::Generator::set_real_methods
@@ -21,31 +30,30 @@ class Api::V1::ApiBaseController < ApplicationController
     private
     # called for each controller
     def setup_basic_api_documentation
+      # Add authorization headers for all default actions
       [:index, :show, :create, :update, :delete].each do |api_action|
         swagger_api api_action do |api|
-          # TODO make a some first user with two shipments, bids, auth. so api doc user can see the responces
-          param :header, 'access-token', :string, :required, 'Logged in user access token'
-          param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)'
-          param :header, 'client', :string, :required, 'Cliend ID'
-          Api::V1::ApiBaseController.add_pagination_params(api) if api_action == :index
+          Api::V1::ApiBaseController.add_authorization_headers(api)
+          Api::V1::ApiBaseController.add_pagination_params(api) if api_action == :index # Pagination autoadded for all indexes
         end
       end
       ## Populate Response model here
       # Add models here which has ATTRS constants in it (see Shipment for details).
 
-      [Shipment, AddressInfo].each do |s_model|
+      [Shipment, AddressInfo, Tracking].each do |s_model|
         # because all setup_basic_api_documentation rendered for each controller
         # we make a little hack to render only models we include in [].each
         next if s_model.table_name != controller_name
         class_name = s_model.name
         attrs = "#{class_name}::ATTRS".constantize
+        # Render a Response Model here
         swagger_model class_name.to_sym do
           description "#{class_name} object"
           attrs.each_pair do |k,v|
             property k, v[:type], v[:required], v[:desc]
           end
         end
-        # populate some action.
+        # populate some action for posting forms.
         [:create, :update].each do |action|
           swagger_api action do
             summary "#{action.to_s.upcase} #{class_name}"
@@ -54,7 +62,7 @@ class Api::V1::ApiBaseController < ApplicationController
               next if v[:for_model] # skip, if attribute is for swagger_model only, looks like it DOESNT really works
               param :form, "#{s_model.table_name.singularize}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
             end
-            response 'ok', 'Success', class_name.to_sym
+            response 'ok', "{#{class_name}Object}", class_name.to_sym
             response 'not_valid', "{'text': [ArrayOfErrors]}"
           end
         end

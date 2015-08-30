@@ -21,11 +21,15 @@ class Ability
     can :read, Bid do |bid|
       user.shipment_ids.include?(bid.shipment_id)
     end
+    can :read, Tracking do |tracking|
+      user.shipment_ids.include?(tracking.shipment_id)
+    end
     can :manage, ShipInvitation, user_id: user.id
   elsif user.carrier?
     # can create bid for invited shipments ?? check with Matt
     can :manage, Bid, user_id: user.id
     can :read, Shipment
+    can :manage, Tracking, user_id: user.id
   elsif user.has_role?(:user) # both client and carrier can manage their address_infos and shipment_feedbacks
     can :manage, AddressInfo, user_id: user.id
     can [:read, :create, :update], ShipmentFeedback, user_id: user.id

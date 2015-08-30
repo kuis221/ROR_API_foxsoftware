@@ -35,6 +35,7 @@
 #  pickup_at_to         :datetime
 #  arrive_at_from       :datetime
 #  arrive_at_to         :datetime
+#  hide_bids            :boolean          default(FALSE)
 #
 # Indexes
 #

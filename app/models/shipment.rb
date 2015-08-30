@@ -35,6 +35,7 @@
 #  pickup_at_to         :datetime
 #  arrive_at_from       :datetime
 #  arrive_at_to         :datetime
+#  hide_bids            :boolean          default(FALSE)
 #
 # Indexes
 #
@@ -55,6 +56,7 @@ class Shipment < ActiveRecord::Base
   has_many :bids, dependent: :destroy
   has_many :ship_invitations, dependent: :destroy
   has_many :shipment_feedbacks, dependent: :destroy
+  has_many :trackings, dependent: :destroy
 
   mount_uploader :picture, ShipmentPictureUploader
   resourcify
@@ -114,7 +116,11 @@ class Shipment < ActiveRecord::Base
     end
 
     event :shipped do
-      transitions from: :bidding, to: :picked_up
+      transitions from: :bidding, to: :in_transit
+    end
+
+    event :reject_offer do
+      transitions from: :bidding, to: :pending
     end
 
   end

@@ -47,8 +47,12 @@ Rails.application.routes.draw do
           post :invite_carrier
         end
       end
-    end
 
+      resources :trackings, except: [:new, :update, :edit, :show] do
+
+      end
+
+    end# END V1
     # api_version(module: 'V2', path: {value: 'v2'}, default: true) do
     #
     # end

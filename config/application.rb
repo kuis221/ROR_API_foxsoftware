@@ -38,6 +38,10 @@ module FoxSoftware
       g.factory_girl true
       g.test_framework  :rspec
       g.integration_tool :rspec
+      g.stylesheets     false
+      g.javascripts     false
+      g.assets  false
+      g.helper  false
     end
 
     config.action_mailer.default_url_options = { host: Settings.host }

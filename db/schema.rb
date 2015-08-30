@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150830100219) do
+ActiveRecord::Schema.define(version: 20150830142100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,6 +156,19 @@ ActiveRecord::Schema.define(version: 20150830100219) do
   end
 
   add_index "shipments_ship_invitations", ["shipment_id", "ship_invitations_id"], name: "ship_invitations_habtm", using: :btree
+
+  create_table "trackings", force: :cascade do |t|
+    t.integer  "shipment_id"
+    t.integer  "user_id"
+    t.string   "location"
+    t.text     "notes"
+    t.datetime "checkpoint_time"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "trackings", ["shipment_id"], name: "index_trackings_on_shipment_id", using: :btree
+  add_index "trackings", ["user_id"], name: "index_trackings_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email"

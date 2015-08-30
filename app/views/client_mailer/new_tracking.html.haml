@@ -1,0 +1,12 @@
+%p
+  Hello,
+  = @client.name
+
+%p
+  New tracking added to your shipment ID:
+  = link_to @shipment.id, "#{Settings.host}/my/shipments/#{@shipment.id}"
+
+%p
+  Thank You
+  Fox LMP
+
