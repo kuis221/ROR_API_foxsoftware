@@ -9,7 +9,9 @@ class Api::V1::JsonPresenter
   def self.hash_for(model, attributes)
     res = {}
     attributes.map do |attr|
-      res[attr] = model.send attr
+      # datetime or related object classes does not using :default format that called in initializer
+      value = model[attr].is_a?(ActiveSupport::TimeWithZone) ? model[attr].to_s : model.send(attr)
+      res[attr] = value
     end
     res
   end

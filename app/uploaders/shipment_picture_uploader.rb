@@ -48,7 +48,7 @@ class ShipmentPictureUploader < CarrierWave::Uploader::Base
   #   "something.jpg" if original_filename
   # end
 
-  def default_url(*args)
-    ActionController::Base.helpers.asset_path("shipments_fallback/" + [version_name, "default.png"].compact.join('_'))
-  end
+  # def default_url(*args)
+  #   ActionController::Base.helpers.asset_path("shipments_fallback/" + [version_name, "default.png"].compact.join('_'))
+  # end
 end

@@ -25,8 +25,10 @@ describe Api::V1::ShipmentsController do
     it 'should read invited shipment' do
       json_query :get, :show, id: @shipment.id, invitation: @shipment.secret_id
       expect(@json[:id]).to eq @shipment.id
-      # check for proper hash respond(should not return all attrs like for owner of shipment)
-      expect(@json[:private_bidding]).to be nil
+      keys =  Api::V1::ShipmentPresenter::HASH
+      keys.each do |key|
+        expect(@json[key.to_sym].to_s).to eq @shipment[key].to_s
+      end
     end
 
     it 'should not read invited shipment with wrong secret_id' do

@@ -55,9 +55,11 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
         connections = create_list :friendship, 3, user: @logged_in_user, type_of: opposite_role(user_role)
         json_query :get, :index
         expect(@json[:results].size).to eq 3
+        friend_names = connections.map(&:friend).map(&:name)
+        friend_ids = connections.map(&:friend_id)
         @json[:results].each do |fs|
-          expect(connections.map(&:friend_id)).to include fs['friend']['id']
-          expect(connections.map(&:friend).map(&:name)).to include fs['friend']['name']
+          expect(friend_ids).to include fs['friend']['id']
+          expect(friend_names).to include fs['friend']['name']
         end
       end
 
@@ -100,7 +102,7 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
 
   it_behaves_like 'user_connections' do
     let(:user_role) { :carrier }
-    let(:user_role) { :client }
+    # let(:user_role) { :client }
   end
 
   it_behaves_like 'client_connections'
