@@ -26,13 +26,13 @@ class Bid < ActiveRecord::Base
 
   resourcify
 
-  # Do not use it to
+  # Do not use it here
   # ATTRS = {
   #     price: {desc: 'Price', required: :required, type: :double},
   #     shipment_id: {desc: 'Shipment ID', required: :required, type: :integer}
   # }
 
-  validates_presence_of :price, :shipment_id
+  validates_presence_of :price, :shipment_id, :equipment_type
   after_validation :validate_shipment
 
   # Check that associated shipment has ship invitation

@@ -79,7 +79,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
         expect(@json[:id]).to eq shipment.id
 
         ## Bid on it
-        expect { post '/api/v1/bids', {bid: {price: 109.32, shipment_id: shipment.id}}, headers }.to change{Bid.count}.by(1)
+        expect { post '/api/v1/bids', {bid: {price: 109.32, shipment_id: shipment.id, equipment_type: 'C130'}}, headers }.to change{Bid.count}.by(1)
         read_json_response :post
         expect(@json[:status]).to eq 'ok'
         bid = Bid.last

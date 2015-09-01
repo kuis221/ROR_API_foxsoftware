@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Api::V1::BidsController do
-  let(:attrs) { {price: 22.11, shipment_id: @shipment.id} }
+  let(:attrs) { {price: 22.11, shipment_id: @shipment.id, equipment_type: 'Semi-trailer'} }
 
   login_user
 
@@ -47,12 +47,20 @@ describe Api::V1::BidsController do
       end
     end
 
-    context "Creating a new [{way.to_s.upcase}] bid" do
+    context "Creating a new bid" do
       it 'normally' do
         expect {
           json_query :post, :create, bid: attrs
           expect(@json[:status]).to eq 'ok'
         }.to change{Bid.count}.by(1)
+      end
+
+      it 'should not create without equipment_type' do
+        attrs[:equipment_type] = nil
+        expect {
+          json_query :post, :create, bid: attrs
+          expect(@json[:error]).to eq 'not_saved'
+        }.not_to change{Bid.count}
       end
 
       it 'should not allow when shipment not in correct state' do

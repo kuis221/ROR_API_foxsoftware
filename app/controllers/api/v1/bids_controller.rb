@@ -45,6 +45,7 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     notes 'This endpoint provide creation of new bid for shipment. Only user with <strong>carrier</strong> role can do this.'
     param :form, 'bid[price]', :double, :required, desc: 'Offered price'
     param :form, 'bid[shipment_id]', :integer, :required, desc: 'Shipment ID'
+    param :form, 'bid[equipment_type]', :string, :required, desc: 'Equipment type'
     response 'limit_reached', "When user reached bid limit on this shipment. Current quota: #{Settings.bid_limit}"
     response 'no_access', "User can't bid on this shipment, no invitation for private bidding"
     response 'not_saved', 'Bad price or shipment is not active'
@@ -77,6 +78,6 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
   end
 
   def allowed_params
-    params.require(:bid).permit(:price, :shipment_id)
+    params.require(:bid).permit(:price, :shipment_id, :equipment_type)
   end
 end

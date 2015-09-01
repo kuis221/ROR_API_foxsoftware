@@ -19,6 +19,7 @@
 FactoryGirl.define do
   factory :bid do
     price {FFaker.numerify("##.##")}
+    equipment_type {FFaker::NatoAlphabet.callsign}
     user
     shipment
   end
