@@ -52,6 +52,9 @@ describe Api::V1::BidsController do
         expect {
           json_query :post, :create, bid: attrs
           expect(@json[:status]).to eq 'ok'
+          expect(ActionMailer::Base.deliveries.count).to eq 1
+          body = ActionMailer::Base.deliveries.first.body.raw_source
+          expect(body).to include('You have new bid for Shipment ID:')
         }.to change{Bid.count}.by(1)
       end
 
@@ -60,6 +63,7 @@ describe Api::V1::BidsController do
         expect {
           json_query :post, :create, bid: attrs
           expect(@json[:error]).to eq 'not_saved'
+          expect(ActionMailer::Base.deliveries.count).to eq 0
         }.not_to change{Bid.count}
       end
 

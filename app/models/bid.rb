@@ -26,6 +26,7 @@ class Bid < ActiveRecord::Base
 
   resourcify
 
+  after_create :send_notification
   # Do not use it here
   # ATTRS = {
   #     price: {desc: 'Price', required: :required, type: :double},
@@ -39,5 +40,9 @@ class Bid < ActiveRecord::Base
   def validate_shipment
     self.errors.add(:shipment_id, 'has no invitation for current user (Bid model)') if shipment.try(:private_bidding?) && user.invitation_for?(shipment).blank?
     self.errors.add(:shipment_id, 'is in invalid state for bidding') unless shipment.try(:bidding?)
+  end
+
+  def send_notification
+    ClientMailer.new_bid(self).deliver_now
   end
 end

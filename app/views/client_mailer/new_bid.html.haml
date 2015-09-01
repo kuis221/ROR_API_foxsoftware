@@ -1,0 +1,12 @@
+%p
+  Hello,
+  = @client.name
+
+%p
+  You have new bid for Shipment ID:
+  = link_to @shipment.id, "#{Settings.host}/my/shipments/#{@shipment.id}/bids"
+
+%p
+  Thank You
+  Fox LMP
+
