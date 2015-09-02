@@ -108,6 +108,7 @@ class Shipment < ActiveRecord::Base
   aasm do # add whiny_transitions: true to return true/false
     state :pending, initial: true
     state :proposing
+    state :offered
     state :in_transit
     state :delivered
     state :completed
@@ -115,6 +116,10 @@ class Shipment < ActiveRecord::Base
 
     event :auction do
       transitions from: :pending, to: :proposing
+    end
+
+    event :negotiation do
+      transitions from: :proposing, to: :offered
     end
 
     event :shipped do
