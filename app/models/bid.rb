@@ -23,6 +23,7 @@ class Bid < ActiveRecord::Base
   scope :with_shipment, ->(shipment_id) {where(shipment_id: shipment_id)}
   scope :by_highest, ->() {order('bids.price DESC')}
   scope :by_lowest, ->() {order('bids.price ASC')}
+  scope :from_user, ->(user) {where('bids.user_id = ?', user.id)}
 
   resourcify
 
@@ -36,7 +37,9 @@ class Bid < ActiveRecord::Base
   validates_presence_of :price, :shipment_id, :equipment_type
   after_validation :validate_shipment
 
-  # Check that associated shipment has ship invitation
+  # Check that associated shipment has:
+  # -> ship invitation
+  # -> is in correct state
   def validate_shipment
     self.errors.add(:shipment_id, 'has no invitation for current user (Bid model)') if shipment.try(:private_bidding?) && user.invitation_for?(shipment).blank?
     self.errors.add(:shipment_id, 'is in invalid state for bidding') unless shipment.try(:bidding?)

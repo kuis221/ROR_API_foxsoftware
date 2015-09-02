@@ -22,9 +22,9 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
   end
   # :nocov:
   def index
-    @bids = current_user.bids.order('bids.created_at DESC')
-    @bids = @bids.with_shipment(params[:shipment_id]) if params[:shipment_id]
-    render_json @bids.page(page).per(limit)
+    bids = current_user.bids.order('bids.created_at DESC')
+    bids = bids.with_shipment(params[:shipment_id]) if params[:shipment_id]
+    render_json bids.page(page).per(limit)
   end
 
   # :nocov:
