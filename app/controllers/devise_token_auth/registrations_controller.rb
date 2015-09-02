@@ -17,7 +17,7 @@ module DeviseTokenAuth
       param :form, :password, :string, :required, 'Password'
       param :form, :password_confirmation, :string, :required, 'Password confirmation'
       param :form, :about, :string, :optional, 'About me'
-      param :form, :user_type, :string, :required, "User type, 'carrier' or 'client'"
+      param :form, :user_type, :string, :required, "User type, 'carrier' or 'shipper'"
       param :form, :invitation, :string, :optional, 'Invitation code, pass from query string if available. IF invitation present and valid then new user will be assigned with carrier role regardless of user_type field'
       # param :form, :provider, :string, :required, "Provider, one of: (email,facebook,google_oauth2,linkedin)", {defaultValue: 'email'}
       response 'not_valid'

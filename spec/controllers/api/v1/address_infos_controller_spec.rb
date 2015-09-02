@@ -73,7 +73,7 @@ RSpec.describe Api::V1::AddressInfosController, type: :controller do
     end
   end
 
-  context 'Setting default addresses for client' do
+  context 'Setting default addresses for shipper' do
     before do
       ## main to change
       @receiver_info = create :receiver_info, user: @logged_in_user

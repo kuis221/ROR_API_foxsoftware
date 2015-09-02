@@ -5,10 +5,10 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
     @request.env["devise.mapping"] = Devise.mappings[:user]
   end
 
-  context 'client user with email' do
+  context 'shipper user with email' do
     let(:attrs) { {password: '123123', password_confirmation: '123123', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
 
-    it 'should properly register user with client role' do
+    it 'should properly register user with shipper role' do
       expect {
         json_query :post, :create, attrs
       }.to change{User.count}.by(1)
@@ -20,7 +20,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       # expect(user.uid).to eq response.headers['uid']
       # expect(user.tokens[token_client]['expiry'].to_s).to eq response.headers['expiry']
       expect(user.has_role?(:user)).to eq true
-      expect(user.has_role?(:client)).to eq true
+      expect(user.has_role?(:shipper)).to eq true
       attrs.each_pair do |k,v|
         next if [:password, :password_confirmation].include?(k)
         expect(user[k]).to eq v
@@ -47,7 +47,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
         expect(user.ship_invitations.first.id).to eq ship_invitation.id
         expect(user.has_role?(:user)).to eq true
         expect(user.has_role?(:carrier)).to eq true
-        expect(user.has_role?(:client)).to eq false
+        expect(user.has_role?(:shipper)).to eq false
       end
 
       it "and has no someone's else invitation" do
@@ -85,7 +85,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
     end
   end
 
-  context 'client user with oauth' do
+  context 'shipper user with oauth' do
     let(:attrs) { {provider: 'facebook', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
 
     # TODO

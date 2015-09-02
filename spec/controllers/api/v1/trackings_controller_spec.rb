@@ -9,15 +9,15 @@ RSpec.describe Api::V1::TrackingsController, type: :controller do
   # end
   #
   # it_behaves_like 'tracking' do
-  #   let(:role) { :client }
+  #   let(:role) { :shipper }
   #   let(:role) { :carrier }
   # end
-  context 'client' do
+  context 'shipper' do
     before do
-      @logged_in_user.add_role :client
+      @logged_in_user.add_role :shipper
     end
 
-    it 'should load client shipment trackings' do
+    it 'should load shipper shipment trackings' do
       shipment = create :shipment, user: @logged_in_user, aasm_state: :in_transit
       user = create :carrier
       create_list :tracking, 4, shipment: shipment, user: user
@@ -25,8 +25,8 @@ RSpec.describe Api::V1::TrackingsController, type: :controller do
       expect(@json[:results].size).to eq 4
     end
 
-    it 'should not load other client trackings' do
-      user = create :client
+    it 'should not load other shipper trackings' do
+      user = create :shipper
       shipment = create :shipment, user: user, aasm_state: :in_transit
       create_list :tracking, 1, shipment: shipment
       json_query :get, :index, shipment_id: shipment.id

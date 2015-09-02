@@ -43,7 +43,7 @@ class Tracking < ActiveRecord::Base
     self.errors.add(:shipment_id, 'is in invalid state for tracking') if shipment.try(:state) != :in_transit
   end
 
-  # send email to client about new tracking
+  # send email to shipper about new tracking
   def notify_client
     ClientMailer.new_tracking(self).deliver_now
   end

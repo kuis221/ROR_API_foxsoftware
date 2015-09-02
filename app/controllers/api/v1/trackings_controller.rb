@@ -14,7 +14,7 @@ class Api::V1::TrackingsController < Api::V1::ApiBaseController
   def index
     if current_user.has_role?(:carrier)
       trackings = current_user.trackings.for_shipment(@shipment).by_newest
-    elsif current_user.has_role?(:client)
+    elsif current_user.has_role?(:shipper)
       if @shipment.user == current_user
         trackings = @shipment.trackings
       else

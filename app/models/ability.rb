@@ -14,7 +14,7 @@ class Ability
     can :access, :rails_admin
     can :dashboard
     # See more user cases for rails_admin: https://github.com/sferik/rails_admin/wiki/CanCan
-  elsif user.client?
+  elsif user.shipper?
     # can read only his own shipments
     can :manage, Shipment, user_id: user.id
     # And read proposals related to his shipments
@@ -30,7 +30,7 @@ class Ability
     can :manage, Proposal, user_id: user.id
     can :read, Shipment
     can :manage, Tracking, user_id: user.id
-  elsif user.has_role?(:user) # both client and carrier can manage their address_infos and shipment_feedbacks
+  elsif user.has_role?(:user) # both shipper and carrier can manage their address_infos and shipment_feedbacks
     can :manage, AddressInfo, user_id: user.id
     can [:read, :create, :update], ShipmentFeedback, user_id: user.id
   else

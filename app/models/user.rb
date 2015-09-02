@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
 
   # by default all users get :user role. second role  depends on params[:user_type]
   def assign_role_by_param(user_type)
-    role = :client
+    role = :shipper
     role = :carrier if user_type == 'carrier'
     add_role role
   end
@@ -111,8 +111,8 @@ class User < ActiveRecord::Base
     has_role?(:admin)
   end
 
-  def client?
-    has_role?(:client)
+  def shipper?
+    has_role?(:shipper)
   end
 
   def carrier?

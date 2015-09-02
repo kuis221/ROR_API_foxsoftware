@@ -18,10 +18,10 @@
 class Friendship < ActiveRecord::Base
   belongs_to :user
   belongs_to :friend, class_name: 'User'
-  # Type of friendship relation - client has many carriers or carrier has many clients
-  TYPE_OF = %w(client carrier) # do not change order of array
+  # Type of friendship relation - shipper has many carriers or carrier has many clients
+  TYPE_OF = %w(shipper carrier) # do not change order of array
 
-  scope :clients, ->() {where(type_of: TYPE_OF.first)}
+  scope :shippers, ->() {where(type_of: TYPE_OF.first)}
   scope :carriers, ->() {where(type_of: TYPE_OF.last)}
 
   validates :type_of, inclusion: TYPE_OF

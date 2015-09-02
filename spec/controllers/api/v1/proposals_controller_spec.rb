@@ -117,7 +117,7 @@ describe Api::V1::ProposalsController do
   context 'not a carrier user' do
     login_user
     before do
-      @logged_in_user.add_role :client
+      @logged_in_user.add_role :shipper
       @shipment = create :shipment
     end
 

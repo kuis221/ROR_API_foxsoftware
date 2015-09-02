@@ -181,18 +181,18 @@ describe Api::V1::ShipmentsController do
     login_user
 
     before do
-      @logged_in_user.add_role :client
+      @logged_in_user.add_role :shipper
     end
 
     context 'listing' do
-      it 'should let client list his shipments' do
+      it 'should let shipper list his shipments' do
         create_list :shipment, 2, user: @logged_in_user
         json_query :get, :index
         expect(@json[:results].size).to eq 2
         expect(@json[:results].first['active']).to eq true
       end
 
-      it 'should let client list his shipment with proposals, even not active' do
+      it 'should let shipper list his shipment with proposals, even not active' do
         shipment = create :shipment, user: @logged_in_user, private_proposing: false, active: false
         shipment.auction!
         proposals_count = (rand*10).to_i
@@ -204,7 +204,7 @@ describe Api::V1::ShipmentsController do
         expect(@json[:results][0]['user']['name']).not_to eq ''
       end
 
-      it 'should not let client list other shipments' do
+      it 'should not let shipper list other shipments' do
         create_list :shipment, 2
         json_query :get, :index
         expect(@json[:results].size).to eq 0
@@ -221,7 +221,7 @@ describe Api::V1::ShipmentsController do
         @invs = ['some@email.com', 'other@email.com']
       end
 
-      it 'should let client create new shipment with invitations' do
+      it 'should let shipper create new shipment with invitations' do
         expect {
           json_query :post, :create, shipment: attrs, invitations: {emails: @invs}
           expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], @invs)
@@ -230,7 +230,7 @@ describe Api::V1::ShipmentsController do
         expect(@json[:secret_id]).not_to be blank?
       end
 
-      it 'should let client create new shipment as draft' do
+      it 'should let shipper create new shipment as draft' do
         expect {
           json_query :post, :create, shipment: attrs, state: 'pending'
         }.to change{Shipment.count}
@@ -273,7 +273,7 @@ describe Api::V1::ShipmentsController do
         }.not_to change{Shipment.count}
       end
 
-      it 'should not let client create invalid shipment' do
+      it 'should not let shipper create invalid shipment' do
         attrs[:price] = nil
         expect {
           json_query :post, :create, shipment: attrs
@@ -288,7 +288,7 @@ describe Api::V1::ShipmentsController do
           @shipment = create :shipment, user: @logged_in_user
         end
 
-        it 'should let client edit its own shipment' do
+        it 'should let shipper edit its own shipment' do
           expect {
             json_query :put, :update, id: @shipment.id, shipment: {price: 22.32}
             expect(@json[:status]).to eq 'ok'
@@ -315,7 +315,7 @@ describe Api::V1::ShipmentsController do
           }.not_to change(@shipment, :price)
         end
 
-        it 'should not let client save bad details' do
+        it 'should not let shipper save bad details' do
           expect {
             json_query :put, :update, id: @shipment.id, shipment: {price: ''}
             expect(@json[:error]).to eq 'not_saved'
@@ -323,7 +323,7 @@ describe Api::V1::ShipmentsController do
           }.not_to change(@shipment, :price)
         end
 
-        it "should not let client edit someone's shipment" do
+        it "should not let shipper edit someone's shipment" do
           shipment = create :shipment
           expect {
             json_query :put, :update, id: shipment.id, shipment: {price: '22222.22'}

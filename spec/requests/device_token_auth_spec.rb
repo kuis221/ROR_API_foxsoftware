@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe DeviseTokenAuth::RegistrationsController, type: :request do
 
-  context 'client user with email' do
+  context 'shipper user with email' do
     let(:attrs) { {password: '123123', password_confirmation: '123123', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
 
-    it 'should create and confirm client user' do
+    it 'should create and confirm shipper user' do
       expect { post '/auth', attrs}.to change{User.count}.by(1)
       expect(ActionMailer::Base.deliveries.size).to eq 1
       user = User.last
@@ -23,7 +23,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
     end
 
     # this complex flow represent user:
-    # -> clicking a link in invitation email (send by client user)
+    # -> clicking a link in invitation email (send by shipper user)
     # -> register without confirmation
     # -> attach ship_invitation
     # -> can browse private shipment
@@ -37,8 +37,8 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
 
       it 'should do it' do
         ## Initialization
-        client = create :client
-        shipment = create :shipment, user: client, private_proposing: true
+        shipper = create :shipper
+        shipment = create :shipment, user: shipper, private_proposing: true
         ship_inv = create :ship_invitation, shipment: shipment, invitee_email: @carrier_email
         shipment.auction!
         CarrierMailer.send_invitation(shipment, @carrier_email).deliver_now
@@ -95,7 +95,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
     end
   end
 
-  context 'client user with oauth' do
+  context 'shipper user with oauth' do
     let(:attrs) { {provider: 'facebook', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
     # TODO, write oauth test
   end

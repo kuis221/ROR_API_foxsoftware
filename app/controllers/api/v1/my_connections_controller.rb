@@ -8,7 +8,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   swagger_controller :my_connection, 'User connections'
   swagger_api :index do
     summary 'LIST user connections'
-    notes 'Depends on user role it will load his connections, for client user will load carriers and vice versa'
+    notes 'Depends on user role it will load his connections, for shipper user will load carriers and vice versa'
     response 'ok', "{'results': ArrayOfConnectionObject}"
   end
   # :nocov:
@@ -32,7 +32,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :create do
     summary 'CREATE a connection'
-    notes 'Create connection between current user and other user, Users must have opposite roles. For example, current_user(client) add carrier.'
+    notes 'Create connection between current user and other user, Users must have opposite roles. For example, current_user(shipper) add carrier.'
     param :form, :friend_id, :string, :required, 'Opposite user ID'
     response 'ok', 'ConnectionObject'
     response 'not_saved'
@@ -55,7 +55,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   end
   # :nocov:
   def invite_carrier
-    validate_role(:client)
+    validate_role(:shipper)
     emails = params[:emails]
     emails_ok = true
     emails.each {|e| emails_ok = false unless e.valid_email? }
@@ -82,7 +82,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   end
 
   private
-  # depends on user role we set friendships scope. carrier have client friendships and vice versa.
+  # depends on user role we set friendships scope. carrier have shipper friendships and vice versa.
   def set_connection_type
     @conn_type = current_user.has_role?(:carrier) ? Friendship::TYPE_OF.first : Friendship::TYPE_OF.last
   end

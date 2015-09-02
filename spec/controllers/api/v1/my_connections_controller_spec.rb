@@ -8,7 +8,7 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
     before do
       @shipment = create :shipment, user: @logged_in_user
       @emails = []
-      @logged_in_user.add_role :client
+      @logged_in_user.add_role :shipper
       5.times{|e| @emails << FFaker::Internet.email }
     end
 
@@ -102,12 +102,12 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
 
   it_behaves_like 'user_connections' do
     let(:user_role) { :carrier }
-    # let(:user_role) { :client }
+    # let(:user_role) { :shipper }
   end
 
   it_behaves_like 'client_connections'
 
   def opposite_role(role)
-    role == :client ? :carrier : :client
+    role == :shipper ? :carrier : :shipper
   end
 end

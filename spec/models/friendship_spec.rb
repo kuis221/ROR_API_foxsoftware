@@ -18,5 +18,5 @@
 require 'rails_helper'
 
 RSpec.describe Friendship, type: :model do
-  # TODO add validation examples. to test client can add carrier only
+  # TODO add validation examples. to test shipper can add carrier only
 end

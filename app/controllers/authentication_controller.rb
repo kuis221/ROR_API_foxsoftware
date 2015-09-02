@@ -1,7 +1,7 @@
 class AuthenticationController < ApplicationController
   # this is stub controller created for documentation
 
-  swagger_controller :authentication, 'Authenticating Fox Software API'
+  swagger_controller :authentication, 'Authenticating Fox LMP API'
 
   swagger_api :registration do
     summary 'This part explain how authentication should be make'

@@ -1,7 +1,7 @@
 roles:
   - :user
   - :admin
-  - :client
+  - :shipper
   - :carrier
 default_role: :user
 index_list: 10

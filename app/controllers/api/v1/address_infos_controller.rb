@@ -1,5 +1,5 @@
 class Api::V1::AddressInfosController < Api::V1::ApiBaseController
-  # only for current user with client permission
+  # only for current user with shipper permission
   # load_and_authorize_resource # probably only authorize_resource (we use our loads)
   before_filter :find_address_info, except: [:index, :create, :my_defaults]
 

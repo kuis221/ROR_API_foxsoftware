@@ -62,9 +62,9 @@ FactoryGirl.define do
     end
   end
 
-  factory :client, parent: :user do
+  factory :shipper, parent: :user do
     after :create do |user|
-      user.add_role :client
+      user.add_role :shipper
     end
   end
 
