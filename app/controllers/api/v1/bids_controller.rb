@@ -1,7 +1,7 @@
 class Api::V1::BidsController < Api::V1::ApiBaseController
 
   authorize_resource # so only carrier can get in, part of cancan
-  before_filter :find_bid, only: [:show]
+  before_filter :find_bid, only: [:show, :destroy]
 
   # :nocov:
   swagger_controller :bids, 'Bids resource'
@@ -70,6 +70,23 @@ class Api::V1::BidsController < Api::V1::ApiBaseController
     else
       render_error :not_saved
     end
+  end
+
+  # :nocov:
+  swagger_api :destroy do
+    summary 'RETRACT Bid'
+    notes 'Retract a bid for current_user. Client will get notification about the bid and bid status became retracted.'
+    params :path, :id, :integer, :requred, 'Bid ID'
+    response 'ok'
+    response 'not_found', 'Bid not found with that user'
+  end
+  # :nocov:
+  # this is the rectract by the bidder(eg: carrier).
+  # TODO implement.
+  def destroy
+    @bid.retract!
+    ClientMailer.bid_retracted(@bid)
+    render_ok
   end
 
   private

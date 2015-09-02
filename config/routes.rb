@@ -22,7 +22,7 @@ Rails.application.routes.draw do
           get :my_invitations
         end
       end
-      resources :bids, except: [:destroy] do
+      resources :bids do
 
       end
       resources :shipment_feedbacks

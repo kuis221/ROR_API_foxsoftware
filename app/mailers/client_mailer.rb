@@ -12,4 +12,12 @@ class ClientMailer < ApplicationMailer
     @client = @shipment.user
     mail to: @client.email, subject: "New bid for shipment: #{@shipment.id}"
   end
+
+  def bid_retracted(bid)
+    @shipment = bid.shipment
+    @client = @shipment.user
+    @bid = bid
+    mail to: @client.email, subject: "Bid retracted for shipment: #{@shipment.id} by #{bid.user.name}"
+  end
+
 end
