@@ -34,19 +34,6 @@ ActiveRecord::Schema.define(version: 20150901120503) do
 
   add_index "address_infos", ["is_default"], name: "index_address_infos_on_is_default", using: :btree
 
-  create_table "bids", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "shipment_id"
-    t.decimal  "price",          precision: 10, scale: 2
-    t.inet     "ip"
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-    t.string   "equipment_type"
-  end
-
-  add_index "bids", ["shipment_id"], name: "index_bids_on_shipment_id", using: :btree
-  add_index "bids", ["user_id"], name: "index_bids_on_user_id", using: :btree
-
   create_table "friendships", force: :cascade do |t|
     t.integer  "friend_id"
     t.integer  "user_id"
@@ -74,6 +61,19 @@ ActiveRecord::Schema.define(version: 20150901120503) do
   end
 
   add_index "identities", ["uid", "provider"], name: "index_identities_on_uid_and_provider", using: :btree
+
+  create_table "proposals", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "shipment_id"
+    t.decimal  "price",          precision: 10, scale: 2
+    t.inet     "ip"
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+    t.string   "equipment_type"
+  end
+
+  add_index "proposals", ["shipment_id"], name: "index_proposals_on_shipment_id", using: :btree
+  add_index "proposals", ["user_id"], name: "index_proposals_on_user_id", using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string   "name"
@@ -125,7 +125,7 @@ ActiveRecord::Schema.define(version: 20150901120503) do
     t.integer  "user_id"
     t.integer  "original_shipment_id"
     t.boolean  "hazard",                                        default: false
-    t.boolean  "private_bidding",                               default: false
+    t.boolean  "private_proposing",                             default: false
     t.boolean  "active",                                        default: true
     t.boolean  "stackable",                                     default: true
     t.decimal  "price",                precision: 10, scale: 2
@@ -142,7 +142,7 @@ ActiveRecord::Schema.define(version: 20150901120503) do
     t.datetime "pickup_at_to"
     t.datetime "arrive_at_from"
     t.datetime "arrive_at_to"
-    t.boolean  "hide_bids",                                     default: false
+    t.boolean  "hide_proposals",                                default: false
     t.string   "track_frequency"
   end
 
@@ -151,13 +151,6 @@ ActiveRecord::Schema.define(version: 20150901120503) do
   add_index "shipments", ["receiver_info_id"], name: "index_shipments_on_receiver_info_id", using: :btree
   add_index "shipments", ["shipper_info_id"], name: "index_shipments_on_shipper_info_id", using: :btree
   add_index "shipments", ["user_id"], name: "index_shipments_on_user_id", using: :btree
-
-  create_table "shipments_ship_invitations", id: false, force: :cascade do |t|
-    t.integer "shipment_id"
-    t.integer "ship_invitations_id"
-  end
-
-  add_index "shipments_ship_invitations", ["shipment_id", "ship_invitations_id"], name: "ship_invitations_habtm", using: :btree
 
   create_table "trackings", force: :cascade do |t|
     t.integer  "shipment_id"

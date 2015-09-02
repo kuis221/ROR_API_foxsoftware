@@ -9,7 +9,7 @@
       "operations": [
         {
           "summary": "Create user with email",
-          "notes": "When invited user register, we will find and assign all shipment invitations by email, so later you can load them from <strong>my_invitations</strong> query",
+          "notes": "When invited by user(url with query string <strong>invitation=</strong>, we will find and assign all shipment invitations by email, so later you can load them from <strong>my_invitations</strong> query",
           "parameters": [
             {
               "paramType": "form",
@@ -59,6 +59,13 @@
               "type": "string",
               "description": "User type, 'carrier' or 'client'",
               "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "invitation",
+              "type": "string",
+              "description": "Invitation code, pass from query string if available. IF invitation present and valid then new user will be assigned with carrier role regardless of user_type field",
+              "required": false
             }
           ],
           "responseMessages": [

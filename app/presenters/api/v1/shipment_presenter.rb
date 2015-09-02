@@ -9,10 +9,10 @@ class Api::V1::ShipmentPresenter < Api::V1::JsonPresenter
       hash = Api::V1::ShipmentPresenter::HASH
     end
     json = hash_for(shipment, hash)
-    low_bid  = shipment.low_bid
-    high_bid = shipment.high_bid
-    avg_bid = shipment.avg_bid
-    json[:bids] = {low: low_bid, high: high_bid, avg: avg_bid} unless shipment.hide_bids?
+    low_proposal  = shipment.low_proposal
+    high_proposal = shipment.high_proposal
+    avg_proposal = shipment.avg_proposal
+    json[:proposals] = {low: low_proposal, high: high_proposal, avg: avg_proposal} unless shipment.hide_proposals?
     json
   end
 

@@ -45,7 +45,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :invite_carrier do
-    summary 'Invite carriers to bid on specific shipment'
+    summary 'Invite carriers to proposal on specific shipment'
     notes 'And email will be send to each email inviting people to our system.'
     param :form, :shipment_id, :integer, :required, 'Shipment ID from user scope'
     param :form, :emails, :array, :required, 'Carrier emails', {items: {:'$ref' => 'email'}}

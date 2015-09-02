@@ -8,7 +8,7 @@
       "path": "api/v1/my_connections/invite_carrier.json",
       "operations": [
         {
-          "summary": "Invite carriers to bid on specific shipment",
+          "summary": "Invite carriers to proposal on specific shipment",
           "notes": "And email will be send to each email inviting people to our system.",
           "parameters": [
             {

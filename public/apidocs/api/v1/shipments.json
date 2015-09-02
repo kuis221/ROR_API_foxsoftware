@@ -36,10 +36,10 @@
       ]
     },
     {
-      "path": "api/v1/shipments/{id}/lowest_bid.json",
+      "path": "api/v1/shipments/{id}/lowest_proposal.json",
       "operations": [
         {
-          "summary": "LOAD bid with lowest price",
+          "summary": "LOAD proposal with lowest price",
           "parameters": [
             {
               "paramType": "path",
@@ -56,9 +56,9 @@
               "message": "Shipping private and user has no access to it"
             },
             {
-              "code": "no_bids",
+              "code": "no_proposals",
               "responseModel": null,
-              "message": "No bids yet"
+              "message": "No proposals yet"
             },
             {
               "code": "not_found",
@@ -67,21 +67,21 @@
             },
             {
               "code": "ok",
-              "responseModel": "Bid",
+              "responseModel": "Proposal",
               "message": "Success"
             }
           ],
           "method": "get",
-          "nickname": "Api::V1::Shipments#lowest_bid"
+          "nickname": "Api::V1::Shipments#lowest_proposal"
         }
       ]
     },
     {
-      "path": "api/v1/shipments/{id}/current_bids.json",
+      "path": "api/v1/shipments/{id}/current_proposals.json",
       "operations": [
         {
-          "summary": "LIST all current bids for shipment",
-          "notes": "For author of shipment will render all bids, and for viewers will render non-private active shipment bids",
+          "summary": "LIST all current proposals for shipment",
+          "notes": "For author of shipment will render all proposals, and for viewers will render non-private active shipment proposals",
           "parameters": [
             {
               "paramType": "query",
@@ -114,9 +114,9 @@
               "message": "Shipping private/hidden and user has no access to it"
             },
             {
-              "code": "no_bids",
+              "code": "no_proposals",
               "responseModel": null,
-              "message": "No bids yet"
+              "message": "No proposals yet"
             },
             {
               "code": "not_found",
@@ -125,12 +125,12 @@
             },
             {
               "code": "ok",
-              "responseModel": "Bid",
+              "responseModel": "Proposal",
               "message": "Success"
             }
           ],
           "method": "get",
-          "nickname": "Api::V1::Shipments#current_bids"
+          "nickname": "Api::V1::Shipments#current_proposals"
         }
       ]
     },
@@ -162,7 +162,7 @@
             {
               "code": "ok",
               "responseModel": "Shipment",
-              "message": "Success"
+              "message": "{'results': [ShipmentObjects]}"
             }
           ],
           "method": "get",
@@ -221,12 +221,12 @@
             }
           ],
           "summary": "LIST all user shipments",
-          "notes": "For client user, list his created shipments. When listing with user_id - only public and active shipments will be shown",
+          "notes": "For current user, list owned shipments. When listing with user_id - only public and active shipments will be shown",
           "responseMessages": [
             {
               "code": "ok",
               "responseModel": "Shipment",
-              "message": "Success"
+              "message": "{'results': [ShipmentObjects]}"
             }
           ],
           "method": "get",
@@ -374,9 +374,9 @@
             },
             {
               "paramType": "form",
-              "name": "shipment[private_bidding]",
+              "name": "shipment[private_proposing]",
               "type": "boolean",
-              "description": "Is private bidding by link",
+              "description": "Is private auction by link",
               "required": false,
               "defaultValue": "false"
             },
@@ -446,6 +446,14 @@
             },
             {
               "paramType": "form",
+              "name": "shipment[track_frequency]",
+              "type": "string",
+              "description": "Required tracking frequency update, use: X.INTERVAL, like: 2.hours or 1.day ..",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
               "name": "invitations[emails]",
               "type": "array",
               "description": "Array of emails to invite carriers",
@@ -453,6 +461,14 @@
               "items": {
                 "$ref": "email"
               }
+            },
+            {
+              "paramType": "form",
+              "name": "state",
+              "type": "string",
+              "description": "Initial proposing status, default 'proposing'. For draft set 'pending'",
+              "required": false,
+              "defaultValue": "proposing"
             }
           ],
           "summary": "CREATE Shipment",
@@ -465,7 +481,7 @@
             {
               "code": "ok",
               "responseModel": "Shipment",
-              "message": "Success"
+              "message": "{ShipmentObject}"
             }
           ],
           "notes": "If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)",
@@ -684,9 +700,9 @@
             },
             {
               "paramType": "form",
-              "name": "shipment[private_bidding]",
+              "name": "shipment[private_proposing]",
               "type": "boolean",
-              "description": "Is private bidding by link",
+              "description": "Is private auction by link",
               "required": false,
               "defaultValue": "false"
             },
@@ -756,6 +772,14 @@
             },
             {
               "paramType": "form",
+              "name": "shipment[track_frequency]",
+              "type": "string",
+              "description": "Required tracking frequency update, use: X.INTERVAL, like: 2.hours or 1.day ..",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
               "name": "invitations[emails]",
               "type": "array",
               "description": "Array of emails to update list of invitations",
@@ -775,7 +799,7 @@
             {
               "code": "ok",
               "responseModel": "Shipment",
-              "message": "Success"
+              "message": "{ShipmentObject}"
             },
             {
               "code": "not_found",
@@ -897,9 +921,9 @@
           "type": "boolean",
           "description": "Is hazard"
         },
-        "private_bidding": {
+        "private_proposing": {
           "type": "boolean",
-          "description": "Is private bidding by link"
+          "description": "Is private auction by link"
         },
         "active": {
           "type": "boolean",
@@ -943,7 +967,15 @@
         },
         "auction_end_at": {
           "type": "datetime",
-          "description": "When shipment end taking any bids"
+          "description": "When shipment stop taking any proposals"
+        },
+        "hide_proposals": {
+          "type": "boolean",
+          "description": "Hide proposals for everyone except owner"
+        },
+        "track_frequency": {
+          "type": "string",
+          "description": "Required tracking frequency update, use: X.INTERVAL, like: 2.hours or 1.day .."
         }
       },
       "description": "Shipment object"

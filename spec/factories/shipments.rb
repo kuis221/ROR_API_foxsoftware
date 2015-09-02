@@ -18,7 +18,7 @@
 #  user_id              :integer
 #  original_shipment_id :integer
 #  hazard               :boolean          default(FALSE)
-#  private_bidding      :boolean          default(FALSE)
+#  private_proposing    :boolean          default(FALSE)
 #  active               :boolean          default(TRUE)
 #  stackable            :boolean          default(TRUE)
 #  price                :decimal(10, 2)
@@ -35,7 +35,8 @@
 #  pickup_at_to         :datetime
 #  arrive_at_from       :datetime
 #  arrive_at_to         :datetime
-#  hide_bids            :boolean          default(FALSE)
+#  hide_proposals       :boolean          default(FALSE)
+#  track_frequency      :string
 #
 # Indexes
 #
@@ -66,7 +67,7 @@ FactoryGirl.define do
     cubic_feet {rand(10)}
     unit_count {rand(10)}
     skids_count {rand(10)}
-    hide_bids false
+    hide_proposals false
     before :create do |shipment| # should be before creation to pass validations of model
       shipper_info = create :shipper_info, user: shipment.user
       receiver_info = create :receiver_info, user: shipment.user

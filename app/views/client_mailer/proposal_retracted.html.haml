@@ -1,0 +1,14 @@
+%p
+  Hello,
+  = @client.name
+
+%p
+  Proposal for Shipment ID has been retracted:
+  = link_to @shipment.id, "#{Settings.host}/my/shipments/#{@shipment.id}/proposals"
+  %br
+    Proposalder:
+    = @proposal.user.name
+%p
+  Thank You
+  Fox LMP
+

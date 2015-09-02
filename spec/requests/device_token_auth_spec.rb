@@ -27,7 +27,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
     # -> register without confirmation
     # -> attach ship_invitation
     # -> can browse private shipment
-    # -> can bid on it
+    # -> can proposal on it
 
     ## TODO maybe split that to examples and test both fail and success, or test inside ??
     context 'carrier flow' do
@@ -38,13 +38,13 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
       it 'should do it' do
         ## Initialization
         client = create :client
-        shipment = create :shipment, user: client, private_bidding: true
+        shipment = create :shipment, user: client, private_proposing: true
         ship_inv = create :ship_invitation, shipment: shipment, invitee_email: @carrier_email
         shipment.auction!
         CarrierMailer.send_invitation(shipment, @carrier_email).deliver_now
         expect(ActionMailer::Base.deliveries.size).to eq 1
         body = ActionMailer::Base.deliveries.last.body.raw_source
-        expect(body).to include 'You has been invited to private bidding on shipment'
+        expect(body).to include 'You has been invited to private auction on shipment'
         # <a href=\"http://localhost:3000/shipments/581?invitation=0YyuOMaO9BlJlbrEbIWHNXw\">http://localhost:3000/shipments/581?invitation=0YyuOMaO9BlJlbrEbIWHNXw</a>
         # Anyway nokogiri included by some gem dependencies..
         url = Nokogiri.HTML(body).search('a').map{ |a| a['href'] }.first
@@ -78,15 +78,15 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
         expect(@json[:error]).to be nil
         expect(@json[:id]).to eq shipment.id
 
-        ## Bid on it
-        expect { post '/api/v1/bids', {bid: {price: 109.32, shipment_id: shipment.id, equipment_type: 'C130'}}, headers }.to change{Bid.count}.by(1)
+        ## Proposal on it
+        expect { post '/api/v1/proposals', {proposal: {price: 109.32, shipment_id: shipment.id, equipment_type: 'C130'}}, headers }.to change{Proposal.count}.by(1)
         read_json_response :post
         expect(@json[:status]).to eq 'ok'
-        bid = Bid.last
-        expect(bid.user).to eq user
-        expect(bid.shipment).to eq shipment
+        proposal = Proposal.last
+        expect(proposal.user).to eq user
+        expect(proposal.shipment).to eq shipment
 
-        ## TODO more ? like bid listing
+        ## TODO more ? like proposal listing
       end
 
       # it 'goes wrong' do

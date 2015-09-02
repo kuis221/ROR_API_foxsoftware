@@ -16,8 +16,8 @@
       "description": "Shipment resource"
     },
     {
-      "path": "http://localhost:3000/apidocs/api/v1/bids.{format}",
-      "description": "Bids resource"
+      "path": "http://localhost:3000/apidocs/api/v1/proposals.{format}",
+      "description": "Proposals resource"
     },
     {
       "path": "http://localhost:3000/apidocs/api/v1/users.{format}",
@@ -30,10 +30,14 @@
     {
       "path": "http://localhost:3000/apidocs/api/v1/my_connections.{format}",
       "description": "User connections"
+    },
+    {
+      "path": "http://localhost:3000/apidocs/api/v1/trackings.{format}",
+      "description": "Shipment tracking resource"
     }
   ],
   "info": {
-    "title": "Fox Software",
+    "title": "Fox LMP",
     "contact": "cat.of.duty@gmail.com"
   }
 }

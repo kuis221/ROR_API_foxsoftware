@@ -12,17 +12,17 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     api_version(module: 'V1', path: {value: 'v1'}, default: true) do
 
-      resources :shipments do
+      resources :shipments, except: [:new, :edit] do
         member do
           post :toggle_active
-          get :lowest_bid
-          get :current_bids
+          get :lowest_proposal
+          get :current_proposals
         end
         collection do
           get :my_invitations
         end
       end
-      resources :bids do
+      resources :proposals, except: [:edit, :update] do
 
       end
       resources :shipment_feedbacks

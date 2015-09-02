@@ -2,10 +2,10 @@
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
   "basePath": "http://localhost:3000/",
-  "resourcePath": "bids",
+  "resourcePath": "proposals",
   "apis": [
     {
-      "path": "api/v1/bids.json",
+      "path": "api/v1/proposals.json",
       "operations": [
         {
           "parameters": [
@@ -70,22 +70,22 @@
               "defaultValue": 10
             }
           ],
-          "summary": "LIST all current user bids",
+          "summary": "LIST all current user proposals",
           "notes": "Sorted by newest at the top",
           "responseMessages": [
             {
               "code": "ok",
-              "responseModel": "Bid",
+              "responseModel": "Proposal",
               "message": "Success"
             }
           ],
           "method": "get",
-          "nickname": "Api::V1::Bids#index"
+          "nickname": "Api::V1::Proposals#index"
         }
       ]
     },
     {
-      "path": "api/v1/bids.json",
+      "path": "api/v1/proposals.json",
       "operations": [
         {
           "parameters": [
@@ -112,7 +112,7 @@
             },
             {
               "paramType": "form",
-              "name": "bid[price]",
+              "name": "proposal[price]",
               "type": "double",
               "description": {
                 "desc": "Offered price"
@@ -121,16 +121,25 @@
             },
             {
               "paramType": "form",
-              "name": "bid[shipment_id]",
+              "name": "proposal[shipment_id]",
               "type": "integer",
               "description": {
                 "desc": "Shipment ID"
               },
               "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "proposal[equipment_type]",
+              "type": "string",
+              "description": {
+                "desc": "Equipment type"
+              },
+              "required": true
             }
           ],
-          "summary": "CREATE a Bid",
-          "notes": "This endpoint provide creation of new bid for shipment. Only user with <strong>carrier</strong> role can do this.",
+          "summary": "CREATE a Proposal",
+          "notes": "This endpoint provide creation of new proposal for shipment. Only user with <strong>carrier</strong> role can do this.",
           "responseMessages": [
             {
               "code": "end_auction_date",
@@ -140,12 +149,12 @@
             {
               "code": "limit_reached",
               "responseModel": null,
-              "message": "When user reached bid limit on this shipment. Current quota: 99999"
+              "message": "When user reached proposal limit on this shipment. Current quota: 99999"
             },
             {
               "code": "no_access",
               "responseModel": null,
-              "message": "User can't bid on this shipment, no invitation for private bidding"
+              "message": "User can't proposal on this shipment, no invitation for private proposing"
             },
             {
               "code": "not_in_auction",
@@ -164,12 +173,12 @@
             }
           ],
           "method": "post",
-          "nickname": "Api::V1::Bids#create"
+          "nickname": "Api::V1::Proposals#create"
         }
       ]
     },
     {
-      "path": "api/v1/bids/{id}.json",
+      "path": "api/v1/proposals/{id}.json",
       "operations": [
         {
           "parameters": [
@@ -198,11 +207,11 @@
               "paramType": "path",
               "name": "id",
               "type": "integer",
-              "description": "Bid ID",
+              "description": "Proposal ID",
               "required": true
             }
           ],
-          "summary": "LOAD a bid",
+          "summary": "LOAD a proposal",
           "responseMessages": [
             {
               "code": "not_found",
@@ -211,51 +220,51 @@
             },
             {
               "code": "ok",
-              "responseModel": "Bid",
+              "responseModel": "Proposal",
               "message": "Success"
             }
           ],
           "method": "get",
-          "nickname": "Api::V1::Bids#show"
+          "nickname": "Api::V1::Proposals#show"
         }
       ]
     },
     {
-      "path": "api/v1/bids/{id}.json",
+      "path": "api/v1/proposals/{id}.json",
       "operations": [
         {
+          "summary": "RETRACT Proposal",
+          "notes": "Retract a proposal for current_user. Client will get notification about the proposal and proposal status became retracted.",
           "parameters": [
             {
-              "paramType": "header",
-              "name": "access-token",
-              "type": "string",
-              "description": "Logged in user access token",
-              "required": true
-            },
-            {
-              "paramType": "header",
-              "name": "uid",
-              "type": "string",
-              "description": "Logged in user UID(uid from oauth or email)",
-              "required": true
-            },
-            {
-              "paramType": "header",
-              "name": "client",
-              "type": "string",
-              "description": "Cliend ID",
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Proposal ID",
               "required": true
             }
           ],
-          "method": "patch",
-          "nickname": "Api::V1::Bids#update"
+          "responseMessages": [
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "Proposal not found with that user"
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": null
+            }
+          ],
+          "method": "delete",
+          "nickname": "Api::V1::Proposals#destroy"
         }
       ]
     }
   ],
   "models": {
-    "Bid": {
-      "id": "Bid",
+    "Proposal": {
+      "id": "Proposal",
       "required": [
         "shipment_id",
         "price"
@@ -278,7 +287,7 @@
           "description": "NAME"
         }
       },
-      "description": "Bid object"
+      "description": "Proposal object"
     }
   }
 }

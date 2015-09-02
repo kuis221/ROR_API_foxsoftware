@@ -280,7 +280,7 @@
             {
               "code": "ok",
               "responseModel": "AddressInfo",
-              "message": "Success"
+              "message": "{AddressInfoObject}"
             }
           ],
           "method": "post",
@@ -445,7 +445,7 @@
             {
               "code": "ok",
               "responseModel": "AddressInfo",
-              "message": "Success"
+              "message": "{AddressInfoObject}"
             }
           ],
           "method": "patch",

@@ -61,27 +61,27 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   end
 
   # :nocov:
-  swagger_api :lowest_bid do
-    summary 'LOAD bid with lowest price'
+  swagger_api :lowest_proposal do
+    summary 'LOAD proposal with lowest price'
     param :path, :id, :integer, :required, 'Shipment ID'
-    response 'ok', 'Success', :Bid
+    response 'ok', 'Success', :Proposal
     response 'not_found', 'No active shipment with this ID'
-    response 'no_bids', 'No bids yet'
+    response 'no_proposals', 'No proposals yet'
     response 'no_access', 'Shipping private and user has no access to it'
   end
   # :nocov:
-  def lowest_bid
+  def lowest_proposal
     shipment = Shipment.active.find params[:id] # 404 rescued_from by before_filter
     # shipment active and found beyond this point
     can = false
-    if shipment.private_bidding?
+    if shipment.private_proposing?
       can = true if current_user.invitation_for?(shipment)
     else
       can = true
     end
     if can # render
-      bid = shipment.bids.by_lowest.first
-      bid ? render_json(bid) : render(json:{status: 'no_bids'})
+      proposal = shipment.proposals.by_lowest.first
+      proposal ? render_json(proposal) : render(json:{status: 'no_proposals'})
       return
     end
     render_error 'no_access'
@@ -89,31 +89,31 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
 
 
   # :nocov:
-  swagger_api :current_bids do |api|
-    summary 'LIST all current bids for shipment'
-    notes "For author of shipment will render all bids, and for viewers will render non-private active shipment bids"
+  swagger_api :current_proposals do |api|
+    summary 'LIST all current proposals for shipment'
+    notes "For author of shipment will render all proposals, and for viewers will render non-private active shipment proposals"
     Api::V1::ApiBaseController.add_pagination_params(api)
     param :path, :id, :integer, :required, 'Shipment ID'
-    response 'ok', 'Success', :Bid
+    response 'ok', 'Success', :Proposal
     response 'not_found', 'No shipment with this ID'
-    response 'no_bids', 'No bids yet'
+    response 'no_proposals', 'No proposals yet'
     response 'no_access', 'Shipping private/hidden and user has no access to it'
   end
   # :nocov:
-  def current_bids
+  def current_proposals
     shipment = Shipment.find params[:id]
     if shipment.owned_by?(current_user)
       can = true
     else
-      if shipment.private_bidding? && shipment.active?
+      if shipment.private_proposing? && shipment.active?
         can = true if current_user.invitation_for?(shipment)
       else
         can = true if shipment.active?
       end
     end
     if can # render
-      bids = shipment.bids.by_highest.page(page).per(limit)
-      bids.count > 0 ? render_json(bids) : render(json:{status: 'no_bids'})
+      proposals = shipment.proposals.by_highest.page(page).per(limit)
+      proposals.count > 0 ? render_json(proposals) : render(json:{status: 'no_proposals'})
       return
     end
     render_error 'no_access'
@@ -123,7 +123,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   swagger_api :create do
     notes 'If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)'
     param :form, 'invitations[emails]', :array, :optional, 'Array of emails to invite carriers', {items: {:'$ref' => 'email'}}
-    param :form, :state, :string, :optional, "Initial bidding status, default 'bidding'. For draft set 'pending'", defaultValue: 'bidding'
+    param :form, :state, :string, :optional, "Initial proposing status, default 'proposing'. For draft set 'pending'", defaultValue: 'proposing'
     # TODO maybe later(for update too): param :form, 'invitations[user_ids]', :array, :optional, 'Array of user ids from list of past user carriers'
   end
   # :nocov:
@@ -131,7 +131,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     shipment = current_user.shipments.create! allowed_params
     unless shipment.new_record?
       state = params[:state].to_s
-      shipment.auction! if state != 'pending' # by default set to bidding state
+      shipment.auction! if state != 'pending' # by default set to proposing state
       shipment.invite!(params[:invitations])
     end
     render_json shipment
@@ -191,7 +191,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     params.require(:shipment).permit(:dim_w, :dim_h, :dim_l, :distance, :notes, :price,
                                      :pickup_at_from, :arrive_at_from, :pickup_at_to, :arrive_at_to,
                                      :active, :stackable, :n_of_cartons, :cubic_feet, :unit_count, :skids_count,
-                                     :private_bidding, :shipper_info_id, :receiver_info_id, :auction_end_at,
-                                     :po, :pe, :del, :hide_bids, :track_frequency)
+                                     :private_proposing, :shipper_info_id, :receiver_info_id, :auction_end_at,
+                                     :po, :pe, :del, :hide_proposals, :track_frequency)
   end
 end

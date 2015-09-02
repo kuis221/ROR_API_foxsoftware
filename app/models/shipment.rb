@@ -18,7 +18,7 @@
 #  user_id              :integer
 #  original_shipment_id :integer
 #  hazard               :boolean          default(FALSE)
-#  private_bidding      :boolean          default(FALSE)
+#  private_proposing    :boolean          default(FALSE)
 #  active               :boolean          default(TRUE)
 #  stackable            :boolean          default(TRUE)
 #  price                :decimal(10, 2)
@@ -35,7 +35,8 @@
 #  pickup_at_to         :datetime
 #  arrive_at_from       :datetime
 #  arrive_at_to         :datetime
-#  hide_bids            :boolean          default(FALSE)
+#  hide_proposals       :boolean          default(FALSE)
+#  track_frequency      :string
 #
 # Indexes
 #
@@ -53,7 +54,7 @@ class Shipment < ActiveRecord::Base
   belongs_to :shipper_info
   belongs_to :receiver_info
 
-  has_many :bids, dependent: :destroy
+  has_many :proposals, dependent: :destroy
   has_many :ship_invitations, dependent: :destroy
   has_many :shipment_feedbacks, dependent: :destroy
   has_many :trackings, dependent: :destroy
@@ -63,7 +64,7 @@ class Shipment < ActiveRecord::Base
 
   scope :active, ->() {where(active: true)}
   # dont use :public name as scope name :) unless you want be deep in shit
-  scope :public_only, ->() {where(private_bidding: false)}
+  scope :public_only, ->() {where(private_proposing: false)}
   before_create :set_secret_id
 
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
@@ -84,7 +85,7 @@ class Shipment < ActiveRecord::Base
            unit_count: {desc: 'Unit count', required: :required, type: :integer},
            skids_count: {desc: 'Skids count', required: :required, type: :integer},
            hazard: {desc: 'Is hazard', required: :optional, type: :boolean, default: :false},
-           private_bidding: {desc: 'Is private bidding by link', required: :optional, type: :boolean, default: :false},
+           private_proposing: {desc: 'Is private auction by link', required: :optional, type: :boolean, default: :false},
            active: {desc: 'Is active', required: :optional, type: :boolean, default: :true},
            stackable: {desc: 'Is stackable', required: :optional, type: :boolean, default: :true},
            pickup_at_from: {desc: 'Pickup time(from)', required: :required, type: :datetime},
@@ -95,33 +96,33 @@ class Shipment < ActiveRecord::Base
            shipper_info_id: {desc: 'ShipperInfo address ID', type: :integer, required: :required},
            receiver_info_id: {desc: 'ReceiverInfo address ID', type: :integer, required: :required},
            secret_id: {desc: 'Part for private url', type: :string, for_model: true},
-           auction_end_at: {desc: 'When shipment end taking any bids', type: :datetime, required: :required, for_model: true},
-           hide_bids: {desc: 'Hide bids for everyone except owner', type: :boolean, default: :false, required: :optional, for_model: true},
+           auction_end_at: {desc: 'When shipment stop taking any proposals', type: :datetime, required: :required, for_model: true},
+           hide_proposals: {desc: 'Hide proposals for everyone except owner', type: :boolean, default: :false, required: :optional, for_model: true},
            track_frequency: {desc: 'Required tracking frequency update, use: X.INTERVAL, like: 2.hours or 1.day ..', type: :string, required: :optional}
   }
   ATTRS.each_pair do |k,v|
     validates_presence_of k if v[:required] == :required
   end
-  validates_inclusion_of :hide_bids, in: [true, false]
+  validates_inclusion_of :hide_proposals, in: [true, false]
 
   aasm do # add whiny_transitions: true to return true/false
     state :pending, initial: true
-    state :bidding
+    state :proposing
     state :in_transit
     state :delivered
     state :completed
     state :cancelled
 
     event :auction do
-      transitions from: :pending, to: :bidding
+      transitions from: :pending, to: :proposing
     end
 
     event :shipped do
-      transitions from: :bidding, to: :in_transit
+      transitions from: :proposing, to: :in_transit
     end
 
     event :reject_offer do
-      transitions from: :bidding, to: :pending
+      transitions from: :proposing, to: :pending
     end
 
   end
@@ -134,20 +135,20 @@ class Shipment < ActiveRecord::Base
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
   end
 
-  def hide_bids!
-    update_attribute :hide_bids, true
+  def hide_proposals!
+    update_attribute :hide_proposals, true
   end
 
-  def low_bid
-    bids.minimum('bids.price')
+  def low_proposal
+    proposals.minimum('proposals.price')
   end
 
-  def high_bid
-    bids.maximum('bids.price')
+  def high_proposal
+    proposals.maximum('proposals.price')
   end
 
-  def avg_bid
-    bids.average('bids.price')
+  def avg_proposal
+    proposals.average('proposals.price')
   end
 
   def state
@@ -160,17 +161,17 @@ class Shipment < ActiveRecord::Base
   end
 
   # Check for:
-  # -> user has not reached limit of bids
+  # -> user has not reached limit of proposals
   # -> user has invitation_for? shipment if private, or shipment active+public
-  def status_for_bidding(price, user)
+  def status_for_proposing(price, user)
     status = :no_access # default if user has no invitation or not_active+public
-    if user.bids.with_shipment(id).count >= Settings.bid_limit
+    if user.proposals.with_shipment(id).count >= Settings.proposal_limit
       status = :limit_reached
     else
       if auction_end_at <= Time.zone.now
         status = :end_auction_date
       else
-        if state != :bidding
+        if state != :proposing
           status = :not_in_auction
         else
           status = :ok if !user.invitation_for?(self).nil? || public_active?
@@ -185,11 +186,11 @@ class Shipment < ActiveRecord::Base
   end
 
   def public_or_active?(param_secret_id)
-    public_active? || (private_bidding? && secret_id == param_secret_id && active?)
+    public_active? || (private_proposing? && secret_id == param_secret_id && active?)
   end
 
   def public_active?
-    !private_bidding? && active?
+    !private_proposing? && active?
   end
 
   def has_invitation_for?(user)
@@ -197,7 +198,7 @@ class Shipment < ActiveRecord::Base
   end
 
   def private!
-    update_attribute :private_bidding, true
+    update_attribute :private_proposing, true
   end
 
   # Manage ship_invitations here. delete all when [], replace if size>0, or ignore if nil.

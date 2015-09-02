@@ -6,7 +6,7 @@ RSpec.describe CarrierMailer, type: :mailer do
   let(:mail) { CarrierMailer.send_invitation(shipment, email) }
 
   it 'renders the subject' do
-    expect(mail.subject).to match('Invitation for bidding')
+    expect(mail.subject).to match('Invitation for proposing')
   end
 
   it 'renders the receiver email' do

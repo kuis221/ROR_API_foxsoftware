@@ -17,17 +17,17 @@ class Ability
   elsif user.client?
     # can read only his own shipments
     can :manage, Shipment, user_id: user.id
-    # And read bids related to his shipments
-    can :read, Bid do |bid|
-      user.shipment_ids.include?(bid.shipment_id)
+    # And read proposals related to his shipments
+    can :read, Proposal do |proposal|
+      user.shipment_ids.include?(proposal.shipment_id)
     end
     can :read, Tracking do |tracking|
       user.shipment_ids.include?(tracking.shipment_id)
     end
     can :manage, ShipInvitation, user_id: user.id
   elsif user.carrier?
-    # can create bid for invited shipments ?? check with Matt
-    can :manage, Bid, user_id: user.id
+    # can create proposal for invited shipments ?? check with Matt
+    can :manage, Proposal, user_id: user.id
     can :read, Shipment
     can :manage, Tracking, user_id: user.id
   elsif user.has_role?(:user) # both client and carrier can manage their address_infos and shipment_feedbacks

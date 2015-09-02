@@ -46,7 +46,7 @@ class User < ActiveRecord::Base
 
   # has_many :identities, dependent: :destroy
   has_many :shipments, dependent: :destroy
-  has_many :bids, dependent: :destroy
+  has_many :proposals, dependent: :destroy
   has_many :address_infos, dependent: :destroy
   has_many :shipper_infos, dependent: :destroy
   has_many :receiver_infos, dependent: :destroy

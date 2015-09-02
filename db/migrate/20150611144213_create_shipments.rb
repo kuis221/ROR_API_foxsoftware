@@ -6,7 +6,7 @@ class CreateShipments < ActiveRecord::Migration
       t.integer :distance, null: false
       t.integer :n_of_cartons, :cubic_feet, :unit_count, :skids_count,  default: 0
       t.integer :user_id, :original_shipment_id
-      t.boolean :hazard, :private_bidding, default: false
+      t.boolean :hazard, :private_proposing, default: false
       t.boolean :active, :stackable, default: true
       t.decimal :price, precision: 10, scale: 2
       t.datetime :pickup_at, :arrive_at, null: false

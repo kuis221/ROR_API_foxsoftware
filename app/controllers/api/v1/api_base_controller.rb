@@ -12,10 +12,10 @@ class Api::V1::ApiBaseController < ApplicationController
 
   # Reuse that method in custom actions, those are out side of regular crud
   def self.add_authorization_headers(api)
-    # TODO make a some first user with two shipments, bids, auth. so api doc user can see the responces
-    param :header, 'access-token', :string, :required, 'Logged in user access token'
-    param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)'
-    param :header, 'client', :string, :required, 'Cliend ID'
+    # TODO make a some first user with two shipments, proposals, auth. so api doc user can see the responses
+    api.param :header, 'access-token', :string, :required, 'Logged in user access token'
+    api.param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)'
+    api.param :header, 'client', :string, :required, 'Cliend ID'
   end
 
   # do not put code between nocov tags

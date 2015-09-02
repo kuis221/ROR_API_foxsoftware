@@ -18,7 +18,7 @@
 #  user_id              :integer
 #  original_shipment_id :integer
 #  hazard               :boolean          default(FALSE)
-#  private_bidding      :boolean          default(FALSE)
+#  private_proposing    :boolean          default(FALSE)
 #  active               :boolean          default(TRUE)
 #  stackable            :boolean          default(TRUE)
 #  price                :decimal(10, 2)
@@ -35,7 +35,8 @@
 #  pickup_at_to         :datetime
 #  arrive_at_from       :datetime
 #  arrive_at_to         :datetime
-#  hide_bids            :boolean          default(FALSE)
+#  hide_proposals       :boolean          default(FALSE)
+#  track_frequency      :string
 #
 # Indexes
 #

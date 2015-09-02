@@ -15,7 +15,7 @@ describe Api::V1::ShipmentsController do
 
     before do
       @logged_in_user.add_role :carrier
-      @shipment = create :shipment, private_bidding: true # secret_id
+      @shipment = create :shipment, private_proposing: true # secret_id
     end
 
     it 'check carrier ability' do
@@ -47,17 +47,17 @@ describe Api::V1::ShipmentsController do
       expect(@json[:results].collect{|x| x['id']}).to eq my_ships
     end
 
-    context 'list lowest_bid action' do
+    context 'list lowest_proposal action' do
       before do
         @ship_inv = create :ship_invitation, invitee: @logged_in_user
         @shipment = @ship_inv.shipment
         @shipment.auction!
         @shipment.private!
-        @bid = create :bid, shipment: @shipment, price: 100.55, user: @logged_in_user
+        @proposal = create :proposal, shipment: @shipment, price: 100.55, user: @logged_in_user
       end
 
-      it 'should show it, and hide bidder' do
-        json_query :get, :lowest_bid, id: @shipment.id
+      it 'should show it, and hide proposalder' do
+        json_query :get, :lowest_proposal, id: @shipment.id
         expect(@json[:price]).to eq '100.55'
         expect(@json[:user]).to be nil
         # expect(@json[:user]['id']).to eq 0
@@ -66,38 +66,38 @@ describe Api::V1::ShipmentsController do
 
       it 'should render 404 for non existent shipment' do
         @shipment.destroy
-        json_query :get, :lowest_bid, id: @shipment.id
+        json_query :get, :lowest_proposal, id: @shipment.id
         expect(@json[:error]).to eq 'not_found'
       end
 
       it 'should not show for other private shipment' do
         @ship_inv.destroy
-        json_query :get, :lowest_bid, id: @shipment.id
+        json_query :get, :lowest_proposal, id: @shipment.id
         expect(@json[:error]).to eq 'no_access'
       end
 
       it 'should not show inactive shipment' do
         @shipment.inactive!
-        json_query :get, :lowest_bid, id: @shipment.id
+        json_query :get, :lowest_proposal, id: @shipment.id
         expect(@json[:error]).to eq 'not_found'
       end
     end
 
 
-    context 'shipments and bids' do
+    context 'shipments and proposals' do
       before do
         @ship_inv = create :ship_invitation, invitee: @logged_in_user
         @shipment = @ship_inv.shipment
         @shipment.auction!
         # public shipment only
-        @bids = []
+        @proposals = []
         4.times do |b|
-          @bids << (create :bid, shipment: @shipment, price: b*10, user: @logged_in_user)
+          @proposals << (create :proposal, shipment: @shipment, price: b*10, user: @logged_in_user)
         end
       end
 
-      it 'should list and not disclose bidders' do
-        json_query :get, :current_bids, id: @shipment.id
+      it 'should list and not disclose proposalders' do
+        json_query :get, :current_proposals, id: @shipment.id
         expect(@json[:results].size).to eq 4
         last = 10000.0 # shouldnot be more than rand 9999
         # check that results sorted by price :)
@@ -108,40 +108,40 @@ describe Api::V1::ShipmentsController do
         end
       end
 
-      it 'should list shipments with bids summaries' do
+      it 'should list shipments with proposals summaries' do
         json_query :get, :index, user_id: @shipment.user_id
         expect(@json[:results].size).to eq 1
-        low_bid  = @shipment.low_bid
-        high_bid = @shipment.high_bid
-        avg_bid = @shipment.avg_bid
-        expect(@json[:results][0]['bids']['low']).to eq low_bid.to_s
-        expect(@json[:results][0]['bids']['high']).to eq high_bid.to_s
-        expect(@json[:results][0]['bids']['avg']).to eq avg_bid.to_s
+        low_proposal  = @shipment.low_proposal
+        high_proposal = @shipment.high_proposal
+        avg_proposal = @shipment.avg_proposal
+        expect(@json[:results][0]['proposals']['low']).to eq low_proposal.to_s
+        expect(@json[:results][0]['proposals']['high']).to eq high_proposal.to_s
+        expect(@json[:results][0]['proposals']['avg']).to eq avg_proposal.to_s
       end
 
-      it 'should list shipments without bids summaries' do
-        @shipment.hide_bids!
+      it 'should list shipments without proposals summaries' do
+        @shipment.hide_proposals!
         json_query :get, :index, user_id: @shipment.user_id
         expect(@json[:results].size).to eq 1
-        expect(@json[:results][0]['bids']).to be nil
+        expect(@json[:results][0]['proposals']).to be nil
       end
 
       it 'should render 404 for non existent shipment' do
         @shipment.destroy
-        json_query :get, :current_bids, id: @shipment.id
+        json_query :get, :current_proposals, id: @shipment.id
         expect(@json[:error]).to eq 'not_found'
       end
 
       it 'should not show private shipment without ship invitation' do
         @ship_inv.destroy
         @shipment.private!
-        json_query :get, :current_bids, id: @shipment.id
+        json_query :get, :current_proposals, id: @shipment.id
         expect(@json[:error]).to eq 'no_access'
       end
 
       it 'should not show inactive shipment' do
         @shipment.inactive!
-        json_query :get, :current_bids, id: @shipment.id
+        json_query :get, :current_proposals, id: @shipment.id
         expect(@json[:error]).to eq 'no_access'
       end
 
@@ -192,15 +192,15 @@ describe Api::V1::ShipmentsController do
         expect(@json[:results].first['active']).to eq true
       end
 
-      it 'should let client list his shipment with bids, even not active' do
-        shipment = create :shipment, user: @logged_in_user, private_bidding: false, active: false
+      it 'should let client list his shipment with proposals, even not active' do
+        shipment = create :shipment, user: @logged_in_user, private_proposing: false, active: false
         shipment.auction!
-        bids_count = (rand*10).to_i
-        bids_count.times do |bids|
-          create :bid, shipment: shipment
+        proposals_count = (rand*10).to_i
+        proposals_count.times do |proposals|
+          create :proposal, shipment: shipment
         end
-        json_query :get, :current_bids, id: shipment.id
-        expect(@json[:results].size).to eq bids_count
+        json_query :get, :current_proposals, id: shipment.id
+        expect(@json[:results].size).to eq proposals_count
         expect(@json[:results][0]['user']['name']).not_to eq ''
       end
 
@@ -226,7 +226,7 @@ describe Api::V1::ShipmentsController do
           json_query :post, :create, shipment: attrs, invitations: {emails: @invs}
           expect(InviteCarriers).to have_received(:perform_async).exactly(1).with(@json[:id], @invs)
         }.to change{Shipment.count}
-        expect(Shipment.find(@json[:id]).state).to eq :bidding
+        expect(Shipment.find(@json[:id]).state).to eq :proposing
         expect(@json[:secret_id]).not_to be blank?
       end
 

@@ -43,7 +43,7 @@ Swagger::Docs::Config.register_apis({
         camelize_model_properties: false,
         attributes: {
             info: {
-                "title" => "Fox Software",
+                "title" => "Fox LMP",
                 # "description" => "Shipment network",
                 "contact" => "cat.of.duty@gmail.com"
             }
