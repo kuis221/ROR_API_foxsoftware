@@ -18,7 +18,6 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   end
   # :nocov:
   def show
-    # shipment = @user.shipments.find params[:id]
     shipment = Shipment.find params[:id] # will raise 404 here (rescued)
     # if private -> check secret_id, or if its current user
     if shipment.eligible_for_render?(params[:invitation], current_user)
@@ -38,7 +37,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     response 'ok', "{'results': [ShipmentObjects]}", :Shipment
   end
   # :nocov:
-  # render all current_user shipments or publicity active shipments.
+  # render all current_user shipments or publicity active shipments of :user_id.
   def index
     shipments = @user.shipments
     shipments = shipments.active.public_only if @user != current_user

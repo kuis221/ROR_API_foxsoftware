@@ -160,6 +160,18 @@ class Shipment < ActiveRecord::Base
     aasm_state.to_sym
   end
 
+  def pickup_address
+    shipper_info.city_state
+  end
+
+  def delivery_address
+    receiver_info.city_state
+  end
+
+  def bids_count
+    proposals.count
+  end
+
   # Check if shipment create by user
   def owned_by?(some_user)
     user == some_user

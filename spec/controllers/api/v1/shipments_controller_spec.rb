@@ -25,7 +25,7 @@ describe Api::V1::ShipmentsController do
     it 'should read invited shipment' do
       json_query :get, :show, id: @shipment.id, invitation: @shipment.secret_id
       expect(@json[:id]).to eq @shipment.id
-      keys =  Api::V1::ShipmentPresenter::HASH
+      keys =  Api::V1::ShipmentPresenter::HASH_show
       keys.each do |key|
         expect(@json[key.to_sym].to_s).to eq @shipment[key].to_s
       end
@@ -56,7 +56,7 @@ describe Api::V1::ShipmentsController do
         @proposal = create :proposal, shipment: @shipment, price: 100.55, user: @logged_in_user
       end
 
-      it 'should show it, and hide proposalder' do
+      it 'should show it, and hide carrier names' do
         json_query :get, :lowest_proposal, id: @shipment.id
         expect(@json[:price]).to eq '100.55'
         expect(@json[:user]).to be nil
@@ -96,7 +96,7 @@ describe Api::V1::ShipmentsController do
         end
       end
 
-      it 'should list and not disclose proposalders' do
+      it 'should list and not disclose carrier names' do
         json_query :get, :current_proposals, id: @shipment.id
         expect(@json[:results].size).to eq 4
         last = 10000.0 # shouldnot be more than rand 9999
@@ -176,7 +176,7 @@ describe Api::V1::ShipmentsController do
 
   end
 
-  context 'Client shipments manipulations' do
+  context 'Shipper shipments manipulations' do
 
     login_user
 
@@ -185,11 +185,25 @@ describe Api::V1::ShipmentsController do
     end
 
     context 'listing' do
-      it 'should let shipper list his shipments' do
-        create_list :shipment, 2, user: @logged_in_user
+      it 'should let shipper :index shipments' do
+        shipments = create_list :shipment, 2, user: @logged_in_user
+        shipment_with_bids = shipments.last
+        shipment_with_bids.auction!
+        create_list :proposal, 1, shipment: shipment_with_bids
         json_query :get, :index
-        expect(@json[:results].size).to eq 2
-        expect(@json[:results].first['active']).to eq true
+        expect(@json[:results].size).to eq shipments.size
+        expect(@json[:results][0]['proposals']['avg'].to_i).to be > 0.0 # proposals with info (not low/high/avg)
+        expect(@json[:results][0]['bids_count']).to eq 1 # proposal from above
+      end
+
+      it 'should :show shipment info' do
+        shipment = create :shipment, user: @logged_in_user
+        shipment.auction!
+        proposals = create_list :proposal, 3, shipment: shipment
+        json_query :get, :show, id: shipment.id
+        expect(@json[:id]).to eq shipment.id
+        expect(@json[:proposals].size).to eq 3
+        expect(@json[:proposals][0]['id']).to eq proposals.first.id
       end
 
       it 'should let shipper list his shipment with proposals, even not active' do

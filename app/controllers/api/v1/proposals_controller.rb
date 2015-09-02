@@ -74,7 +74,7 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :destroy do
     summary 'RETRACT Proposal'
-    notes 'Retract a proposal for current_user. Client will get notification about the proposal and proposal status became retracted.'
+    notes 'Retract a proposal for current_user. Shipper will get notification about the proposal and proposal status became retracted.'
     param :path, :id, :integer, :required, 'Proposal ID'
     response 'ok'
     response 'not_found', 'Proposal not found with that user'
