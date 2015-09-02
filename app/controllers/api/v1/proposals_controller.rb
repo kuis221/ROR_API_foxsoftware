@@ -17,7 +17,6 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
     summary 'LIST all current user proposals'
     notes 'Sorted by newest at the top'
     param :query, :shipment_id, :string, :optional, 'Scope by shipment ID'
-    Api::V1::ApiBaseController.add_pagination_params(api)
     response 'ok', 'Success', :Proposal
   end
   # :nocov:
