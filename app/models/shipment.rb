@@ -106,28 +106,46 @@ class Shipment < ActiveRecord::Base
   validates_inclusion_of :hide_proposals, in: [true, false]
 
   aasm do # add whiny_transitions: true to return true/false
-    state :pending, initial: true
+    ## Statuses descriptions(and appropriate events): TODO cover with heavy tests
+    # not listed = for public. author can always see it.
+    # draft: no proposals allowed, not listed
+    # proposing: can accept proposals, listed
+    # pending: proposal accepted by shipper, still can take new proposals, listed
+    # confirmed: accept pending by carrier, shipper can edit shipment info(if do then status drop to pending.), no proposals can be made, not listed.
+    # in_transit: changed by carrier, shipper cant do edit or any action here, not listed
+    # delivered: same as in_transit state, at this point shipper can leave feedback.
+    # completed: switch to this state after shipper left feedback
+
+    state :draft, initial: true
     state :proposing
-    state :offered
+    state :pending
+    state :confirming
     state :in_transit
-    state :delivered
+    state :delivering
     state :completed
-    state :cancelled
 
     event :auction do
-      transitions from: :pending, to: :proposing
+      transitions from: :draft, to: :proposing
     end
 
-    event :negotiation do
-      transitions from: :proposing, to: :offered
+    event :negotiate do
+      transitions from: :proposing, to: :pending
+    end
+
+    event :confirm do
+      transitions from: :pending, to: :confirming
     end
 
     event :shipped do
-      transitions from: :proposing, to: :in_transit
+      transitions from: :confirmed, to: :in_transit
     end
 
-    event :reject_offer do
-      transitions from: :proposing, to: :pending
+    event :delivered do
+      transitions from: :in_transit, to: :delivering
+    end
+
+    event :closed do
+      transitions from: :delivering, to: :completed
     end
 
   end

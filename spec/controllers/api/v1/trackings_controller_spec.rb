@@ -74,7 +74,7 @@ RSpec.describe Api::V1::TrackingsController, type: :controller do
       end
 
       it "cant create while shipment not in 'in_transit' state" do
-        @shipment.update_attribute :aasm_state, 'pending'
+        @shipment.update_attribute :aasm_state, 'draft'
         expect {
           json_query :post, :create, tracking: attrs
         }.not_to change{Tracking.count}

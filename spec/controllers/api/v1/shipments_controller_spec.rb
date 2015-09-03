@@ -248,9 +248,9 @@ describe Api::V1::ShipmentsController do
 
       it 'should let shipper create new shipment as draft' do
         expect {
-          json_query :post, :create, shipment: attrs, state: 'pending'
+          json_query :post, :create, shipment: attrs, state: 'draft'
         }.to change{Shipment.count}
-        expect(Shipment.find(@json[:id]).state).to eq :pending
+        expect(Shipment.find(@json[:id]).state).to eq :draft
       end
 
       it "can't create without auction_end_date" do

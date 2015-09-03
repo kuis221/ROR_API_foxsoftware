@@ -68,7 +68,7 @@ describe Api::V1::ProposalsController do
       end
 
       it 'should not allow when shipment not in correct state' do
-        @shipment.update_attribute :aasm_state, 'pending'
+        @shipment.update_attribute :aasm_state, 'draft'
         expect {
           json_query :post, :create, proposal: attrs
           expect(@json[:error]).to eq 'not_in_auction'
