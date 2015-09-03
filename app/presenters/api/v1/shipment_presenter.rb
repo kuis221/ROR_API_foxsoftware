@@ -24,6 +24,8 @@ class Api::V1::ShipmentPresenter < Api::V1::JsonPresenter
         shipment.proposals.each do |proposal|
           json_props << Api::V1::ProposalPresenter.minimal_hash(proposal, current_user, object_type)
         end
+        json[:shipper_info] = Api::V1::ShipperInfoPresenter.minimal_hash(shipment.shipper_info, current_user, object_type)
+        json[:receiver_info] = Api::V1::ReceiverInfoPresenter.minimal_hash(shipment.receiver_info, current_user, object_type)
         json[:proposals] = json_props
       end
     end

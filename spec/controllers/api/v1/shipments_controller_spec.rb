@@ -196,11 +196,13 @@ describe Api::V1::ShipmentsController do
         expect(@json[:results][0]['bids_count']).to eq 1 # proposal from above
       end
 
-      it 'should :show shipment info' do
+      it 'should :show shipment info with proposals' do
         shipment = create :shipment, user: @logged_in_user
         shipment.auction!
         proposals = create_list :proposal, 3, shipment: shipment
         json_query :get, :show, id: shipment.id
+        expect(@json[:shipper_info]).not_to eq nil
+        expect(@json[:receiver_info]).not_to eq nil
         expect(@json[:id]).to eq shipment.id
         expect(@json[:proposals].size).to eq 3
         expect(@json[:proposals][0]['id']).to eq proposals.first.id
