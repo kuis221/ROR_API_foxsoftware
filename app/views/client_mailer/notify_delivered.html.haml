@@ -1,0 +1,12 @@
+%p
+  Hello,
+  = @shipper.name
+
+%p
+  Carrier been marked shipment as 'Delivered':
+  = link_to @shipment.id, "#{Settings.host}/my/shipments/#{@shipment.id}"
+
+%p
+  Thank You
+  Fox LMP
+
