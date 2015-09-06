@@ -28,7 +28,7 @@ Rails.application.routes.draw do
 
       end
       resources :shipment_feedbacks
-      resources :users do
+      resources :users, except: [:new, :update, :edit, :destroy, :index] do
         collection do
           post :get_address_by_zip
         end

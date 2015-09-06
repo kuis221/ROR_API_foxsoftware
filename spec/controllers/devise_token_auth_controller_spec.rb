@@ -85,6 +85,50 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
     end
   end
 
+  context 'Edit user details' do
+    login_user
+    let(:attrs) { {current_password: '123123', password: '4123123', password_confirmation: '4123123', about: 'New BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
+
+    it 'save new details' do
+      expect{
+        json_query :post, :update, attrs
+        @logged_in_user.reload
+        expect(@json[:status]).to eq 'ok'
+      }.to change(@logged_in_user, :about)
+    end
+
+    it "can't save bad email" do
+      attrs[:email] = 'bad'
+      expect{
+        json_query :post, :update, attrs
+        @logged_in_user.reload
+        expect(@json[:error]).to eq 'not_valid'
+      }.not_to change(@logged_in_user, :about)
+    end
+
+    it 'cant save because current_password wrong' do
+      attrs[:current_password] = '1231231'
+      expect{
+        json_query :post, :update, attrs
+        @logged_in_user.reload
+        expect(@json[:error]).to eq 'not_valid'
+      }.not_to change(@logged_in_user, :about)
+    end
+
+    # WEIRD. devise do not validate password and password_confirmation ?????????????
+    # it 'will not accept mismatch new passwords' do
+    #   attrs[:current_password] = '123123'
+    #   attrs[:password] = '1231'
+    #   attrs[:password_confirmation] = '12312345'
+    #   expect{
+    #     json_query :post, :update, attrs
+    #     @logged_in_user.reload
+    #     expect(@json[:error]).to eq 'not_valid'
+    #   }.not_to change(@logged_in_user, :about)
+    # end
+
+  end
+
   context 'shipper user with oauth' do
     let(:attrs) { {provider: 'facebook', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
 

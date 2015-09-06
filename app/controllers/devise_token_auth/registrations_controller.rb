@@ -1,22 +1,27 @@
 module DeviseTokenAuth
   class RegistrationsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:destroy, :update]
-    before_filter :validate_sign_up_params, :only => :create
-    before_filter :validate_account_update_params, :only => :update
-    skip_after_filter :update_auth_header, :only => [:create, :destroy]
+    before_filter :set_user_by_token, only: [:destroy, :update]
+    before_filter :validate_sign_up_params, only: :create
+    before_filter :validate_account_update_params, only: :update
+    skip_after_filter :update_auth_header, only: [:create, :destroy]
 
     # :nocov:
     swagger_controller :registrations, 'User email registration'
 
-    swagger_api :create do
-      summary 'Create user with email'
+    def self.generic_user_details(api)
+      api.param :form, :first_name, :string, :required, 'First Name'
+      api.param :form, :last_name, :string, :required, 'Last Name'
+      api.param :form, :email, :string, :required, 'Email'
+      api.param :form, :password, :string, :required, 'Password'
+      api.param :form, :password_confirmation, :string, :required, 'Password confirmation'
+      api.param :form, :about, :string, :optional, 'About me'
+      api.param :form, :mc_num, :string, :optional, 'MC number'
+    end
+
+    swagger_api :create do |api|
+      summary 'CREATE user with email'
       notes 'When invited by user(url with query string <strong>invitation=</strong>, we will find and assign all shipment invitations by email, so later you can load them from <strong>my_invitations</strong> query'
-      param :form, :first_name, :string, :required, 'First Name'
-      param :form, :last_name, :string, :required, 'Last Name'
-      param :form, :email, :string, :required, 'Email'
-      param :form, :password, :string, :required, 'Password'
-      param :form, :password_confirmation, :string, :required, 'Password confirmation'
-      param :form, :about, :string, :optional, 'About me'
+      Api::V1::DeviseTokenAuth::RegistrationsController.generic_user_details(api)
       param :form, :user_type, :string, :required, "User type, 'carrier' or 'shipper'"
       param :form, :invitation, :string, :optional, 'Invitation code, pass from query string if available. IF invitation present and valid then new user will be assigned with carrier role regardless of user_type field'
       # param :form, :provider, :string, :required, "Provider, one of: (email,facebook,google_oauth2,linkedin)", {defaultValue: 'email'}
@@ -120,44 +125,48 @@ module DeviseTokenAuth
       end
     end
 
+    # :nocov:
+    swagger_api :update do |api|
+      summary 'UPDATE user details'
+      Api::V1::DeviseTokenAuth::RegistrationsController.generic_user_details(api)
+      param :form, :current_password, :string, :optional, 'Current password, use to change password'
+      response 'not_valid', "{'message': [ArrayOfErrors]}"
+      response 'ok'
+    end
+    # :nocov:
     def update
       if @resource
         if @resource.send(resource_update_method, account_update_params)
           yield @resource if block_given?
-          render json: {
-            status: 'success',
-            data:   @resource.as_json
-          }
+          render_ok
+          # render json: {
+          #   status: 'ok',
+          #   data:   @resource.as_json
+          # }
         else
-          render json: {
-            status: 'error',
-            errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-          }, status: 403
+          render_error 'not_valid', 403, @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
         end
       else
-        render json: {
-          status: 'error',
-          errors: [I18n.t("devise_token_auth.registrations.user_not_found")]
-        }, status: 404
+        render_error 'not_found', 404
       end
     end
 
-    def destroy
-      if @resource
-        @resource.destroy
-        yield @resource if block_given?
-
-        render json: {
-          status: 'success',
-          message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
-        }
-      else
-        render json: {
-          status: 'error',
-          errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
-        }, status: 404
-      end
-    end
+    # def destroy
+    #   if @resource
+    #     @resource.destroy
+    #     yield @resource if block_given?
+    #
+    #     render json: {
+    #       status: 'success',
+    #       message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
+    #     }
+    #   else
+    #     render json: {
+    #       status: 'error',
+    #       errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
+    #     }, status: 404
+    #   end
+    # end
 
     def sign_up_params
       params.permit(devise_parameter_sanitizer.for(:sign_up))
@@ -191,8 +200,8 @@ module DeviseTokenAuth
 
     def validate_post_data which, message
       render json: {
-         status: 'error',
-         errors: [message]
+         error: 'not_valid',
+         message: [message]
       }, status: :unprocessable_entity if which.empty?
     end
   end
