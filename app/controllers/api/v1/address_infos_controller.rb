@@ -7,7 +7,6 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   swagger_controller :address_info, 'User addresses management'
   swagger_api :index do |api|
     summary 'LIST all AddressInfos'
-    Api::V1::ApiBaseController.add_pagination_params(api)
     response 'ok', 'Success', :AddressInfo
   end
   # :nocov:

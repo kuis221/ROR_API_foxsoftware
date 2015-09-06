@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://localhost:3000/",
+  "basePath": "http://foxsoftware.herokuapp.com/",
   "resourcePath": "shipments",
   "apis": [
     {
@@ -131,6 +131,104 @@
           ],
           "method": "get",
           "nickname": "Api::V1::Shipments#current_proposals"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/{id}/set_status.json",
+      "operations": [
+        {
+          "summary": "SET shipment status/transit to",
+          "notes": "      Transit shipment status to new one, according to current status and current_user role.\n      Available statuses:\n      <table>\n        <thead><th>Status</th><th>Set by</th><th>Explanation</th><th>From statuses</th></thead>\n        <tr><th>auction</th><td>Shipper</td><td>Move from Draft to Auction</td><td>draft</td></tr>\n        <tr><th>pause</th><td>Shipper</td><td>Set shipment to 'draft' and remove all proposals</td><td>offer, auction</td></tr>\n        <tr><th>propose</th><td>Shipper</td><td>Accept proposal(make an offer)</td>auction</tr>\n        <tr><th>confirm</th><td>Carrier</td><td>Accept above offer.</td><td>propose</td></tr>\n        <tr><th>in_transit</th><td>Carrier</td><td>Mark as in transit</td><td>confirm</td></tr>\n        <tr><th>delivered</th><td>Carrier</td><td>Mark as delivered</td><td>in_transit</td></tr>\n        <!--<tr><th>state</th><td></td><td>role</td><td>explanation</td><td>from statuses</td></tr> -->\n      </table>\n",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Shipment ID",
+              "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "status",
+              "type": "string",
+              "description": "New status, lowercase.",
+              "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "proposal_id",
+              "type": "integer",
+              "description": "Proposal ID, required for 'propose' and 'confirm' status",
+              "required": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "access_denied",
+              "responseModel": null,
+              "message": "Cannot update this shipment, shipment has no invitation for user or not public"
+            },
+            {
+              "code": "bad_proposal_id",
+              "responseModel": null,
+              "message": "No proposal found within shipment scope"
+            },
+            {
+              "code": "bad_role",
+              "responseModel": null,
+              "message": "This user can't switch to this status"
+            },
+            {
+              "code": "bad_status",
+              "responseModel": null,
+              "message": "No such status"
+            },
+            {
+              "code": "bad_transition",
+              "responseModel": null,
+              "message": "Not eligible for transition to this status"
+            },
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "Shipment not found"
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": null
+            }
+          ],
+          "method": "post",
+          "nickname": "Api::V1::Shipments#set_status"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/shipments/{id}/check_new_proposals.json",
+      "operations": [
+        {
+          "summary": "Check if new proposals has been made since last check",
+          "notes": "For shipper users",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Shipment ID",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "2",
+              "responseModel": null,
+              "message": "Return number of new proposals"
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::Shipments#check_new_proposals"
         }
       ]
     },
@@ -466,7 +564,7 @@
               "paramType": "form",
               "name": "state",
               "type": "string",
-              "description": "Initial proposing status, default 'proposing'. For draft set 'pending'",
+              "description": "Initial proposing status, For draft set 'draft'",
               "required": false,
               "defaultValue": "proposing"
             }
@@ -807,7 +905,7 @@
               "message": null
             }
           ],
-          "notes": "Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them.<br/>\n           If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)",
+          "notes": "           Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them.<br/>\n           If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)<br/>\n           When updated by Shipper and shipment in status of 'confirm', then shipment will be moved to 'propose' status.<br/>\n           It is not possible to update when status >= in_transit.\n",
           "method": "patch",
           "nickname": "Api::V1::Shipments#update"
         }

@@ -8,7 +8,7 @@ class Api::V1::TrackingsController < Api::V1::ApiBaseController
   swagger_api :index do
     summary 'LOAD a trackings'
     param :path, :shipment_id, :integer, :required, 'Shipment ID'
-    response 'ok', "{'results': [TrackingObjects]", :Tracking
+    response 'ok', "{'results': [TrackingObjects]}", :Tracking
   end
   # :nocov:
   def index

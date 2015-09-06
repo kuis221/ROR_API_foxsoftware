@@ -177,7 +177,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
       Available statuses:
       <table>
         <thead><th>Status</th><th>Set by</th><th>Explanation</th><th>From statuses</th></thead>
-        <tr><th>auction</th><td>Shipper</td>Move from Draft to Auction<td></td><td>draft</td></tr>
+        <tr><th>auction</th><td>Shipper</td><td>Move from Draft to Auction</td><td>draft</td></tr>
         <tr><th>pause</th><td>Shipper</td><td>Set shipment to 'draft' and remove all proposals</td><td>offer, auction</td></tr>
         <tr><th>propose</th><td>Shipper</td><td>Accept proposal(make an offer)</td>auction</tr>
         <tr><th>confirm</th><td>Carrier</td><td>Accept above offer.</td><td>propose</td></tr>
@@ -190,10 +190,11 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     param :query, :status, :string, :required, 'New status, lowercase.'
     param :query, :proposal_id, :integer, :optional, "Proposal ID, required for 'propose' and 'confirm' status"
     response 'ok'
-    response 'not_found'
+    response 'not_found', 'Shipment not found'
     response 'bad_status', 'No such status'
-    response 'bad_role', 'This user cant switch to this status'
+    response 'bad_role', "This user can't switch to this status"
     response 'bad_transition', 'Not eligible for transition to this status'
+    response 'bad_proposal_id', 'No proposal found within shipment scope'
     response 'access_denied', 'Cannot update this shipment, shipment has no invitation for user or not public'
   end
   # :nocov:
