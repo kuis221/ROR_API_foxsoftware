@@ -10,6 +10,8 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  equipment_type :string
+#  offered_at     :datetime
+#  accepted_at    :datetime
 #
 # Indexes
 #
@@ -28,7 +30,7 @@ class Proposal < ActiveRecord::Base
 
   resourcify
 
-  after_create :send_notification
+  after_create :new_notification
   # Do not use it here
   # ATTRS = {
   #     price: {desc: 'Price', required: :required, type: :double},
@@ -43,10 +45,21 @@ class Proposal < ActiveRecord::Base
   # -> is in correct state
   def validate_shipment
     self.errors.add(:shipment_id, 'has no invitation for current user (Proposal model)') if shipment.try(:private_proposing?) && user.invitation_for?(shipment).blank?
-    self.errors.add(:shipment_id, 'is in invalid state for proposing') unless shipment.try(:proposing?)
+    self.errors.add(:shipment_id, 'is in invalid state for proposing') unless shipment.try(:propose_allowed?)
   end
 
-  def send_notification
+  # offered by shipper
+  def offered!
+    update_attribute :offered_at, Time.zone.now
+  end
+
+  # confirmed by carrier
+  def accepted!
+    update_attribute :accepted_at, Time.zone.now
+  end
+
+  def new_notification
     ClientMailer.new_proposal(self).deliver_now
   end
+
 end

@@ -39,7 +39,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   # render all current_user shipments or publicity active shipments of :user_id.
   def index
-    shipments = @user.shipments
+    shipments = @user.shipments.order('created_at DESC')
     shipments = shipments.active.public_only if @user != current_user
     render_json shipments.page(page).per(limit)
   end
@@ -55,7 +55,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # This action render shipments when current_user having invitation for it.
   # -> while :index action render @user related shipment
   def my_invitations
-    shipments = Shipment.active.joins(:ship_invitations).where('ship_invitations.invitee_id IN (?)', current_user.id).page(page).per(limit)
+    shipments = Shipment.active.joins(:ship_invitations).order('shipments.created_at DESC').where('ship_invitations.invitee_id IN (?)', current_user.id).page(page).per(limit)
     render_json shipments
   end
 
@@ -111,7 +111,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
       end
     end
     if can # render
-      proposals = shipment.proposals.by_highest.page(page).per(limit)
+      proposals = shipment.proposals.by_highest.order('proposals.created_at DESC').page(page).per(limit)
       proposals.count > 0 ? render_json(proposals) : render(json:{status: 'no_proposals'})
       return
     end
@@ -139,16 +139,65 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :update do
     param :form, 'invitations[emails]', :array, :optional, 'Array of emails to update list of invitations', {items: {:'$ref' => 'email'}}
-    notes 'Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them.<br/>
-           If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)'
+    notes <<-UPD
+           Invitations will be overwritten if provided, do not send if you do not intend to replace. Send blank arrays if you want to remove all of them.<br/>
+           If you want set shipment pickup/arrive range, for example pickup date can be between 1 and 2 July or/and arrive date at 5 July between 12:00 and 18:00, then set both of dates(4 dates in total)<br/>
+           When updated by Shipper and shipment in status of 'confirm', then shipment will be moved to 'propose' status.<br/>
+           It is not possible to update when status >= in_transit.
+    UPD
     response 'not_found'
   end
   # :nocov:
   def update
     if @shipment.update_attributes! allowed_params
+      # TODO fallback to 'propose' state if status == 'offered'
+      # TODO not possible to edit while in status >= in_transit
       @shipment.invite!(params[:invitations])
     end
     render_ok
+  end
+
+  # :nocov:
+  swagger_api :set_status do
+    summary 'SET shipment status/transit to'
+    notes <<-TR
+      Transit shipment status to new one, according to current status and current_user role.
+      Available statuses:
+      <table>
+        <thead><th>Status</th><th>Set by</th><th>Explanation</th><th>From statuses</th></thead>
+        <tr><th>auction</th><td>Shipper</td>Move from Draft to Auction<td></td><td>draft</td></tr>
+        <tr><th>pause</th><td>Shipper</td><td>Set shipment to 'draft' and remove all proposals</td><td>offer, auction</td></tr>
+        <tr><th>propose</th><td>Shipper</td><td>Accept proposal(make an offer)</td>auction</tr>
+        <tr><th>confirm</th><td>Carrier</td><td>Accept above offer.</td><td>propose</td></tr>
+        <tr><th>in_transit</th><td>Carrier</td><td>Mark as in transit</td><td>confirm</td></tr>
+        <tr><th>delivered</th><td>Carrier</td><td>Mark as delivered</td><td>in_transit</td></tr>
+        <!--<tr><th>state</th><td></td><td>role</td><td>explanation</td><td>from statuses</td></tr> -->
+      </table>
+      TR
+    param :path, :id, :integer, :required, 'Shipment ID'
+    param :query, :status, :string, :required, 'New status, lowercase.'
+    param :query, :proposal_id, :integer, :optional, "Proposal ID, required for 'propose' and 'confirm' status"
+    response 'ok'
+    response 'not_found'
+    response 'bad_status', 'No such status'
+    response 'bad_role', 'This user cant switch to this status'
+    response 'bad_transition', 'Not eligible for transition to this status'
+    response 'access_denied', 'Cannot update this shipment, shipment has no invitation for user or not public'
+  end
+  # :nocov:
+  def set_status
+    shipment = Shipment.find params[:id]
+    if shipment.changeable_by?(current_user)
+      to_status = params[:status]
+      switch_status = shipment.switch_status(to_status, current_user, params[:proposal_id])
+      if switch_status == :ok
+        render_ok
+      else
+        render_error switch_status
+      end
+    else
+      render_error 'access_denied'
+    end
   end
 
   # :nocov:

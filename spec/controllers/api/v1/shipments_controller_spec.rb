@@ -10,6 +10,148 @@ describe Api::V1::ShipmentsController do
     end
   end
 
+
+  shared_examples_for 'post action set' do |role, way|
+    login_user
+
+    before do
+      @logged_in_user.add_role role
+      @shipper = create :user if role == :carrier # create some other shipper who own the @shipment in carrier scenarios
+      @shipment = create :shipment, private_proposing: way == :private, user: (role == :shipper ? @logged_in_user : @shipper)
+      @invitation = create :ship_invitation, shipment: @shipment, invitee: @logged_in_user if role == :carrier
+    end
+
+    it 'access_denied' do
+      shipment = create :shipment
+      json_query :post, :set_status, {id: shipment.id, status: 'auction'}
+      expect(@json[:error]).to eq 'access_denied'
+    end
+
+    # Not allow carrier to set this status(eg: 'bad_role').
+    it 'to auction' do
+      json_query :post, :set_status, {id: @shipment.id, status: 'auction'}
+      if role == :shipper
+        expect(@json[:status]).to eq 'ok'
+        @shipment.reload
+        expect(@shipment.state).to eq :proposing
+      else # carrier
+        expect(@json[:error]).to eq 'bad_role'
+      end
+    end
+
+    it 'to pause' do
+      @shipment.auction!  # >> ff
+      @shipment.offer!    # fast forward to proposing
+      create_list :proposal, 3, shipment: @shipment
+      json_query :post, :set_status, {id: @shipment.id, status: 'pause'}
+      if role == :shipper
+        expect(@json[:status]).to eq 'ok'
+        @shipment.reload
+        expect(@shipment.proposals.count).to eq 0 # remove proposals after this status in after_transition callback
+        expect(@shipment.state).to eq :draft
+      else # carrier
+        expect(@json[:error]).to eq 'bad_role'
+      end
+    end
+
+    # Has to test with and without(bad_proposal_id) proposal id !
+    # TODO to offer without proposal id. when tested manually - its pass the test.
+    it 'to offer with proposal_id' do
+      @shipment.auction! # ff
+      proposal = create :proposal, shipment: @shipment
+      json_query :post, :set_status, {id: @shipment.id, status: 'offer', proposal_id: proposal.id}
+      if role == :shipper
+        expect(@json[:status]).to eq 'ok'
+        @shipment.reload
+        proposal.reload
+        expect(proposal.offered_at).not_to be_falsey
+        expect(@shipment.state).to eq :pending
+      else
+        expect(@json[:error]).to eq 'bad_role'
+      end
+    end
+
+    # TODO to offer without proposal id. when tested manually - its pass the test.
+    it 'to confirm with proposal_id' do
+      # Fast forward
+      @shipment.auction!
+      @shipment.offer!
+      bidder = create :user# if role == :carrier
+      proposal = create :proposal, shipment: @shipment, user: (role == :carrier ? @logged_in_user : bidder ), offered_at: Time.zone.now
+      json_query :post, :set_status, {id: @shipment.id, status: 'confirm', proposal_id: proposal.id}
+      if role == :shipper
+        expect(@json[:error]).to eq 'bad_role'
+      else
+        expect(@json[:status]).to eq 'ok'
+        @shipment.reload
+        proposal.reload
+        expect(proposal.accepted_at).not_to be_falsey
+        expect(@shipment.state).to eq :confirming
+      end
+    end
+
+    it 'to in_transit' do
+      # Fast forward
+      @shipment.auction!
+      @shipment.offer!
+      @shipment.confirm!
+      json_query :post, :set_status, {id: @shipment.id, status: 'in_transit'}
+      if role == :shipper
+        expect(@json[:error]).to eq 'bad_role'
+      else
+        expect(@json[:status]).to eq 'ok'
+        @shipment.reload
+        expect(@shipment.state).to eq :in_transit
+      end
+    end
+
+    it 'to delivered' do
+      # Fast forward
+      @shipment.auction!
+      @shipment.offer!
+      @shipment.confirm!
+      @shipment.picked!
+      json_query :post, :set_status, {id: @shipment.id, status: 'delivered'}
+      if role == :shipper
+        expect(@json[:error]).to eq 'bad_role'
+      else
+        expect(@json[:status]).to eq 'ok'
+        @shipment.reload
+        expect(@shipment.state).to eq :delivering
+      end
+    end
+
+    it 'cant set to completed' do
+      # Fast forward
+      @shipment.auction!
+      @shipment.offer!
+      @shipment.confirm!
+      @shipment.picked!
+      @shipment.delivered!
+      json_query :post, :set_status, {id: @shipment.id, status: 'completed'}
+      expect(@json[:error]).to eq 'bad_status'
+    end
+
+    # Cant pause from confirmed
+    it 'bad_transition' do
+      if role == :shipper
+        @shipment.auction!
+        @shipment.offer!
+        @shipment.confirm!
+        json_query :post, :set_status, {id: @shipment.id, status: 'pause'}
+        expect(@json[:error]).to eq 'bad_transition'
+      end
+    end
+
+  end
+
+  describe 'Using set_status' do
+    it_should_behave_like 'post action set', :carrier, :private
+    it_should_behave_like 'post action set', :carrier, :public
+    it_should_behave_like 'post action set', :shipper, :private
+    it_should_behave_like 'post action set', :shipper, :public
+  end
+
   context 'Carrier browsing shipments' do
     login_user
 
@@ -44,7 +186,7 @@ describe Api::V1::ShipmentsController do
       json_query :get, :my_invitations
       expect(@json[:results].size).to eq 3
       my_ships = my_ship_invs.map &:shipment_id
-      expect(@json[:results].collect{|x| x['id']}).to eq my_ships
+      expect(@json[:results].collect{|x| x['id']}.sort).to eq my_ships
     end
 
     context 'list lowest_proposal action' do
@@ -60,8 +202,6 @@ describe Api::V1::ShipmentsController do
         json_query :get, :lowest_proposal, id: @shipment.id
         expect(@json[:price]).to eq '100.55'
         expect(@json[:user]).to be nil
-        # expect(@json[:user]['id']).to eq 0
-        # expect(@json[:user]['name']).to eq ''
       end
 
       it 'should render 404 for non existent shipment' do
@@ -71,8 +211,8 @@ describe Api::V1::ShipmentsController do
       end
 
       it 'should not show for other private shipment' do
-        @ship_inv.destroy
-        json_query :get, :lowest_proposal, id: @shipment.id
+        shipment = create :shipment, private_proposing: true
+        json_query :get, :lowest_proposal, id: shipment.id
         expect(@json[:error]).to eq 'no_access'
       end
 
@@ -133,9 +273,8 @@ describe Api::V1::ShipmentsController do
       end
 
       it 'should not show private shipment without ship invitation' do
-        @ship_inv.destroy
-        @shipment.private!
-        json_query :get, :current_proposals, id: @shipment.id
+        shipment = create :shipment, private_proposing: true
+        json_query :get, :current_proposals, id: shipment.id
         expect(@json[:error]).to eq 'no_access'
       end
 
@@ -192,7 +331,8 @@ describe Api::V1::ShipmentsController do
         create_list :proposal, 1, shipment: shipment_with_bids
         json_query :get, :index
         expect(@json[:results].size).to eq shipments.size
-        expect(@json[:results][0]['proposals']['avg'].to_i).to be > 0.0 # proposals with info (not low/high/avg)
+        # newest on top
+        expect(@json[:results][0]['proposals']['avg'].to_i).to be shipment_with_bids.avg_proposal.to_i # proposals with info (not low/high/avg)
         expect(@json[:results][0]['bids_count']).to eq 1 # proposal from above
       end
 

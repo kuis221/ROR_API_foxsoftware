@@ -105,15 +105,17 @@ class Shipment < ActiveRecord::Base
   end
   validates_inclusion_of :hide_proposals, in: [true, false]
 
-  aasm do # add whiny_transitions: true to return true/false
+  aasm do # add whiny_transitions: true to return true/false as a transition result
     ## Statuses descriptions(and appropriate events): TODO cover with heavy tests
-    # not listed = for public. author can always see it.
+    ## see #switch_status.
+    ## not listed = for public. author can always see it.
+    ## Okay, statuses
     # draft: no proposals allowed, not listed
     # proposing: can accept proposals, listed
     # pending: proposal accepted by shipper, still can take new proposals, listed
     # confirmed: accept pending by carrier, shipper can edit shipment info(if do then status drop to pending.), no proposals can be made, not listed.
     # in_transit: changed by carrier, shipper cant do edit or any action here, not listed
-    # delivered: same as in_transit state, at this point shipper can leave feedback.
+    # delivering: same as in_transit state, at this point shipper can leave feedback.
     # completed: switch to this state after shipper left feedback
 
     state :draft, initial: true
@@ -124,26 +126,37 @@ class Shipment < ActiveRecord::Base
     state :delivering
     state :completed
 
+    # shipper
     event :auction do
       transitions from: :draft, to: :proposing
     end
 
-    event :negotiate do
+    # shipper, move shipment to draft and remove all proposals
+    event :pause, after: :remove_proposals do
+      transitions from: [:proposing, :pending], to: :draft
+    end
+
+    # shipper
+    event :offer do
       transitions from: :proposing, to: :pending
     end
 
+    # by carrier
     event :confirm do
       transitions from: :pending, to: :confirming
     end
 
-    event :shipped do
-      transitions from: :confirmed, to: :in_transit
+    # by carrier
+    event :picked do
+      transitions from: :confirming, to: :in_transit
     end
 
+    # by carrier
     event :delivered do
       transitions from: :in_transit, to: :delivering
     end
 
+    # leaving feedback by shipper after last status
     event :closed do
       transitions from: :delivering, to: :completed
     end
@@ -156,6 +169,12 @@ class Shipment < ActiveRecord::Base
   def validate_addresses
     self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
+  end
+
+  # remove all proposals after being called 'pause' event
+  def remove_proposals
+    # event_name = aasm.current_event
+    self.proposals.destroy_all
   end
 
   def hide_proposals!
@@ -234,6 +253,64 @@ class Shipment < ActiveRecord::Base
 
   def private!
     update_attribute :private_proposing, true
+  end
+
+  def private?
+    private_proposing?
+  end
+
+  # Can be changed ? status change by carrier or shipper. additional validation for proper roles are in switch status
+  def changeable_by?(user_obj)
+    has_invitation_for?(user_obj) || user == user_obj
+  end
+
+  # Can be read
+  def accessible_by?(user_obj)
+    public_active? || (private? && has_invitation_for?(user_obj) && active?) || user == user_obj
+  end
+
+  # Switch status and return result
+  def switch_status(to_status, by_user, proposal_id=nil)
+    role = by_user.main_role # should be :carrier or :shipper
+    result = false
+    begin
+      case to_status
+        when 'auction'
+          result = auction! if role == :shipper
+        when 'pause'
+          result = pause! if role == :shipper
+        when 'offer'
+          if role == :shipper
+            proposal = proposals.where(id: proposal_id).first
+            return :bad_proposal_id unless proposal
+            proposal.offered!
+            result = offer!
+          end
+        when 'confirm'
+          if role == :carrier
+            proposal = proposals.where(id: proposal_id).first
+            return :bad_proposal_id unless proposal
+            proposal.accepted!
+            result = confirm!
+          end
+        when 'in_transit'
+          result = picked! if role == :carrier
+        when 'delivered'
+          result = delivered! if role == :carrier
+        else
+          return :bad_status
+      end
+      return(result ? :ok : :bad_role)
+    rescue Exception => e
+      return :bad_transition if e.is_a?(AASM::InvalidTransition)
+      raise e
+    end
+    # we should not reach this line )
+  end
+
+  # Statuses where proposals are accepted
+  def propose_allowed?
+    [:proposing, :pending].include?(state)
   end
 
   # Manage ship_invitations here. delete all when [], replace if size>0, or ignore if nil.

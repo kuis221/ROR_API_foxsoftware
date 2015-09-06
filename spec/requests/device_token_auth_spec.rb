@@ -104,6 +104,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
     token_client = user.tokens.first[0]
     expect(response.headers['access-token']).not_to be blank?
     expect(user.uid).to eq response.headers['uid']
-    expect(user.tokens[token_client]['expiry'].to_s).to eq response.headers['expiry']
+    # dont test with last ms, because its can vary by 1 ms depends on your machine speed
+    expect(user.tokens[token_client]['expiry'].to_s[0..8]).to eq response.headers['expiry'].to_s[0..8]
   end
 end

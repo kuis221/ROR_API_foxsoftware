@@ -10,6 +10,8 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  equipment_type :string
+#  offered_at     :datetime
+#  accepted_at    :datetime
 #
 # Indexes
 #

@@ -96,6 +96,14 @@ class User < ActiveRecord::Base
     shipment ? (ship_invitations.where(shipment_id: shipment.id).first && shipment.active?) : nil
   end
 
+  # Find if carrier or shipper
+  def main_role
+    return :carrier if has_role?(:carrier)
+    return :shipper if has_role?(:shipper)
+    return :admin if has_role?(:admin)
+    raise "USER #{id} HAS NO MAIN ROLE"
+  end
+
   # by default all users get :user role. second role  depends on params[:user_type]
   def assign_role_by_param(user_type)
     role = :shipper
