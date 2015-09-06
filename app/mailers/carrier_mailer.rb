@@ -22,6 +22,13 @@ class CarrierMailer < ApplicationMailer
     mail to: proposal.user.email, subject: 'Your proposal has been rejected'
   end
 
+  # def proposal_retracted(proposal)
+  #   @shipment = proposal.shipment
+  #   @shipper = @shipment.user
+  #   @proposal = proposal
+  #   mail to: @shipper.email, subject: "Proposal retracted for shipment: #{@shipment.id} by #{proposal.user.name}"
+  # end
+
   # Updated while being in status :confirming
   def updated_shipment(shipment)
     proposal = shipment.offered_proposal

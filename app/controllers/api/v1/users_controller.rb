@@ -17,7 +17,6 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
     render_json @user
   end
 
-  # :nocov:
   # swagger_api :update do |api|
   #   summary 'Update current user details'
   #   Api::V1::DeviseTokenAuth::RegistrationsController.generic_user_details(api)
@@ -28,7 +27,6 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
   #   response 'unauthorized'
   #   response 'not_valid'
   # end
-  # # :nocov:
   # def update
   #   current_user.update_attributes! allowed_params
   #   render_ok
