@@ -11,7 +11,7 @@ describe Api::V1::ShipmentsController do
   end
 
 
-  shared_examples_for 'post action set' do |role, way|
+  shared_examples_for 'POST action' do |role, way|
     login_user
 
     before do
@@ -162,11 +162,11 @@ describe Api::V1::ShipmentsController do
 
   end
 
-  describe 'Using set_status' do
-    it_should_behave_like 'post action set', :carrier, :private
-    it_should_behave_like 'post action set', :carrier, :public
-    it_should_behave_like 'post action set', :shipper, :private
-    it_should_behave_like 'post action set', :shipper, :public
+  describe 'Changing shipment status' do
+    it_should_behave_like 'POST action', :carrier, :private
+    it_should_behave_like 'POST action', :carrier, :public
+    it_should_behave_like 'POST action', :shipper, :private
+    it_should_behave_like 'POST action', :shipper, :public
   end
 
   context 'Carrier browsing shipments' do
@@ -179,6 +179,15 @@ describe Api::V1::ShipmentsController do
 
     it 'check carrier ability' do
       expect(@logged_in_user.has_role?(:carrier)).to eq true
+    end
+
+    it 'should not list unlisted shipments' do
+      shipper = @shipment.user
+      @shipment.auction!
+      @shipment.update_attribute :private_proposing, false
+      create_list :shipment, 3, user: shipper, aasm_state: 'confirming', private_proposing: false
+      json_query :get, :index, user_id: shipper.id
+      expect(@json[:results].size).to eq 1 # see only auction state
     end
 
     it 'should read invited shipment' do
@@ -407,6 +416,7 @@ describe Api::V1::ShipmentsController do
         expect(ActionMailer::Base.deliveries.size).to eq 3 # New proposal, You got offer, Carrier accepted offer
         ActionMailer::Base.deliveries.clear
       end
+
 
       it 'should move to :pending from :confirmed' do
         expect {

@@ -63,7 +63,8 @@ class Shipment < ActiveRecord::Base
   mount_uploader :picture, ShipmentPictureUploader
   resourcify
 
-  scope :active, ->() {where(active: true).where("aasm_state != 'draft'") }
+  # only those two status'es can be considered as active
+  scope :active, ->() {where(active: true).where('aasm_state IN (?)', %w(proposing pending)) }
   # dont use :public name as scope name :) unless you want be deep in shit
   scope :public_only, ->() {where(private_proposing: false)}
   before_create :set_secret_id
