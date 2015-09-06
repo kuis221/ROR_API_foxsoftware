@@ -26,4 +26,11 @@ class ClientMailer < ApplicationMailer
     @shipment = shipment
     mail to: @shipper.email, subject: "Carrier has accepted your offer for shipment: #{shipment.id}"
   end
+
+  def notify_delivered(shipment)
+    @shipper = shipment.user
+    @shipment = shipment
+    mail to: @shipper.email, subject: "Your shipment: #{shipment.id} has been delivered"
+  end
+
 end

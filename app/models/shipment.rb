@@ -153,7 +153,7 @@ class Shipment < ActiveRecord::Base
     end
 
     # by carrier
-    event :delivered do
+    event :delivered, after: :notify_delivered do
       transitions from: :in_transit, to: :delivering
     end
 
@@ -224,6 +224,10 @@ class Shipment < ActiveRecord::Base
   # Notify carrier about offer
   def notify_carrier
     CarrierMailer.offered_status(self).deliver_now
+  end
+
+  def notify_delivered
+    ClientMailer.notify_delivered(self).deliver_now
   end
 
   # Reject proposals and notify carriers

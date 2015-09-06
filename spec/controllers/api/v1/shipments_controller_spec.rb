@@ -132,6 +132,9 @@ describe Api::V1::ShipmentsController do
         expect(@json[:status]).to eq 'ok'
         @shipment.reload
         expect(@shipment.state).to eq :delivering
+        shipper_mail = ActionMailer::Base.deliveries.last
+        expect(shipper_mail.to.first).to eq @shipment.user.email
+        expect(shipper_mail.subject).to eq "Your shipment: #{@shipment.id} has been delivered"
       end
     end
 
