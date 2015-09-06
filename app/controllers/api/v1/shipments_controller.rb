@@ -1,6 +1,6 @@
 class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   before_filter :set_user, only: [:index, :show]
-  before_filter :find_shipment, only: [:update, :toggle_active, :destroy]
+  before_filter :find_shipment, only: [:update, :toggle_active, :destroy, :check_new_proposals]
 
   # :nocov:
   swagger_controller :shipments, 'Shipment resource'
@@ -134,6 +134,18 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
       shipment.invite!(params[:invitations])
     end
     render_json shipment
+  end
+
+  # :nocov:
+  swagger_api :check_new_proposals do
+    summary 'Check if new proposals has been made since last check'
+    notes 'For shipper users'
+    param :path, :id, :integer, :required, 'Shipment ID'
+    response '2', 'Return number of new proposals'
+  end
+  # :nocov:
+  def check_new_proposals
+    render json: {status: @shipment.new_proposals.count}
   end
 
   # :nocov:

@@ -37,6 +37,7 @@
 #  arrive_at_to         :datetime
 #  hide_proposals       :boolean          default(FALSE)
 #  track_frequency      :string
+#  last_review_at       :datetime
 #
 # Indexes
 #

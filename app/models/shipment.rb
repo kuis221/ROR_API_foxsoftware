@@ -37,6 +37,7 @@
 #  arrive_at_to         :datetime
 #  hide_proposals       :boolean          default(FALSE)
 #  track_frequency      :string
+#  last_review_at       :datetime
 #
 # Indexes
 #
@@ -165,10 +166,16 @@ class Shipment < ActiveRecord::Base
 
   # should be after validates_presence_of shipper_info_id and receiver_info_id
   after_validation :validate_addresses
+  before_create :set_last_review_at
+
   # Check that associated addresses belongs to that user
   def validate_addresses
     self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
+  end
+
+  def set_last_review_at
+    self.last_review_at = Time.zone.now
   end
 
   # remove all proposals after being called 'pause' event
@@ -356,4 +363,10 @@ class Shipment < ActiveRecord::Base
     save!
   end
 
+  # Render new proposals since the last call of this method. update when touched.
+  def new_proposals
+    res = proposals.where('created_at >= ?', last_review_at)
+    update_attribute :last_review_at, Time.zone.now
+    res
+  end
 end

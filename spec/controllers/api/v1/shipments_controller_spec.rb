@@ -452,6 +452,15 @@ describe Api::V1::ShipmentsController do
           @shipment = create :shipment, user: @logged_in_user
         end
 
+        it 'should display new proposals for check_new_proposals' do
+          @shipment.auction!
+          create_list :proposal, 3, shipment: @shipment
+          expect(@shipment.new_proposals.count).to eq 3
+          create :proposal, shipment: @shipment
+          json_query :get, :check_new_proposals, id: @shipment.id
+          expect(@json[:status]).to eq 1
+        end
+
         it 'should let shipper edit its own shipment' do
           expect {
             json_query :put, :update, id: @shipment.id, shipment: {price: 22.32}
