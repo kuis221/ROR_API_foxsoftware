@@ -66,6 +66,9 @@ describe Api::V1::ShipmentsController do
         proposal.reload
         expect(proposal.offered_at).not_to be_falsey
         expect(@shipment.state).to eq :pending
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.to.first).to eq proposal.user.email
+        expect(mail.subject).to eq 'You got offer for your proposal!'
       else
         expect(@json[:error]).to eq 'bad_role'
       end

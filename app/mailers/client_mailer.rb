@@ -13,6 +13,7 @@ class ClientMailer < ApplicationMailer
     mail to: @shipper.email, subject: "New proposal for shipment: #{@shipment.id}"
   end
 
+  # TODO move to CarrierMailer.
   def proposal_retracted(proposal)
     @shipment = proposal.shipment
     @shipper = @shipment.user

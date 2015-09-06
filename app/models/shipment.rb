@@ -137,8 +137,8 @@ class Shipment < ActiveRecord::Base
       transitions from: [:proposing, :pending], to: :draft
     end
 
-    # shipper
-    event :offer do
+    # shipper, notify carrier
+    event :offer, after: :notify_carrier do
       transitions from: :proposing, to: :pending
     end
 
@@ -221,6 +221,13 @@ class Shipment < ActiveRecord::Base
     user == some_user
   end
 
+  def notify_carrier
+    CarrierMailer.offered_status(self).deliver_now
+  end
+
+  def offered_proposal
+    proposals.where('offered_at IS NOT NULL').first
+  end
   # Check for:
   # -> user has not reached limit of proposals
   # -> user has invitation_for? shipment if private, or shipment active+public
