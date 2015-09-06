@@ -1,4 +1,4 @@
-class ClientMailer < ApplicationMailer
+class ShipperMailer < ApplicationMailer
 
 
   def new_tracking(tracking)

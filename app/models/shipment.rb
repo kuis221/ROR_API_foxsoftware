@@ -227,14 +227,14 @@ class Shipment < ActiveRecord::Base
   end
 
   def notify_delivered
-    ClientMailer.notify_delivered(self).deliver_now
+    ShipperMailer.notify_delivered(self).deliver_now
   end
 
   # Reject proposals and notify carriers
   # TODO Sidekiq
   # TODO remove proposals ?
   def notify_shipper_and_reject_proposals
-    ClientMailer.offer_accepted(self).deliver_now
+    ShipperMailer.offer_accepted(self).deliver_now
     proposals.each do |proposal|
       CarrierMailer.shipment_rejected(proposal).deliver_now
     end

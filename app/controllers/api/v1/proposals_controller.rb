@@ -84,7 +84,7 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
   # TODO implement.
   def destroy
     @proposal.retract!
-    ClientMailer.proposal_retracted(@proposal)
+    ShipperMailer.proposal_retracted(@proposal)
     render_ok
   end
 

@@ -45,6 +45,6 @@ class Tracking < ActiveRecord::Base
 
   # send email to shipper about new tracking
   def notify_client
-    ClientMailer.new_tracking(self).deliver_now
+    ShipperMailer.new_tracking(self).deliver_now
   end
 end

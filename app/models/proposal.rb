@@ -59,7 +59,7 @@ class Proposal < ActiveRecord::Base
   end
 
   def new_notification
-    ClientMailer.new_proposal(self).deliver_now
+    ShipperMailer.new_proposal(self).deliver_now
   end
 
 end
