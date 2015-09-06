@@ -74,6 +74,19 @@ describe Api::V1::ShipmentsController do
       end
     end
 
+    it 'cannot offer twice' do
+      @shipment.auction! # ff
+      proposal = create :proposal, shipment: @shipment
+      proposal.offered!
+      @shipment.offer!
+      json_query :post, :set_status, {id: @shipment.id, status: 'offer', proposal_id: proposal.id}
+      if role == :shipper
+        expect(@json[:error]).to eq 'offer_already_made'
+      else
+        expect(@json[:error]).to eq 'bad_role'
+      end
+    end
+
     # TODO to offer without proposal id. when tested manually - its pass the test.
     it 'to confirm with proposal_id' do
       # Fast forward

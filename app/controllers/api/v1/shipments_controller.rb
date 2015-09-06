@@ -203,6 +203,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     response 'bad_transition', 'Not eligible for transition to this status'
     response 'bad_proposal_id', 'No proposal found within shipment scope'
     response 'access_denied', 'Cannot update this shipment, shipment has no invitation for user or not public'
+    response 'offer_already_made', "For 'propose' status, when shipment already has offered proposal"
   end
   # :nocov:
   def set_status

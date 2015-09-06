@@ -334,6 +334,7 @@ class Shipment < ActiveRecord::Base
           result = pause! if role == :shipper
         when 'offer'
           if role == :shipper
+            return :offer_already_made if offered_proposal
             proposal = proposals.where(id: proposal_id).first
             return :bad_proposal_id unless proposal
             proposal.offered!
