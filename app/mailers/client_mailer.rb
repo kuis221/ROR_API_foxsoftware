@@ -21,4 +21,9 @@ class ClientMailer < ApplicationMailer
     mail to: @shipper.email, subject: "Proposal retracted for shipment: #{@shipment.id} by #{proposal.user.name}"
   end
 
+  def offer_accepted(shipment)
+    @shipper = shipment.user
+    @shipment = shipment
+    mail to: @shipper.email, subject: "Carrier has accepted your offer for shipment: #{shipment.id}"
+  end
 end

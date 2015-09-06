@@ -81,6 +81,8 @@ describe Api::V1::ShipmentsController do
       @shipment.offer!
       bidder = create :user# if role == :carrier
       proposal = create :proposal, shipment: @shipment, user: (role == :carrier ? @logged_in_user : bidder ), offered_at: Time.zone.now
+      other_proposal = create :proposal, shipment: @shipment
+      ActionMailer::Base.deliveries.clear
       json_query :post, :set_status, {id: @shipment.id, status: 'confirm', proposal_id: proposal.id}
       if role == :shipper
         expect(@json[:error]).to eq 'bad_role'
@@ -90,6 +92,15 @@ describe Api::V1::ShipmentsController do
         proposal.reload
         expect(proposal.accepted_at).not_to be_falsey
         expect(@shipment.state).to eq :confirming
+        # Check that shipper get an email
+        shipper_mail = ActionMailer::Base.deliveries.first
+        expect(shipper_mail.to.first).to eq @shipment.user.email
+        expect(shipper_mail.subject).to eq "Carrier has accepted your offer for shipment: #{@shipment.id}"
+
+        # Should let other carriers that their proposals are rejected
+        rejected_mail = ActionMailer::Base.deliveries.last # rejected email to other carriers
+        expect(rejected_mail.to.first).to eq other_proposal.user.email
+        expect(rejected_mail.subject).to eq 'Your proposal has been rejected'
       end
     end
 

@@ -13,4 +13,12 @@ class CarrierMailer < ApplicationMailer
     @name = proposal.user.name
     mail to: proposal.user.email, subject: 'You got offer for your proposal!'
   end
+
+  # When shipment accepted by the shipper, we let know all other carriers that their proposals are rejected
+  def shipment_rejected(proposal)
+    # shipment = proposal.shipment
+    @name = proposal.user.name
+    @link = Settings.host + '/my/proposals'
+    mail to: proposal.user.email, subject: 'Your proposal has been rejected'
+  end
 end

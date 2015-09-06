@@ -143,7 +143,7 @@ class Shipment < ActiveRecord::Base
     end
 
     # by carrier
-    event :confirm do
+    event :confirm, after: :notify_shipper_and_reject_proposals do
       transitions from: :pending, to: :confirming
     end
 
@@ -221,13 +221,26 @@ class Shipment < ActiveRecord::Base
     user == some_user
   end
 
+  # Notify carrier about offer
   def notify_carrier
     CarrierMailer.offered_status(self).deliver_now
   end
 
+  # Reject proposals and notify carriers
+  # TODO Sidekiq
+  # TODO remove proposals ?
+  def notify_shipper_and_reject_proposals
+    ClientMailer.offer_accepted(self).deliver_now
+    proposals.each do |proposal|
+      CarrierMailer.shipment_rejected(proposal).deliver_now
+    end
+  end
+
+  # Find proposal with offer from shipper
   def offered_proposal
     proposals.where('offered_at IS NOT NULL').first
   end
+
   # Check for:
   # -> user has not reached limit of proposals
   # -> user has invitation_for? shipment if private, or shipment active+public
