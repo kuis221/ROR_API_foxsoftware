@@ -21,4 +21,14 @@ class CarrierMailer < ApplicationMailer
     @link = Settings.host + '/my/proposals'
     mail to: proposal.user.email, subject: 'Your proposal has been rejected'
   end
+
+  # Updated while being in status :confirming
+  def updated_shipment(shipment)
+    proposal = shipment.offered_proposal
+    return unless proposal
+    @link = Settings.host + "/my/proposals/#{proposal.id}"
+    @name = proposal.user.name
+    @shipment = shipment
+    mail to: proposal.user.email, subject: "Shipment ID:#{shipment.id} has been changed"
+  end
 end

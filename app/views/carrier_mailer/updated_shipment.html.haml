@@ -1,0 +1,17 @@
+%p
+  Hello,
+  = @name
+
+%p
+  Shipment ID:
+  %strong= @shipment.id
+  has been edited by shipper, therefore status of shipment has been reduced to "pending"
+  %br
+  Click the following link, review changes and "Accept" new offer or decline it.
+  %br
+  Link:
+  = link_to @link, @link
+
+%p
+  Thank You
+  Fox LMP

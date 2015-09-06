@@ -70,6 +70,7 @@ group :development, :test do
   gem 'annotate'
   gem 'bullet'
   gem 'dotenv-rails'
+  gem 'fuubar'
 end
 
 group :test do

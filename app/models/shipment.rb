@@ -114,7 +114,7 @@ class Shipment < ActiveRecord::Base
     # draft: no proposals allowed, not listed
     # proposing: can accept proposals, listed
     # pending: proposal accepted by shipper, still can take new proposals, listed
-    # confirmed: accept pending by carrier, shipper can edit shipment info(if do then status drop to pending.), no proposals can be made, not listed.
+    # confirming: accept pending by carrier, shipper can edit shipment info(if do then status drop to pending.), no proposals can be made, not listed.
     # in_transit: changed by carrier, shipper cant do edit or any action here, not listed
     # delivering: same as in_transit state, at this point shipper can leave feedback.
     # completed: switch to this state after shipper left feedback
@@ -147,6 +147,11 @@ class Shipment < ActiveRecord::Base
       transitions from: :pending, to: :confirming
     end
 
+    # by client, if updated shipment during
+    event :edited, after: :notify_carrier_on_update do
+      transitions from: :confirming, to: :pending
+    end
+
     # by carrier
     event :picked do
       transitions from: :confirming, to: :in_transit
@@ -172,6 +177,16 @@ class Shipment < ActiveRecord::Base
   def validate_addresses
     self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
+  end
+
+  # If updated while in :confirming status then fallback to :pending and send email to offered_proposal
+  def status_check
+    edited! if state == :confirming
+  end
+
+  # Notify carrier on updated shipment during status change. called from status_check(after event)
+  def notify_carrier_on_update
+    CarrierMailer.updated_shipment(self).deliver_now
   end
 
   def set_last_review_at
@@ -230,12 +245,13 @@ class Shipment < ActiveRecord::Base
     ShipperMailer.notify_delivered(self).deliver_now
   end
 
-  # Reject proposals and notify carriers
+  # Reject proposals except offered and notify carriers
   # TODO Sidekiq
   # TODO remove proposals ?
   def notify_shipper_and_reject_proposals
     ShipperMailer.offer_accepted(self).deliver_now
-    proposals.each do |proposal|
+    offered = offered_proposal
+    proposals.where('id != ?', offered.try(:id)).each do |proposal|
       CarrierMailer.shipment_rejected(proposal).deliver_now
     end
   end
@@ -298,6 +314,11 @@ class Shipment < ActiveRecord::Base
   # Can be read
   def accessible_by?(user_obj)
     public_active? || (private? && has_invitation_for?(user_obj) && active?) || user == user_obj
+  end
+
+  # Can be updated ?
+  def updateable_in_status?
+    [:draft, :proposed, :pending, :confirming].include?(state)
   end
 
   # Switch status and return result

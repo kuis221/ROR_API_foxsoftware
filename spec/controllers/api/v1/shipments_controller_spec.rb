@@ -393,6 +393,45 @@ describe Api::V1::ShipmentsController do
 
     end
 
+    context 'changes during limited statuses' do
+
+      before do
+        @shipment = create :shipment, user: @logged_in_user
+        @shipment.auction!
+        carrier = create :user
+        carrier.add_role(:carrier)
+        ship_inv = create :ship_invitation, invitee: carrier, shipment: @shipment, invitee_email: carrier.email
+        @proposal = create :proposal, shipment: @shipment, price: 120, user: @logged_in_user, offered_at: 2.hours.ago, accepted_at: Time.zone.now
+        @shipment.offer!
+        @shipment.confirm!
+        expect(ActionMailer::Base.deliveries.size).to eq 3 # New proposal, You got offer, Carrier accepted offer
+        ActionMailer::Base.deliveries.clear
+      end
+
+      it 'should move to :pending from :confirmed' do
+        expect {
+          json_query :post, :update, id: @shipment.id, shipment: {price: 135.32}
+          @shipment.reload
+        }.to change(@shipment, :price)
+        expect(@shipment.state).to eq :pending
+        email = ActionMailer::Base.deliveries.last
+        expect(email.to.first).to eq @proposal.user.email
+        expect(email.subject).to eq "Shipment ID:#{@shipment.id} has been changed"
+        expect(@json[:status]).to eq 'ok'
+      end
+
+      it 'should not let change during prohibited statuses' do
+        @shipment.picked!
+        expect {
+          json_query :post, :update, id: @shipment.id, shipment: {price: 135.32}
+          @shipment.reload
+        }.not_to change(@shipment, :price)
+        expect(ActionMailer::Base.deliveries.size).to eq 0
+        expect(@json[:error]).to eq 'locked_status'
+      end
+
+    end
+
     context 'saving' do
       let(:attrs) { {shipper_info_id: @shipper_info.id, receiver_info_id: @receiver_info.id, dim_w: 10, dim_h: 20.22, dim_l: 30.3, distance: 50, notes: 'TEST DS', price: 1005.22, pickup_at_from: 2.days.from_now.to_s, arrive_at_from: 3.days.from_now.to_s, auction_end_at: 2.days.from_now.to_s} }
       before do
