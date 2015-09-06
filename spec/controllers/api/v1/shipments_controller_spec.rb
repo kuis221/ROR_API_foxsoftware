@@ -182,7 +182,10 @@ describe Api::V1::ShipmentsController do
 
     it 'should display only my invites in my_invitations' do
       other_ship_invs = create_list :ship_invitation, 2
-      my_ship_invs = create_list :ship_invitation, 3, invitee: @logged_in_user # with related shipments
+      shipment = create :shipment, private_proposing: true
+      shipment.auction!
+      my_ship_invs = create_list :ship_invitation, 3, invitee: @logged_in_user, shipment: shipment # with related shipments
+
       json_query :get, :my_invitations
       expect(@json[:results].size).to eq 3
       my_ships = my_ship_invs.map &:shipment_id
@@ -212,6 +215,7 @@ describe Api::V1::ShipmentsController do
 
       it 'should not show for other private shipment' do
         shipment = create :shipment, private_proposing: true
+        shipment.auction!
         json_query :get, :lowest_proposal, id: shipment.id
         expect(@json[:error]).to eq 'no_access'
       end
@@ -246,6 +250,10 @@ describe Api::V1::ShipmentsController do
           expect(res['price'].to_f < last).to be true
           last = res['price'].to_f
         end
+      end
+
+      it 'should not list draft shipments' do
+
       end
 
       it 'should list shipments with proposals summaries' do

@@ -62,7 +62,7 @@ class Shipment < ActiveRecord::Base
   mount_uploader :picture, ShipmentPictureUploader
   resourcify
 
-  scope :active, ->() {where(active: true)}
+  scope :active, ->() {where(active: true).where("aasm_state != 'draft'") }
   # dont use :public name as scope name :) unless you want be deep in shit
   scope :public_only, ->() {where(private_proposing: false)}
   before_create :set_secret_id
