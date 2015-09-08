@@ -16,6 +16,8 @@
 #  is_default   :boolean          default(FALSE)
 #  address2     :string
 #  title        :string
+#  fax          :string
+#  company_name :string
 #
 # Indexes
 #
@@ -42,5 +44,9 @@ FactoryGirl.define do
 
   factory :receiver_info, parent: :address_info do
     type 'ReceiverInfo'
+  end
+
+  factory :user_info, parent: :address_info do
+    type 'UserInfo'
   end
 end

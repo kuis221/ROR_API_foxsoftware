@@ -25,7 +25,7 @@ module DeviseTokenAuth
       param :form, :user_type, :string, :required, "User type, 'carrier' or 'shipper'"
       param :form, :invitation, :string, :optional, 'Invitation code, pass from query string if available. IF invitation present and valid then new user will be assigned with carrier role regardless of user_type field'
       # param :form, :provider, :string, :required, "Provider, one of: (email,facebook,google_oauth2,linkedin)", {defaultValue: 'email'}
-      response 'not_valid'
+      response 'not_valid', "{'text': [ArrayOfErrors]}"
       response 'ok', 'Success', :User
     end
     # :nocov:
@@ -109,19 +109,21 @@ module DeviseTokenAuth
           # }
         else
           clean_up_passwords @resource
-          render json: {
-            status: 'error',
-            data:   @resource.as_json,
-            errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-          }, status: 403
+          render_error 'not_saved', 403, @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+          # render json: {
+          #   error: 'error',
+          #   # data:   @resource.as_json,
+          #   text: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+          # }, status: 403
         end
       rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
-        render json: {
-          status: 'error',
-          data:   @resource.as_json,
-          errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
-        }, status: 403
+        render_error 'not_unique', 403
+        # render json: {
+        #   status: 'error',
+        #   data:   @resource.as_json,
+        #   errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
+        # }, status: 403
       end
     end
 
@@ -130,7 +132,7 @@ module DeviseTokenAuth
       summary 'UPDATE user details'
       Api::V1::DeviseTokenAuth::RegistrationsController.generic_user_details(api)
       param :form, :current_password, :string, :optional, 'Current password, use to change password'
-      response 'not_valid', "{'message': [ArrayOfErrors]}"
+      response 'not_valid', "{'text': [ArrayOfErrors]}"
       response 'ok'
     end
     # :nocov:

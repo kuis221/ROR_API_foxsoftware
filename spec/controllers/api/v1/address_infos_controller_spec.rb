@@ -2,18 +2,46 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::AddressInfosController, type: :controller do
   login_user
+  let(:attrs) { {state: 'CA', zip_code: '20860', city: 'Palm Springs', address1: 'Lake street 21', fax: '112233', company_name: FFaker::Company.name,
+                 appointment: true, contact_name: 'Alex', type: 'ShipperInfo', is_default: false, title: 'Zooloo'} }
+
+  shared_examples_for 'create address_info' do |address_type| # eg: ShipperInfo
+    it 'normally' do
+      expect {
+        attrs[:type] = address_type
+        json_query :post, :create, address_info: attrs
+        expect(@json[:type]).to eq address_type
+      }.to change{address_type.constantize.count}.by(1)
+      expect(@logged_in_user.send(address_type.constantize.table_name).count).to eq 1
+    end
+  end
 
   context 'CRUD AddressInfo' do
 
-    let(:attrs) { {state: 'CA', zip_code: '20860', city: 'Palm Springs', address1: 'Lake street 21',
-                appointment: true, contact_name: 'Alex', type: 'ShipperInfo', is_default: false, title: 'Zooloo'} }
+    it_should_behave_like 'create address_info', 'ShipperInfo'
+    it_should_behave_like 'create address_info', 'ReceiverInfo'
+    it_should_behave_like 'create address_info', 'UserInfo'
 
+    it 'should load my_address' do
+      user_info = create :user_info, user: @logged_in_user
+      json_query :get, :my_address
+      expect(@json[:id]).to eq user_info.id
+    end
 
-    it 'create an AddressInfo of ShipperInfo type' do
+    it 'load some address_info' do
+      shipper_info = create :shipper_info, user: @logged_in_user
+      json_query :get, :show, id: shipper_info.id
+      expect(@json[:id]).to eq shipper_info.id
+      expect(@json[:type]).to eq 'ShipperInfo'
+    end
+
+    it 'should not let create UserInfo twice' do
+      user_info = create :user_info, user: @logged_in_user
+      attrs[:type] = 'UserInfo'
       expect {
         json_query :post, :create, address_info: attrs
-        expect(@json[:type]).to eq 'ShipperInfo'
-      }.to change{ShipperInfo.count}.by(1)
+        expect(@json[:error]).to eq 'not_saved'
+      }.not_to change{UserInfo}
     end
 
     it 'should not create with bad type' do

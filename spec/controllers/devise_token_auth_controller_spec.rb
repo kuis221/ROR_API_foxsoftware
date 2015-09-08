@@ -32,7 +32,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       expect {
         json_query :post, :create, attrs
       }.not_to change{User.count}
-      expect(@json[:status]).to eq 'error'
+      expect(@json[:error]).to eq 'not_saved'
       expect(ActionMailer::Base.deliveries.size).to eq 0
     end
 
@@ -64,7 +64,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       attrs[:password] = ''
       expect {
         json_query :post, :create, attrs
-        expect(@json[:errors]['password']).not_to be blank?
+        expect(@json[:text]['password']).not_to be blank?
       }.not_to change{User.count}
     end
 
@@ -72,7 +72,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       attrs[:email] = 'bad'
       expect {
         json_query :post, :create, attrs
-        expect(@json[:errors]['email']).not_to be blank?
+        expect(@json[:text]['email']).not_to be blank?
       }.not_to change{User.count}
     end
 
@@ -80,7 +80,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
       attrs[:password_confirmation] = 'zozosd'
       expect {
         json_query :post, :create, attrs
-        expect(@json[:errors]['password_confirmation']).not_to be blank?
+        expect(@json[:text]['password_confirmation']).not_to be blank?
       }.not_to change{User.count}
     end
   end

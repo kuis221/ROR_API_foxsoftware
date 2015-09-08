@@ -392,7 +392,7 @@ describe Api::V1::ShipmentsController do
         expect(@json[:receiver_info]).not_to eq nil
         expect(@json[:id]).to eq shipment.id
         expect(@json[:proposals].size).to eq 3
-        expect(@json[:proposals][0]['id']).to eq proposals.first.id
+        expect(proposals.map(&:id)).to include @json[:proposals][0]['id']
       end
 
       it 'should let shipper list his shipment with proposals, even not active' do

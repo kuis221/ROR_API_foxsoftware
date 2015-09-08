@@ -26,5 +26,6 @@
 
 require 'rails_helper'
 
-RSpec.describe AddressInfo, type: :model do
+RSpec.describe UserInfo, type: :model do
+
 end

@@ -384,7 +384,7 @@ function program14(depth0,data) {
 function program16(depth0,data) {
   
   
-  return "\n          <div style='margin:0;padding:0;display:inline'></div>\n          <h4>Response Messages in {'status': 'CODE', message: 'Readable MSG'}</h4>\n          <table class='fullwidth'>\n            <thead>\n            <tr>\n              <th>CODE</th>\n              <th>Readable MSG</th>\n              <th>Response Model</th>\n            </tr>\n            </thead>\n            <tbody class=\"operation-status\">\n            \n            </tbody>\n          </table>\n          ";
+  return "\n          <div style='margin:0;padding:0;display:inline'></div>\n          <h4>Response Messages in {'status': 'CODE', text: 'Readable MSG'}</h4>\n          <table class='fullwidth'>\n            <thead>\n            <tr>\n              <th>CODE</th>\n              <th>text</th>\n              <th>Response Model</th>\n            </tr>\n            </thead>\n            <tbody class=\"operation-status\">\n            \n            </tbody>\n          </table>\n          ";
   }
 
 function program18(depth0,data) {

@@ -27,6 +27,7 @@
 #  provider               :string           default("email"), not null
 #  uid                    :string           default(""), not null
 #  tokens                 :json
+#  mc_num                 :string
 #
 # Indexes
 #
@@ -50,6 +51,7 @@ class User < ActiveRecord::Base
   has_many :address_infos, dependent: :destroy
   has_many :shipper_infos, dependent: :destroy
   has_many :receiver_infos, dependent: :destroy
+  has_one :user_info, dependent: :destroy
   # its not user created ship_invitation but from where user invited
   has_many :ship_invitations, foreign_key: :invitee_id, dependent: :destroy
   has_many :trackings, dependent: :destroy
@@ -131,13 +133,13 @@ class User < ActiveRecord::Base
     super && !blocked?
   end
 
-  def inactive_message
-    if blocked?
-      :blocked
-    else
-      super # Use whatever other message
-    end
-  end
+  # def inactive_message
+  #   if blocked?
+  #     :blocked
+  #   else
+  #     super # Use whatever other message
+  #   end
+  # end
 
   def block!
     update_attribute :blocked, true

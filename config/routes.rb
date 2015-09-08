@@ -40,6 +40,7 @@ Rails.application.routes.draw do
         end
         collection do
           get :my_defaults
+          get :my_address
         end
       end
 

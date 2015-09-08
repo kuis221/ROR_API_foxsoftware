@@ -1,7 +1,7 @@
 class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   # only for current user with shipper permission
   # load_and_authorize_resource # probably only authorize_resource (we use our loads)
-  before_filter :find_address_info, except: [:index, :create, :my_defaults]
+  before_filter :find_address_info, except: [:index, :create, :my_defaults, :my_address]
 
   # :nocov:
   swagger_controller :address_info, 'User addresses management'
@@ -27,6 +27,12 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :create do
+    notes <<-CREATE
+            ShipperInfo - Ship from address<br/>
+            ReceiverInfo - Ship to address<br/>
+            UserInfo - User address<br/>
+    CREATE
+    response 'not_saved', 'When UserInfo already exists within current user'
   end
   # :nocov:
   def create
@@ -38,7 +44,7 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
     rescue Exception => e
       # We need this block to have class validation workaround.
       if e.is_a?(ActiveRecord::SubclassNotFound)
-        render_error :not_saved, 500, 'type is invalid, must be ShipperInfo or ReceiverInfo'
+        render_error :not_saved, 500, 'type is invalid, must be ShipperInfo or ReceiverInfo or UserInfo'
         return
       else
         raise e # regular ActiveRecord::RecordNotSaved managed by rescue_from
@@ -93,9 +99,26 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
   end
 
   # :nocov:
+  swagger_api :my_address do
+    summary 'LOAD current user address'
+    notes 'Render current user address(which is not related to shipper or carrier objects)'
+    response 'not_found', 'Not found, create with #create method'
+    response 'ok', '{AdressInfoObject}'
+  end
+  # :nocov:
+  def my_address
+    user_address = current_user.user_info
+    if user_address
+      render_json user_address
+    else
+      render_error 'not_found', 404
+    end
+  end
+
+  # :nocov:
   swagger_api :my_defaults do
     summary "Return user's default addresses"
-    notes 'Can be in any combination found/not found'
+    notes 'Can be in any combination found/not found of ShipperInfo or AddressInfo'
     response 'ok', "{'shipper_info':'not_found', 'receiver_info': {AddressInfoResponseModel}}"
     response 'ok', "{'shipper_info':{AddressInfoResponseModel}, 'receiver_info': {AddressInfoResponseModel}"
   end
@@ -127,6 +150,6 @@ class Api::V1::AddressInfosController < Api::V1::ApiBaseController
 
   def allowed_params
     params.require(:address_info).permit(:city, :state, :address1, :address2, :zip_code, :contact_name, :appointment,
-                                         :type, :is_default, :title)
+                                         :type, :is_default, :title, :fax, :company_name)
   end
 end
