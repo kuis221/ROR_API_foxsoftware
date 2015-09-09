@@ -1,7 +1,15 @@
+class MissingParam < StandardError
+end
+
 module Extenders
 
   def validate_role(role)
     raise CanCan::AccessDenied unless current_user.has_role?(role)
+  end
+
+  # catch by rescue_from
+  def validate_param(param)
+    raise MissingParam, param unless param
   end
 
   def limit

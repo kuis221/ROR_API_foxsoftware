@@ -2,8 +2,6 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   before_filter :set_connection_type
   before_filter :find_connection, only: [:show, :destroy]
 
-  # authorize_resource only: [:invite_carrier] cant use because we dont have MyConnection AR class
-
   # :nocov:
   swagger_controller :my_connection, 'User connections'
   swagger_api :index do
@@ -15,6 +13,23 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   def index
     connections = current_user.friendships.where(type_of: @conn_type).page(page).per(limit)
     render_json connections
+  end
+
+  # :nocov:
+  swagger_api :autocomplete_carriers do
+    summary 'AUTOCOMPLETE carriers connections y part of email'
+    notes 'For shipper role only.<br/>Will find carrier in current_user connections, depends on current_user role, will return only 5 first matches'
+    param :query, :email, :string, :required, 'Email or a part of it'
+    response 'ok', "{'results': [ArrayOfUsers]}"
+    response 'missing_param', 'Email blank'
+  end
+  # :nocov:
+  def autocomplete_carriers
+    validate_role(:shipper)
+    validate_param(params[:email])
+    conns = current_user.friendships.where(type_of: @conn_type).joins(:friend).where('users.email ILIKE ?', "%#{params[:email]}%").limit(5)
+    users = conns.map &:friend
+    render_json(users, false, with_pagination: false)
   end
 
   # :nocov:

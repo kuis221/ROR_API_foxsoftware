@@ -48,6 +48,7 @@ Rails.application.routes.draw do
       resources :my_connections, except: [:new, :update, :edit] do
         collection do
           post :invite_carrier
+          post :autocomplete_carriers
         end
       end
 

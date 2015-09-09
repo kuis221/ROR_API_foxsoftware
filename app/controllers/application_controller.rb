@@ -22,6 +22,10 @@ class ApplicationController < ActionController::Base
     render_error :access_denied_with_role, 403
   end
 
+  rescue_from MissingParam do |e|
+    render_error 'missing_param', 401, e.message
+  end
+
   private
 
   # def dummy_proof_auth_headers

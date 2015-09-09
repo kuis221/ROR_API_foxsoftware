@@ -4,7 +4,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::MyConnectionsController, type: :controller do
   login_user
 
-  shared_examples_for 'client_connections' do
+  shared_examples_for 'shipper_connections' do
     before do
       @shipment = create :shipment, user: @logged_in_user
       @emails = []
@@ -41,6 +41,23 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
         json_query :post, :invite_carrier, shipment_id: shipment.id, emails: @emails
       }.not_to change{ShipInvitation.count}
       expect(ActionMailer::Base.deliveries.size).to eq 0
+    end
+
+    it 'should autocomplete_carriers' do
+      connections = []
+      3.times do |x|
+        friend = create :user, email: "my_email_#{x}@email.com" # make a group of similar friends
+        connections << create(:friendship, user: @logged_in_user, type_of: :carrier, friend: friend)
+      end
+      create :friendship, user: @logged_in_user, type_of: :carrier # should not find it
+      json_query :post, :autocomplete_carriers, email: 'my_email'
+      expect(@json[:results].collect{|x| x['email']}).to match_array(connections.map(&:friend).map(&:email))
+    end
+
+    it 'should return missing_param in autocomplete_carriers' do
+      create_list :friendship, 3, user: @logged_in_user, type_of: :carrier
+      json_query :post, :autocomplete_carriers
+      expect(@json[:error]).to eq 'missing_param'
     end
   end
 
@@ -105,7 +122,7 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
     # let(:user_role) { :shipper }
   end
 
-  it_behaves_like 'client_connections'
+  it_behaves_like 'shipper_connections'
 
   def opposite_role(role)
     role == :shipper ? :carrier : :shipper
