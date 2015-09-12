@@ -34,12 +34,14 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     summary 'LIST all user shipments'
     notes 'For current user, list owned shipments. When listing with user_id - only public and active shipments will be shown'
     param :query, :user_id, :integer, :optional, 'User ID, if not set then scope by currently logged in user.'
+    param :query, :status, :string, :optional, 'Sort by status name'
     response 'ok', "{'results': [ShipmentObjects]}", :Shipment
   end
   # :nocov:
   # render all current_user shipments or publicity active shipments of :user_id.
   def index
     shipments = @user.shipments.order('created_at DESC')
+    shipments = shipments.with_status(params[:status]) if params[:status]
     shipments = shipments.active.public_only if @user != current_user
     render_json shipments.page(page).per(limit)
   end

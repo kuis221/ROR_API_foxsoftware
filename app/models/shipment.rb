@@ -67,6 +67,8 @@ class Shipment < ActiveRecord::Base
   scope :active, ->() {where(active: true).where('aasm_state IN (?)', %w(proposing pending)) }
   # dont use :public name as scope name :) unless you want be deep in shit
   scope :public_only, ->() {where(private_proposing: false)}
+  scope :with_status, ->(aasm_state) { where(aasm_state: aasm_state)}
+
   before_create :set_secret_id
 
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)

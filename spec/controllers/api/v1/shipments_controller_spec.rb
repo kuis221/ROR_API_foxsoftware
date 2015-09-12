@@ -194,6 +194,14 @@ describe Api::V1::ShipmentsController do
       expect(@logged_in_user.has_role?(:carrier)).to eq true
     end
 
+    it 'filter by shipment.status' do
+      # @shipment are in draft state
+      shipper = @shipment.user
+      shipments = create_list :shipment, 3, private_proposing: false, aasm_state: :proposing, user: shipper # auction
+      json_query :get, :index, status: 'proposing', user_id: shipper.id
+      expect(@json[:results].size).to eq shipments.count
+    end
+
     it 'should not list unlisted shipments' do
       shipper = @shipment.user
       @shipment.auction!

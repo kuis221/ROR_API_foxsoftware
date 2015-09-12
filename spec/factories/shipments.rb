@@ -64,6 +64,7 @@ FactoryGirl.define do
     # arrive_at_to
     auction_end_at 2.days.from_now
     stackable true
+    active true
     n_of_cartons {rand(10)}
     cubic_feet {rand(10)}
     unit_count {rand(10)}
