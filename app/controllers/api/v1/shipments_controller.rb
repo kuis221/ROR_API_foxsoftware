@@ -14,7 +14,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     response 'ok', 'Success', :Shipment
     response 'unauthorized', 'No access to this shipment'
     response 'not_found'
-    response 'not_eligible', 'Same as not found but means that shipment active'
+    response 'not_eligible', 'Shipment inactive'
   end
   # :nocov:
   def show
@@ -47,12 +47,13 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :my_invitations do |api|
     summary 'LIST all invited shipments for carrier user'
-    notes 'Find and display all shipments with invitations only'
+    notes 'Find and display all current_user invited shipments in active status'
     Api::V1::ApiBaseController.add_pagination_params(api)
     response 'ok', "{'results': [ShipmentObjects]}", :Shipment
   end
   # :nocov:
-  # This action render shipments when current_user having invitation for it.
+  # This action render shipments when current_user having invitation for it. Only in active state ->
+  # -> because current_user can be invited but he still may not be "winner"
   # -> while :index action render @user related shipment
   def my_invitations
     shipments = Shipment.active.joins(:ship_invitations).order('shipments.created_at DESC').where('ship_invitations.invitee_id IN (?)', current_user.id).page(page).per(limit)
@@ -141,7 +142,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     summary 'Check if new proposals has been made since last check'
     notes 'For shipper users'
     param :path, :id, :integer, :required, 'Shipment ID'
-    response '2', 'Return number of new proposals'
+    response '2', 'Return number of new proposals since the last check'
   end
   # :nocov:
   def check_new_proposals
@@ -165,8 +166,6 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     if @shipment.updateable_in_status?
       if @shipment.update_attributes! allowed_params
         @shipment.status_check
-        # TODO fallback to 'propose' state if status == 'offered'
-        # TODO not possible to edit while in status >= in_transit
         @shipment.invite!(params[:invitations])
       end
       render_ok

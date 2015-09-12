@@ -287,12 +287,18 @@ class Shipment < ActiveRecord::Base
     public_or_active?(param_secret_id) || user == current_user
   end
 
+  # Public active or accessible by secret_id
   def public_or_active?(param_secret_id)
-    public_active? || (private_proposing? && secret_id == param_secret_id && active?)
+    (public_active? || (private_proposing? && secret_id == param_secret_id)) && active_for_listing?
   end
 
   def public_active?
     !private_proposing? && active?
+  end
+
+  # Is active for listing?
+  def active_for_listing?
+    active? && [:pending, :proposing].include?(state)
   end
 
   def has_invitation_for?(user)

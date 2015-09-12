@@ -204,12 +204,18 @@ describe Api::V1::ShipmentsController do
     end
 
     it 'should read invited shipment' do
+      @shipment.auction!
       json_query :get, :show, id: @shipment.id, invitation: @shipment.secret_id
       expect(@json[:id]).to eq @shipment.id
       keys =  Api::V1::ShipmentPresenter::HASH_show
       keys.each do |key|
         expect(@json[key.to_sym].to_s).to eq @shipment[key].to_s
       end
+    end
+
+    it 'should not read invited shipment when shipment not active_for_listing?' do
+      json_query :get, :show, id: @shipment.id, invitation: @shipment.secret_id
+      expect(@json[:error]).to eq 'unauthorized'
     end
 
     it 'should not read invited shipment with wrong secret_id' do

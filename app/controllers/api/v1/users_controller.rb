@@ -17,21 +17,6 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
     render_json @user
   end
 
-  # swagger_api :update do |api|
-  #   summary 'Update current user details'
-  #   Api::V1::DeviseTokenAuth::RegistrationsController.generic_user_details(api)
-  #   # param :form, 'user[first_name]', :string, :optional, 'First Name'
-  #   # param :form, 'user[last_name]', :string, :optional, 'Last Name'
-  #   # param :form, 'user[email]', :string, :optional, 'Email'
-  #   response 'ok', 'Success', :User
-  #   response 'unauthorized'
-  #   response 'not_valid'
-  # end
-  # def update
-  #   current_user.update_attributes! allowed_params
-  #   render_ok
-  # end
-
   # :nocov:
   swagger_api :get_address_by_zip do
     summary 'Find State and City by Zip code (USA)'
