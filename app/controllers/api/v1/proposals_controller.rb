@@ -1,7 +1,7 @@
 class Api::V1::ProposalsController < Api::V1::ApiBaseController
 
   authorize_resource # so only carrier can get in, part of cancan
-  before_filter :find_proposal, only: [:show, :destroy]
+  before_filter :find_proposal, only: [:show, :reject]
 
   # :nocov:
   swagger_controller :proposals, 'Proposals resource'
@@ -72,20 +72,28 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
   end
 
   # :nocov:
-  swagger_api :destroy do
-    summary 'RETRACT Proposal'
-    notes 'Retract a proposal for current_user. Shipper will get notification about the proposal and proposal status became retracted.'
+  swagger_api :reject do
+    summary 'REJECT Proposal'
+    notes <<-REJECT
+        Reject a proposal for current_user.<br/>
+        Shipper will get notification and proposal status became rejected.<br/>
+        Shipment status will drop to 'proposing' if any other than proposing.<br/>
+        Rejection possible only when shipment in negotiation status.
+    REJECT
     param :path, :id, :integer, :required, 'Proposal ID'
     response 'ok'
+    response 'not_valid', "Can't reject at this status"
     response 'not_found', 'Proposal not found with that user'
   end
   # :nocov:
-  # this is the rectract by the proposalder(eg: carrier).
-  # TODO implement.
-  def destroy
-    @proposal.retract!
-    ShipperMailer.proposal_retracted(@proposal)
-    render_ok
+  def reject
+    shipment = @proposal.shipment
+    if shipment.can_be_rejected?
+      @proposal.reject!
+      render_ok
+    else
+      render_error :not_valid, shipment.state
+    end
   end
 
   private

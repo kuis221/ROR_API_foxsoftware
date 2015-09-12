@@ -12,6 +12,7 @@
 #  equipment_type :string
 #  offered_at     :datetime
 #  accepted_at    :datetime
+#  rejected_at    :datetime
 #
 # Indexes
 #

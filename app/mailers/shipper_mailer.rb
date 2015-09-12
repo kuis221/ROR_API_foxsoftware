@@ -19,6 +19,13 @@ class ShipperMailer < ApplicationMailer
     mail to: @shipper.email, subject: "Carrier has accepted your offer for shipment: #{shipment.id}"
   end
 
+  def proposal_rejected(proposal)
+    @proposal = proposal
+    @shipment = proposal.shipment
+    @shipper = @shipment.user
+    mail to: @shipper.email, subject: "Carrier has rejected his proposal for shipment: #{@shipment.id}"
+  end
+
   def notify_delivered(shipment)
     @shipper = shipment.user
     @shipment = shipment

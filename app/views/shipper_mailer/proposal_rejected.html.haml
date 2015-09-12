@@ -1,0 +1,14 @@
+%p
+  Hello,
+  = @shipper.name
+
+%p
+  Carrier
+  %strong= @proposal.user_name
+  has rejected his proposal for shipment ID:
+  = link_to @shipment.id, "#{Settings.host}/my/shipments/#{@shipment.id}/proposals"
+
+%p
+  Thank You
+  Fox LMP
+

@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://localhost:3000/",
   "resourcePath": "my_connections",
   "apis": [
     {
@@ -48,6 +48,38 @@
           ],
           "method": "post",
           "nickname": "Api::V1::MyConnections#invite_carrier"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/my_connections/autocomplete_carriers.json",
+      "operations": [
+        {
+          "summary": "AUTOCOMPLETE carriers connections y part of email",
+          "notes": "For shipper role only.<br/>Will find carrier in current_user connections, depends on current_user role, will return only 5 first matches",
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "email",
+              "type": "string",
+              "description": "Email or a part of it",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "missing_param",
+              "responseModel": null,
+              "message": "Email blank"
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": "{'results': [ArrayOfUsers]}"
+            }
+          ],
+          "method": "post",
+          "nickname": "Api::V1::MyConnections#autocomplete_carriers"
         }
       ]
     },

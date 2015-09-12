@@ -325,7 +325,12 @@ class Shipment < ActiveRecord::Base
 
   # Can be updated ?
   def updateable_in_status?
-    [:draft, :proposed, :pending, :confirming].include?(state)
+    [:draft, :proposing, :pending, :confirming].include?(state)
+  end
+
+  # Check if shipment in negotiation status
+  def can_be_rejected?
+    [:proposing, :pending, :confirming].include?(state)
   end
 
   # Switch status and return result

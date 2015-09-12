@@ -24,8 +24,10 @@ Rails.application.routes.draw do
           get :my_invitations
         end
       end
-      resources :proposals, except: [:edit, :update] do
-
+      resources :proposals, except: [:new, :edit, :update, :destroy] do
+        member do
+          put :reject
+        end
       end
       resources :shipment_feedbacks
       resources :users, except: [:new, :update, :edit, :destroy, :index] do

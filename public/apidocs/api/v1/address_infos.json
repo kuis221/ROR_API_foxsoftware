@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://localhost:3000/",
   "resourcePath": "address_infos",
   "apis": [
     {
@@ -73,7 +73,7 @@
       "operations": [
         {
           "summary": "Return user's default addresses",
-          "notes": "Can be in any combination found/not found",
+          "notes": "Can be in any combination found/not found of ShipperInfo or AddressInfo",
           "responseMessages": [
             {
               "code": "ok",
@@ -88,6 +88,29 @@
           ],
           "method": "get",
           "nickname": "Api::V1::AddressInfos#my_defaults"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/address_infos/my_address.json",
+      "operations": [
+        {
+          "summary": "LOAD current user address",
+          "notes": "Render current user address(which is not related to shipper or carrier objects)",
+          "responseMessages": [
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "Not found, create with #create method"
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": "{AdressInfoObject}"
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::AddressInfos#my_address"
         }
       ]
     },
@@ -233,7 +256,7 @@
               "paramType": "form",
               "name": "address_info[type]",
               "type": "string",
-              "description": "Address type, one of: ShipperInfo, AddressInfo",
+              "description": "Address type, one of: ShipperInfo, ReceiverInfo, UserInfo",
               "required": true,
               "defaultValue": null
             },
@@ -252,6 +275,22 @@
               "description": "Some title for this address, eg: 'My warehouse'",
               "required": true,
               "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[fax]",
+              "type": "string",
+              "description": "Fax number",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[company_name]",
+              "type": "string",
+              "description": "Company name",
+              "required": false,
+              "defaultValue": null
             }
           ],
           "summary": "CREATE AddressInfo",
@@ -265,8 +304,14 @@
               "code": "ok",
               "responseModel": "AddressInfo",
               "message": "{AddressInfoObject}"
+            },
+            {
+              "code": "not_saved",
+              "responseModel": null,
+              "message": "When UserInfo already exists within current user"
             }
           ],
+          "notes": "            ShipperInfo - Ship from address<br/>\n            ReceiverInfo - Ship to address<br/>\n            UserInfo - User address<br/>\n",
           "method": "post",
           "nickname": "Api::V1::AddressInfos#create"
         }
@@ -398,7 +443,7 @@
               "paramType": "form",
               "name": "address_info[type]",
               "type": "string",
-              "description": "Address type, one of: ShipperInfo, AddressInfo",
+              "description": "Address type, one of: ShipperInfo, ReceiverInfo, UserInfo",
               "required": true,
               "defaultValue": null
             },
@@ -416,6 +461,22 @@
               "type": "string",
               "description": "Some title for this address, eg: 'My warehouse'",
               "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[fax]",
+              "type": "string",
+              "description": "Fax number",
+              "required": false,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "address_info[company_name]",
+              "type": "string",
+              "description": "Company name",
+              "required": false,
               "defaultValue": null
             }
           ],
@@ -507,7 +568,7 @@
         },
         "type": {
           "type": "string",
-          "description": "Address type, one of: ShipperInfo, AddressInfo"
+          "description": "Address type, one of: ShipperInfo, ReceiverInfo, UserInfo"
         },
         "is_default": {
           "type": "string",
@@ -516,6 +577,14 @@
         "title": {
           "type": "string",
           "description": "Some title for this address, eg: 'My warehouse'"
+        },
+        "fax": {
+          "type": "string",
+          "description": "Fax number"
+        },
+        "company_name": {
+          "type": "string",
+          "description": "Company name"
         }
       },
       "description": "AddressInfo object"

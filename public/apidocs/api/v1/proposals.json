@@ -1,9 +1,46 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://localhost:3000/",
   "resourcePath": "proposals",
   "apis": [
+    {
+      "path": "api/v1/proposals/{id}/reject.json",
+      "operations": [
+        {
+          "summary": "REJECT Proposal",
+          "notes": "        Reject a proposal for current_user.<br/>\n        Shipper will get notification and proposal status became rejected.<br/>\n        Shipment status will drop to 'proposing' if any other than proposing.<br/>\n        Rejection possible only when shipment in negotiation status.\n",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Proposal ID",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "Proposal not found with that user"
+            },
+            {
+              "code": "not_valid",
+              "responseModel": null,
+              "message": "Can't reject at this status"
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": null
+            }
+          ],
+          "method": "put",
+          "nickname": "Api::V1::Proposals#reject"
+        }
+      ]
+    },
     {
       "path": "api/v1/proposals.json",
       "operations": [
@@ -210,38 +247,6 @@
           ],
           "method": "get",
           "nickname": "Api::V1::Proposals#show"
-        }
-      ]
-    },
-    {
-      "path": "api/v1/proposals/{id}.json",
-      "operations": [
-        {
-          "summary": "RETRACT Proposal",
-          "notes": "Retract a proposal for current_user. Shipper will get notification about the proposal and proposal status became retracted.",
-          "parameters": [
-            {
-              "paramType": "path",
-              "name": "id",
-              "type": "integer",
-              "description": "Proposal ID",
-              "required": true
-            }
-          ],
-          "responseMessages": [
-            {
-              "code": "not_found",
-              "responseModel": null,
-              "message": "Proposal not found with that user"
-            },
-            {
-              "code": "ok",
-              "responseModel": null,
-              "message": null
-            }
-          ],
-          "method": "delete",
-          "nickname": "Api::V1::Proposals#destroy"
         }
       ]
     }

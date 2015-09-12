@@ -8,20 +8,10 @@ module DeviseTokenAuth
     # :nocov:
     swagger_controller :registrations, 'User email registration'
 
-    def self.generic_user_details(api)
-      api.param :form, :first_name, :string, :required, 'First Name'
-      api.param :form, :last_name, :string, :required, 'Last Name'
-      api.param :form, :email, :string, :required, 'Email'
-      api.param :form, :password, :string, :required, 'Password'
-      api.param :form, :password_confirmation, :string, :required, 'Password confirmation'
-      api.param :form, :about, :string, :optional, 'About me'
-      api.param :form, :mc_num, :string, :optional, 'MC number'
-    end
-
     swagger_api :create do |api|
       summary 'CREATE user with email'
       notes 'When invited by user(url with query string <strong>invitation=</strong>, we will find and assign all shipment invitations by email, so later you can load them from <strong>my_invitations</strong> query'
-      Api::V1::DeviseTokenAuth::RegistrationsController.generic_user_details(api)
+      Api::V1::ApiBaseController.generic_user_details(api)
       param :form, :user_type, :string, :required, "User type, 'carrier' or 'shipper'"
       param :form, :invitation, :string, :optional, 'Invitation code, pass from query string if available. IF invitation present and valid then new user will be assigned with carrier role regardless of user_type field'
       # param :form, :provider, :string, :required, "Provider, one of: (email,facebook,google_oauth2,linkedin)", {defaultValue: 'email'}
@@ -46,24 +36,6 @@ module DeviseTokenAuth
       # redirect_url = params[:confirm_success_url]
       # fall back to default value if provided
       redirect_url = DeviseTokenAuth.default_confirm_success_url
-      # success redirect url is required
-      # if resource_class.devise_modules.include?(:confirmable) && !redirect_url
-      #   return render json: {
-      #     status: 'error',
-      #     data:   @resource.as_json,
-      #     errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
-      #   }, status: 403
-      # end
-      # if whitelist is set, validate redirect_url against whitelist
-      # if DeviseTokenAuth.redirect_whitelist
-      #   unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
-      #     return render json: {
-      #       status: 'error',
-      #       data:   @resource.as_json,
-      #       errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: redirect_url)]
-      #     }, status: 403
-      #   end
-      # end
 
       begin
         # override email confirmation, must be sent manually from ctrl
@@ -103,34 +75,20 @@ module DeviseTokenAuth
           end
 
           render_json @resource
-          # render json: {
-          #   status: 'success',
-          #   data:   @resource.as_json
-          # }
         else
           clean_up_passwords @resource
           render_error 'not_saved', 403, @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-          # render json: {
-          #   error: 'error',
-          #   # data:   @resource.as_json,
-          #   text: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-          # }, status: 403
         end
       rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
         render_error 'not_unique', 403
-        # render json: {
-        #   status: 'error',
-        #   data:   @resource.as_json,
-        #   errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
-        # }, status: 403
       end
     end
 
     # :nocov:
     swagger_api :update do |api|
       summary 'UPDATE user details'
-      Api::V1::DeviseTokenAuth::RegistrationsController.generic_user_details(api)
+      Api::V1::ApiBaseController.generic_user_details(api)
       param :form, :current_password, :string, :optional, 'Current password, use to change password'
       response 'not_valid', "{'text': [ArrayOfErrors]}"
       response 'ok'
@@ -141,10 +99,6 @@ module DeviseTokenAuth
         if @resource.send(resource_update_method, account_update_params)
           yield @resource if block_given?
           render_ok
-          # render json: {
-          #   status: 'ok',
-          #   data:   @resource.as_json
-          # }
         else
           render_error 'not_valid', 403, @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
         end

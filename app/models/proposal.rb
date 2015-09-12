@@ -12,6 +12,7 @@
 #  equipment_type :string
 #  offered_at     :datetime
 #  accepted_at    :datetime
+#  rejected_at    :datetime
 #
 # Indexes
 #
@@ -29,6 +30,7 @@ class Proposal < ActiveRecord::Base
   scope :from_user, ->(user) {where('proposals.user_id = ?', user.id)}
   scope :latest, ->() { order('proposals.created_at DESC') }
   resourcify
+  delegate :name, to: :user, prefix: true
 
   after_create :new_notification
   # Do not use it here
@@ -56,6 +58,13 @@ class Proposal < ActiveRecord::Base
   # confirmed by carrier
   def accepted!
     update_attribute :accepted_at, Time.zone.now
+  end
+
+  # reject proposal by carrier. shipment should be valid for rejection (method .can_be_rejected?)
+  def reject!
+    shipment.update_attribute :aasm_state, :proposing
+    update_attribute :rejected_at, Time.zone.now
+    ShipperMailer.proposal_rejected(self).deliver_now
   end
 
   def new_notification

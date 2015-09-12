@@ -30,6 +30,7 @@ describe Api::V1::ProposalsController do
     before do
       create_resources(way)
     end
+
     context 'Listing current user proposals' do
       it '- all proposals' do
         proposals = create_list :proposal, 3, user: @logged_in_user, shipment: @shipment
@@ -44,6 +45,36 @@ describe Api::V1::ProposalsController do
         create_list :proposal, 3, user: @logged_in_user, shipment: @shipment
         json_query :get, :index, shipment_id: @shipment.id # for @shipment object only.
         expect(@json[:results].size).to eq 3
+      end
+
+      it 'reject properly' do
+        proposal = create :proposal, user: @logged_in_user, shipment: @shipment
+        ActionMailer::Base.deliveries.clear
+        expect {
+          json_query :put, :reject, id: proposal.id
+          proposal.reload
+        }.to change(proposal, :rejected_at)
+        @shipment.reload
+        expect(@shipment.state).to eq :proposing
+        expect(ActionMailer::Base.deliveries.count).to eq 1
+        body = ActionMailer::Base.deliveries.first.body.raw_source
+        expect(body).to include(@logged_in_user.name)
+        expect(body).to include('has rejected his proposal for shipment ID')
+      end
+
+      it 'cant reject when in not negotiation status' do
+        proposal = create :proposal, user: @logged_in_user, shipment: @shipment
+        @shipment.offer!
+        @shipment.confirm!
+        @shipment.picked!
+        ActionMailer::Base.deliveries.clear
+        expect {
+          json_query :put, :reject, id: proposal.id
+          proposal.reload
+        }.not_to change(proposal, :rejected_at)
+        @shipment.reload
+        expect(@shipment.state).to eq :in_transit
+        expect(ActionMailer::Base.deliveries.count).to eq 0
       end
     end
 

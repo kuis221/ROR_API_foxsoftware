@@ -10,6 +10,17 @@ class Api::V1::ApiBaseController < ApplicationController
     api.param :query, :limit, :integer, :optional, 'Results limit', {defaultValue: Settings.index_list}
   end
 
+  # User details
+  def self.generic_user_details(api)
+    api.param :form, :first_name, :string, :required, 'First Name'
+    api.param :form, :last_name, :string, :required, 'Last Name'
+    api.param :form, :email, :string, :required, 'Email'
+    api.param :form, :password, :string, :required, 'Password'
+    api.param :form, :password_confirmation, :string, :required, 'Password confirmation'
+    api.param :form, :about, :string, :optional, 'About me'
+    api.param :form, :mc_num, :string, :optional, 'MC number'
+  end
+
   # Reuse that method in custom actions, those are out side of regular crud
   def self.add_authorization_headers(api)
     # TODO make a some first user with two shipments, proposals, auth. so api doc user can see the responses
