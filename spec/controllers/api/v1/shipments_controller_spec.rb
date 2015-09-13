@@ -419,6 +419,7 @@ describe Api::V1::ShipmentsController do
         json_query :get, :current_proposals, id: shipment.id
         expect(@json[:results].size).to eq proposals_count
         expect(@json[:results][0]['user']['name']).not_to eq ''
+        expect(@json[:results][0]['dates']).not_to be_nil
       end
 
       it 'should not let shipper list other shipments' do
