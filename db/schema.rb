@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150912134601) do
+ActiveRecord::Schema.define(version: 20150913194414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(version: 20150912134601) do
     t.string   "uid",                    default: "",      null: false
     t.json     "tokens"
     t.string   "mc_num"
+    t.string   "alt_email"
   end
 
   add_index "users", ["blocked"], name: "index_users_on_blocked", using: :btree

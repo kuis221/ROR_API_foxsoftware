@@ -6,7 +6,9 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
   end
 
   context 'shipper user with email' do
-    let(:attrs) { {password: '123123', password_confirmation: '123123', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
+    let(:attrs) { {alt_email: 'alt@email.com', password: '123123', password_confirmation: '123123', about: 'BIO about',
+                   first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email}
+    }
 
     it 'should properly register user with shipper role' do
       expect {

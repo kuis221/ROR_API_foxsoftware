@@ -28,6 +28,7 @@
 #  uid                    :string           default(""), not null
 #  tokens                 :json
 #  mc_num                 :string
+#  alt_email              :string
 #
 # Indexes
 #

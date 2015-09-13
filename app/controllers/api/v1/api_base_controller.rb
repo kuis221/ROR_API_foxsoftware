@@ -15,6 +15,7 @@ class Api::V1::ApiBaseController < ApplicationController
     api.param :form, :first_name, :string, :required, 'First Name'
     api.param :form, :last_name, :string, :required, 'Last Name'
     api.param :form, :email, :string, :required, 'Email'
+    api.param :form, :alt_email, :string, :required, 'Alternative email'
     api.param :form, :password, :string, :required, 'Password'
     api.param :form, :password_confirmation, :string, :required, 'Password confirmation'
     api.param :form, :about, :string, :optional, 'About me'

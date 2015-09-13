@@ -71,11 +71,12 @@ group :development, :test do
   gem 'bullet'
   gem 'dotenv-rails'
   gem 'fuubar'
+  gem 'rspec-retry'
 end
 
 group :test do
   gem 'simplecov', require: false
   gem 'capybara'
   gem 'database_cleaner'
-  gem 'rspec-retry'
+
 end

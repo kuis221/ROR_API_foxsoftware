@@ -36,8 +36,8 @@ class ApplicationController < ActionController::Base
 
   protected
   def configure_permitted_parameters
-    create_attrs = [:first_name, :last_name, :about, :avatar, :provider, :mc_num]
-    update_attrs = [:first_name, :last_name, :about, :avatar, :mc_num]
+    create_attrs = [:first_name, :last_name, :about, :avatar, :provider, :mc_num, :alt_email]
+    update_attrs = [:first_name, :last_name, :about, :avatar, :mc_num, :alt_email]
     devise_parameter_sanitizer.for(:sign_up) << create_attrs
     devise_parameter_sanitizer.for(:account_update) << update_attrs
   end

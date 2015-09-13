@@ -28,6 +28,7 @@
 #  uid                    :string           default(""), not null
 #  tokens                 :json
 #  mc_num                 :string
+#  alt_email              :string
 #
 # Indexes
 #
@@ -73,6 +74,7 @@ class User < ActiveRecord::Base
       last_name: {desc: 'Last name', required: :optional, type: :string},
       about: {desc: 'About', required: :optional, type: :string},
       email: {desc: 'Email', required: :required, type: :string},
+      alt_email: {desc: 'Alternative email', required: :optional, type: :string},
       provider: {desc: 'Registration provider, email of oauth', required: :required, type: :string}
   }
 
