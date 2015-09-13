@@ -370,6 +370,8 @@ GEM
       rspec-expectations (~> 3.3.0)
       rspec-mocks (~> 3.3.0)
       rspec-support (~> 3.3.0)
+    rspec-retry (0.4.4)
+      rspec-core
     rspec-support (3.3.0)
     ruby-progressbar (1.7.5)
     ruby2ruby (2.1.4)
@@ -509,6 +511,7 @@ DEPENDENCIES
   rails_config
   rolify
   rspec-rails
+  rspec-retry
   rubycritic
   secure_headers
   sidekiq

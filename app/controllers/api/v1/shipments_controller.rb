@@ -93,7 +93,7 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
   # :nocov:
   swagger_api :current_proposals do |api|
     summary 'LIST all current proposals for shipment'
-    notes "For author of shipment will render all proposals, and for viewers will render non-private active shipment proposals"
+    notes 'For author of shipment will render all proposals, and for viewers will render non-private active shipment proposals'
     Api::V1::ApiBaseController.add_pagination_params(api)
     param :path, :id, :integer, :required, 'Shipment ID'
     response 'ok', 'Success', :Proposal

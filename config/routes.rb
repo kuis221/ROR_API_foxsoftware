@@ -24,6 +24,8 @@ Rails.application.routes.draw do
           get :my_invitations
         end
       end
+      resources :ship_invitations, only: [:index, :destroy]
+
       resources :proposals, except: [:new, :edit, :update, :destroy] do
         member do
           put :reject

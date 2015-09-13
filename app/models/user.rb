@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   has_many :shipper_infos, dependent: :destroy
   has_many :receiver_infos, dependent: :destroy
   has_one :user_info, dependent: :destroy
-  # its not user created ship_invitation but from where user invited
+  # its not user who created ship_invitation but who has been invited
   has_many :ship_invitations, foreign_key: :invitee_id, dependent: :destroy
   has_many :trackings, dependent: :destroy
 
@@ -89,6 +89,10 @@ class User < ActiveRecord::Base
   # def invited_shipment(shipment_id)
   #   Shipment.active.joins(:ship_invitations).where('shipments.id = ? AND ship_invitations.invitee_id IN (?)', shipment_id, id).first
   # end
+
+  def created_invitations
+    ShipInvitation.joins(:shipment).where('shipments.user_id = ?', id)
+  end
 
   def name
     "#{first_name} #{last_name[0].to_s.upcase}."

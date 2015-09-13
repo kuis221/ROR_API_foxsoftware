@@ -17,6 +17,9 @@ class Ability
   elsif user.shipper?
     # can read only his own shipments
     can :manage, Shipment, user_id: user.id
+    can :manage, ShipInvitation do |ship_inv|
+      user.shipment_ids.include?(ship_inv.shipment_id)
+    end
     # And read proposals related to his shipments
     can :read, Proposal do |proposal|
       user.shipment_ids.include?(proposal.shipment_id)
@@ -24,7 +27,6 @@ class Ability
     can :read, Tracking do |tracking|
       user.shipment_ids.include?(tracking.shipment_id)
     end
-    can :manage, ShipInvitation, user_id: user.id
   elsif user.carrier?
     # can create proposal for invited shipments ?? check with Matt
     can :manage, Proposal, user_id: user.id

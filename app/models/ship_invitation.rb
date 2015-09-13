@@ -46,4 +46,9 @@ class ShipInvitation < ActiveRecord::Base
     created
   end
 
+  # IF invitation has been accepted by user registering with this invitation ?
+  # see User#after_create callback
+  def status
+    invitee.present? ? :registered : :pending
+  end
 end

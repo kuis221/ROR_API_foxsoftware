@@ -6,8 +6,16 @@ SimpleCov.start do
   add_filter 'app/controllers/authentication.rb'
 end
 
+require 'rspec/retry'
+
 RSpec.configure do |config|
+
+  ## Retry
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
+  ## Clear emails on before each step
   config.before(:each) { ActionMailer::Base.deliveries.clear }
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

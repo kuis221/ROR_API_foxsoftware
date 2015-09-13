@@ -6,10 +6,11 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
   swagger_controller :my_connection, 'User connections'
   swagger_api :index do
     summary 'LIST user connections'
-    notes 'Depends on user role it will load his connections, for shipper user will load carriers and vice versa'
+    notes 'Depends on user role it will load his connections, for shipper user will load his carriers and vice versa'
     response 'ok', "{'results': ArrayOfConnectionObject}"
   end
   # :nocov:
+  # eg: my_carriers or my_clients
   def index
     connections = current_user.friendships.where(type_of: @conn_type).page(page).per(limit)
     render_json connections

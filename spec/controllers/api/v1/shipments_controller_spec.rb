@@ -445,7 +445,6 @@ describe Api::V1::ShipmentsController do
         ActionMailer::Base.deliveries.clear
       end
 
-
       it 'should move to :pending from :confirmed' do
         expect {
           json_query :post, :update, id: @shipment.id, shipment: {price: 135.32}
