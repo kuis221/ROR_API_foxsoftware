@@ -1,0 +1,13 @@
+%p
+  Hello,
+  = @shipper.name
+
+%p
+  Your proposal for Shipment ID has been cancelled by the shipper:
+  = link_to @shipment.id, "#{Settings.host}/my/proposals/#{@proposal.id}"
+  %br
+
+%p
+  Thank You
+  Fox LMP
+

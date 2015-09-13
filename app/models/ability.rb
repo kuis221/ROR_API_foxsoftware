@@ -21,20 +21,21 @@ class Ability
       user.shipment_ids.include?(ship_inv.shipment_id)
     end
     # And read proposals related to his shipments
-    can :read, Proposal do |proposal|
+    can [:read, :cancel], Proposal do |proposal|
       user.shipment_ids.include?(proposal.shipment_id)
     end
     can :read, Tracking do |tracking|
       user.shipment_ids.include?(tracking.shipment_id)
     end
+    can [:read, :create, :update], ShipmentFeedback, user_id: user.id
   elsif user.carrier?
-    # can create proposal for invited shipments ?? check with Matt
+    # can manage - include reject but not cancel
     can :manage, Proposal, user_id: user.id
+    cannot :cancel, Proposal
     can :read, Shipment
     can :manage, Tracking, user_id: user.id
   elsif user.has_role?(:user) # both shipper and carrier can manage their address_infos and shipment_feedbacks
     can :manage, AddressInfo, user_id: user.id
-    can [:read, :create, :update], ShipmentFeedback, user_id: user.id
   else
     # Unregistered anonym user, fuck off, just fuck off.
   end

@@ -73,9 +73,9 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :reject do
-    summary 'REJECT Proposal'
+    summary 'REJECT Proposal by carrier'
     notes <<-REJECT
-        Reject a proposal for current_user.<br/>
+        Reject a proposal by current_user(must be a carrier).<br/>
         Shipper will get notification and proposal status became rejected.<br/>
         Shipment status will drop to 'proposing' if any other than proposing.<br/>
         Rejection possible only when shipment in negotiation status.
@@ -88,11 +88,39 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
   # :nocov:
   def reject
     shipment = @proposal.shipment
-    if shipment.can_be_rejected?
+    if shipment.may_rejected? #can_be_rejected?
       @proposal.reject!
       render_ok
     else
       render_error :not_valid, shipment.state
+    end
+  end
+
+  # :nocov:
+  swagger_api :cancel do
+    summary 'CANCEL Proposal by shipper'
+    notes <<-CANCEL
+        Cancel proposal, similar as #reject but can be only set by shipper.<br/>
+        Can be only set when shipment is in 'pending' status(before 'confirming')
+    CANCEL
+    param :path, :id, :integer, :required, 'Proposal ID'
+    response 'ok'
+    response 'not_found', "Proposal not found in current user shipments, will add shipment status in 'message'"
+    response 'not_valid', "Can't reject at this status"
+  end
+  # :nocov:
+  def cancel
+    proposal = Proposal.joins(:shipment).where('shipments.user_id = ? AND proposals.id = ?', current_user.id, params[:id]).first
+    if proposal
+      shipment = proposal.shipment
+      if shipment.may_cancel?
+        shipment.cancel!(proposal)
+        render_ok
+      else
+        render_error 'not_valid', nil, shipment.state
+      end
+    else
+      render_error :not_found, 404
     end
   end
 

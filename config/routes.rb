@@ -28,7 +28,8 @@ Rails.application.routes.draw do
 
       resources :proposals, except: [:new, :edit, :update, :destroy] do
         member do
-          put :reject
+          put :reject # reject by carrier
+          put :cancel # cancel by shipper
         end
       end
       resources :shipment_feedbacks

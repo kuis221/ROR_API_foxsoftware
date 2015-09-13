@@ -62,7 +62,7 @@ class Proposal < ActiveRecord::Base
 
   # reject proposal by carrier. shipment should be valid for rejection (method .can_be_rejected?)
   def reject!
-    shipment.update_attribute :aasm_state, :proposing
+    shipment.rejected!
     update_attribute :rejected_at, Time.zone.now
     ShipperMailer.proposal_rejected(self).deliver_now
   end

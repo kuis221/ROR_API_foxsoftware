@@ -71,6 +71,7 @@ class Shipment < ActiveRecord::Base
 
   before_create :set_secret_id
 
+  delegate :name, to: :user, prefix: true
   # Used for validation here, in swagger doc generation (for swagger_api methods and swagger_model)
   # -> :required or :optional for swagger
   # -> for_model: true > only use in swagger_model, looks like its not working as desired.
@@ -145,9 +146,19 @@ class Shipment < ActiveRecord::Base
       transitions from: :proposing, to: :pending
     end
 
+    # Cancel propose by the shipper at pending stage only
+    event :cancel do
+      transitions from: :pending, to: :proposing, after: :set_cancel
+    end
+
     # by carrier
     event :confirm, after: :notify_shipper_and_reject_proposals do
       transitions from: :pending, to: :confirming
+    end
+
+    # rejected by the carrier at first stage(when offered by shipper or after carrier accepted offer(confirm event))
+    event :rejected do
+      transitions from: [:pending, :confirming], to: :proposing
     end
 
     # by client, if updated shipment during
@@ -180,6 +191,12 @@ class Shipment < ActiveRecord::Base
   def validate_addresses
     self.errors.add(:shipper_info_id, 'bad association') unless user.shipper_info_ids.include?(shipper_info_id)
     self.errors.add(:receiver_info_id, 'bad association') unless user.receiver_info_ids.include?(receiver_info_id)
+  end
+
+  # called from transition and passed proposal thru shipment.cancel!
+  def set_cancel(proposal)
+    proposal.update_attribute :rejected_at, Time.zone.now
+    CarrierMailer.proposal_cancelled(proposal).deliver_now
   end
 
   # If updated while in :confirming status then fallback to :pending and send email to offered_proposal
@@ -331,9 +348,9 @@ class Shipment < ActiveRecord::Base
   end
 
   # Check if shipment in negotiation status
-  def can_be_rejected?
-    [:proposing, :pending, :confirming].include?(state)
-  end
+  # def can_be_rejected?
+  #   [:proposing, :pending, :confirming].include?(state)
+  # end
 
   # Switch status and return result
   def switch_status(to_status, by_user, proposal_id=nil)

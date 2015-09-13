@@ -49,6 +49,7 @@ describe Api::V1::ProposalsController do
 
       it 'reject properly' do
         proposal = create :proposal, user: @logged_in_user, shipment: @shipment
+        @shipment.offer!
         ActionMailer::Base.deliveries.clear
         expect {
           json_query :put, :reject, id: proposal.id
@@ -75,6 +76,18 @@ describe Api::V1::ProposalsController do
         @shipment.reload
         expect(@shipment.state).to eq :in_transit
         expect(ActionMailer::Base.deliveries.count).to eq 0
+      end
+
+      it "carrier can't cancel" do
+        proposal = create :proposal, user: @logged_in_user, shipment: @shipment
+        @shipment.offer!
+        email_clear
+        expect {
+          json_query :put, :cancel, id: proposal.id
+          proposal.reload
+        }.not_to change(proposal, :rejected_at)
+        expect(@json[:error]).to eq 'access_denied_with_role'
+        expect_email(0)
       end
     end
 
@@ -145,19 +158,56 @@ describe Api::V1::ProposalsController do
 
   end
 
-  context 'not a carrier user' do
+  context 'shipper user' do
     login_user
     before do
       @logged_in_user.add_role :shipper
-      @shipment = create :shipment
+      @shipment = create :shipment, aasm_state: :proposing, user: @logged_in_user # auction status
     end
 
-    it 'should not let other users to proposal' do
+    it 'should not let create proposal' do
       expect {
         json_query :post, :create, proposal: attrs
         expect(@json[:error]).to eq 'access_denied_with_role'
       }.not_to change{Proposal.count}
     end
+
+    it 'should cancel proposal' do
+      proposal = create :proposal, shipment: @shipment
+      @shipment.offer! # can from this state only
+      email_clear
+      expect {
+        json_query :put, :cancel, id: proposal.id
+        proposal.reload
+      }.to change(proposal, :rejected_at)
+      expect_email(1, 'Your proposal for Shipment ID has been cancelled by the shipper')
+    end
+
+    it 'should not cancel from wrong status' do
+      proposal = create :proposal, shipment: @shipment
+      email_clear
+      expect {
+        json_query :put, :cancel, id: proposal.id
+        proposal.reload
+      }.not_to change(proposal, :rejected_at)
+      expect(@json[:error]).to eq 'not_valid'
+      expect(@json[:text]).to eq 'proposing' # in auction state
+      expect_email(0)
+    end
+
+    it 'should not find someone other shipment proposal' do
+      @shipment.update_attribute :user_id, @logged_in_user.id+1 # just stub to prevent finding it in controller
+      proposal = create :proposal, shipment: @shipment
+      @shipment.offer! # can from this state only
+      email_clear
+      expect {
+        json_query :put, :cancel, id: proposal.id
+        proposal.reload
+      }.not_to change(proposal, :rejected_at)
+      expect(@json[:error]).to eq 'not_found'
+      expect_email(0)
+    end
+
   end
 
   def create_resources(way)

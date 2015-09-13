@@ -96,3 +96,18 @@ def read_json_response(type)
   puts "ERROR PARSING json_query :#{type} method, non json reply with response.body: \n\r#{response.body.inspect}" unless @json
   expect(response['Content-Type']).to match /(application\/json)/
 end
+
+def expect_email(count=1, body_eq=false, subject_eq=false)
+  mail = ActionMailer::Base.deliveries.last
+  if mail
+    subject = mail.subject
+    body = mail.body.raw_source
+  end
+  expect(ActionMailer::Base.deliveries.count).to eq count
+  expect(body).to include(body_eq) if body_eq
+  expect(subject).to include(subject_eq) if subject_eq
+end
+
+def email_clear
+  ActionMailer::Base.deliveries.clear
+end
