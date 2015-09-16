@@ -1,0 +1,157 @@
+{
+  "apiVersion": "1.0",
+  "swaggerVersion": "1.2",
+  "basePath": "http://localhost:3000/",
+  "resourcePath": "ratings",
+  "apis": [
+    {
+      "path": "api/v1/ratings.json",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "access-token",
+              "type": "string",
+              "description": "Logged in user access token",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "uid",
+              "type": "string",
+              "description": "Logged in user UID(uid from oauth or email)",
+              "required": true
+            },
+            {
+              "paramType": "header",
+              "name": "client",
+              "type": "string",
+              "description": "Cliend ID",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "rating[pick_on_time]",
+              "type": "boolean",
+              "description": "Pickup On-time?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[delivery_on_time]",
+              "type": "boolean",
+              "description": "Delivery On-time?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[tracking_updated]",
+              "type": "boolean",
+              "description": "Tracking Updates provided as requested?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[had_claims]",
+              "type": "boolean",
+              "description": "Did you have any claims?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[will_recommend]",
+              "type": "boolean",
+              "description": "Would you recommend this carrier?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[shipment_id]",
+              "type": "string",
+              "description": "Shipment ID",
+              "required": true,
+              "defaultValue": null
+            }
+          ],
+          "summary": "CREATE Rating",
+          "responseMessages": [
+            {
+              "code": "not_valid",
+              "responseModel": null,
+              "message": "[ArrayOfErrors]"
+            },
+            {
+              "code": "ok",
+              "responseModel": "Rating",
+              "message": "{RatingObject}"
+            },
+            {
+              "code": "already_left",
+              "responseModel": null,
+              "message": "When rating already left, 'text' will contain date of rating."
+            },
+            {
+              "code": "bad_state",
+              "responseModel": null,
+              "message": "Wrong shipment state, 'text' will contain shipment status"
+            },
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": 404
+            }
+          ],
+          "notes": "Only when shipment in 'delivering' state",
+          "method": "post",
+          "nickname": "Api::V1::Ratings#create"
+        }
+      ]
+    }
+  ],
+  "models": {
+    "Rating": {
+      "id": "Rating",
+      "required": [
+        "pick_on_time",
+        "delivery_on_time",
+        "tracking_updated",
+        "had_claims",
+        "will_recommend",
+        "shipment_id"
+      ],
+      "properties": {
+        "pick_on_time": {
+          "type": "boolean",
+          "description": "Pickup On-time?"
+        },
+        "delivery_on_time": {
+          "type": "boolean",
+          "description": "Delivery On-time?"
+        },
+        "tracking_updated": {
+          "type": "boolean",
+          "description": "Tracking Updates provided as requested?"
+        },
+        "had_claims": {
+          "type": "boolean",
+          "description": "Did you have any claims?"
+        },
+        "will_recommend": {
+          "type": "boolean",
+          "description": "Would you recommend this carrier?"
+        },
+        "shipment_id": {
+          "type": "string",
+          "description": "Shipment ID"
+        }
+      },
+      "description": "Rating object"
+    }
+  }
+}

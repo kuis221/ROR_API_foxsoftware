@@ -5,21 +5,32 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
   context 'shipper user with email' do
     let(:attrs) { {password: '123123', password_confirmation: '123123', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
 
-    it 'should create and confirm shipper user' do
-      expect { post '/auth', attrs}.to change{User.count}.by(1)
-      expect(ActionMailer::Base.deliveries.size).to eq 1
-      user = User.last
-      expect(user.email).to eq attrs[:email]
-      expect(user.confirmed?).to eq false
+    context 'confirming shipper user' do
+      before do
+        expect { post '/auth', attrs}.to change{User.count}.by(1)
+        expect(ActionMailer::Base.deliveries.size).to eq 1
+        @user = User.last
+        expect(@user.email).to eq attrs[:email]
+        expect(@user.confirmed?).to eq false
 
-      body = ActionMailer::Base.deliveries.last.body.raw_source
-      confirmation_token = body[/confirmation_token=([^"]+)/, 1].split('&')[0]
-      confirm_url = "/auth/confirmation?config=default&confirmation_token=#{confirmation_token}&redirect_url=#{DeviseTokenAuth.default_confirm_success_url}"
-      get confirm_url # confirm it !!
-      expect(response).to have_http_status(200)
-      user.reload
-      expect(user.confirmed?).to eq true
-      validate_auth_headers(user)
+        body = ActionMailer::Base.deliveries.last.body.raw_source
+        @confirmation_token = body[/confirmation_token=([^"]+)/, 1].split('&')[0]
+      end
+
+      it 'should create and confirm' do
+        confirm_url = "/auth/confirmation?config=default&confirmation_token=#{@confirmation_token}&redirect_url=#{DeviseTokenAuth.default_confirm_success_url}"
+        get confirm_url # confirm it !!
+        expect(response).to have_http_status(200)
+        @user.reload
+        expect(@user.confirmed?).to eq true
+        validate_auth_headers(@user)
+      end
+
+      it 'cant find confirmation' do
+        confirm_url = "/auth/confirmation?config=default&confirmation_token=#{@confirmation_token}22222&redirect_url=#{DeviseTokenAuth.default_confirm_success_url}"
+        get confirm_url # confirm it !!
+        expect(response).to have_http_status(404)
+      end
     end
 
     # this complex flow represent user:

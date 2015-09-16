@@ -103,6 +103,14 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
         json_query :post, :create
         expect(@json[:error]).to eq 'not_saved'
       end
+
+      it 'should destroy connection' do
+        connection = create :friendship, type_of: opposite_role(user_role), user: @logged_in_user
+        expect {
+          json_query :delete, :destroy, id: connection.id
+          expect(@json[:status]).to eq 'ok'
+        }.to change{Friendship.count}.by(-1)
+      end
     end
   end
 
@@ -119,7 +127,7 @@ RSpec.describe Api::V1::MyConnectionsController, type: :controller do
 
   it_behaves_like 'user_connections' do
     let(:user_role) { :carrier }
-    # let(:user_role) { :shipper }
+    let(:user_role) { :shipper }
   end
 
   it_behaves_like 'shipper_connections'

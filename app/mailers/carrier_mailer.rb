@@ -38,4 +38,13 @@ class CarrierMailer < ApplicationMailer
     @shipment = shipment
     mail to: proposal.user.email, subject: "Shipment ID:#{shipment.id} has been changed"
   end
+
+  # rating received and shipment.closed!
+  def rating_received(rating)
+    @shipment = rating.shipment
+    proposal = @shipment.accepted_proposal
+    @carrier = proposal.user
+    @link = Settings.host + "/my/rating?shipment_id=#{@shipment.id}"
+    mail to: @carrier.email, subject: "Received rating for shipment ##{@shipment.id}"
+  end
 end

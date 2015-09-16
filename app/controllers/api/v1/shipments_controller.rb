@@ -23,9 +23,9 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     if shipment.eligible_for_render?(params[:invitation], current_user)
       render_json shipment
     elsif !shipment.active?
-      render_error :not_eligible, 'not_eligible'
+      render_error :not_eligible
     else
-      render_error :unauthorized
+      render_error :unauthorized, 403
     end
   end
 

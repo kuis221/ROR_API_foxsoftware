@@ -32,7 +32,6 @@ Rails.application.routes.draw do
           put :cancel # cancel by shipper
         end
       end
-      resources :shipment_feedbacks
       resources :users, except: [:new, :update, :edit, :destroy, :index] do
         collection do
           post :get_address_by_zip
@@ -57,11 +56,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :trackings, except: [:new, :update, :edit, :show] do
-
-      end
-
+      resources :trackings, except: [:new, :update, :edit, :show]
+      resources :ratings, only: [:create]
     end# END V1
+
+    ## Remove default: true from previous version when create a new one
     # api_version(module: 'V2', path: {value: 'v2'}, default: true) do
     #
     # end

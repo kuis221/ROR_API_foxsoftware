@@ -321,6 +321,13 @@
               "type": "integer",
               "description": "User ID, if not set then scope by currently logged in user.",
               "required": false
+            },
+            {
+              "paramType": "query",
+              "name": "status",
+              "type": "string",
+              "description": "Sort by status name",
+              "required": false
             }
           ],
           "summary": "LIST all user shipments",
@@ -579,7 +586,7 @@
             {
               "code": "not_valid",
               "responseModel": null,
-              "message": "{'text': [ArrayOfErrors]}"
+              "message": "[ArrayOfErrors]"
             },
             {
               "code": "ok",
@@ -897,7 +904,7 @@
             {
               "code": "not_valid",
               "responseModel": null,
-              "message": "{'text': [ArrayOfErrors]}"
+              "message": "[ArrayOfErrors]"
             },
             {
               "code": "ok",

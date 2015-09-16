@@ -48,6 +48,7 @@
             }
           ],
           "summary": "LOAD a trackings",
+          "notes": "Carrier user will load all his tracking scoped by shipment ID, Shipper will validate if shipment owned by request user",
           "responseMessages": [
             {
               "code": "ok",
@@ -124,7 +125,7 @@
             {
               "code": "not_valid",
               "responseModel": null,
-              "message": "{'text': [ArrayOfErrors]}"
+              "message": "[ArrayOfErrors]"
             },
             {
               "code": "ok",

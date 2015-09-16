@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150913194414) do
+ActiveRecord::Schema.define(version: 20150913201018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,21 @@ ActiveRecord::Schema.define(version: 20150913194414) do
   add_index "proposals", ["shipment_id"], name: "index_proposals_on_shipment_id", using: :btree
   add_index "proposals", ["user_id"], name: "index_proposals_on_user_id", using: :btree
 
+  create_table "ratings", force: :cascade do |t|
+    t.boolean  "pick_on_time"
+    t.boolean  "delivery_on_time"
+    t.boolean  "tracking_updated"
+    t.boolean  "had_claims"
+    t.boolean  "will_recommend"
+    t.integer  "user_id"
+    t.integer  "shipment_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "ratings", ["shipment_id"], name: "index_ratings_on_shipment_id", using: :btree
+  add_index "ratings", ["user_id"], name: "index_ratings_on_user_id", using: :btree
+
   create_table "roles", force: :cascade do |t|
     t.string   "name"
     t.integer  "resource_id"
@@ -101,18 +116,6 @@ ActiveRecord::Schema.define(version: 20150913194414) do
 
   add_index "ship_invitations", ["invitee_id"], name: "index_ship_invitations_on_invitee_id", using: :btree
   add_index "ship_invitations", ["shipment_id"], name: "index_ship_invitations_on_shipment_id", using: :btree
-
-  create_table "shipment_feedbacks", force: :cascade do |t|
-    t.string   "description"
-    t.integer  "rate",        null: false
-    t.integer  "user_id"
-    t.integer  "shipment_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "shipment_feedbacks", ["shipment_id"], name: "index_shipment_feedbacks_on_shipment_id", using: :btree
-  add_index "shipment_feedbacks", ["user_id"], name: "index_shipment_feedbacks_on_user_id", using: :btree
 
   create_table "shipments", force: :cascade do |t|
     t.string   "notes"

@@ -35,7 +35,7 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
     @user = User.active.find params[:id]
   end
 
-  def allowed_params
-    params.require(:user).permit(:first_name, :last_name, :about, :avatar, :password, :password_confirmation, :email, :about)
-  end
+  # def allowed_params
+  #   params.require(:user).permit(:first_name, :last_name, :about, :avatar, :password, :password_confirmation, :email, :about)
+  # end
 end

@@ -57,8 +57,8 @@ class Shipment < ActiveRecord::Base
 
   has_many :proposals, dependent: :destroy
   has_many :ship_invitations, dependent: :destroy
-  has_many :shipment_feedbacks, dependent: :destroy
   has_many :trackings, dependent: :destroy
+  has_one :rating, dependent: :destroy
 
   mount_uploader :picture, ShipmentPictureUploader
   resourcify
@@ -120,8 +120,8 @@ class Shipment < ActiveRecord::Base
     # pending: proposal accepted by shipper, still can take new proposals, listed
     # confirming: accept pending by carrier, shipper can edit shipment info(if do then status drop to pending.), no proposals can be made, not listed.
     # in_transit: changed by carrier, shipper cant do edit or any action here, not listed
-    # delivering: same as in_transit state, at this point shipper can leave feedback.
-    # completed: switch to this state after shipper left feedback
+    # delivering: same as in_transit state, at this point shipper can leave rating.
+    # completed: switch to this state after shipper left rating
 
     state :draft, initial: true
     state :proposing
@@ -176,7 +176,7 @@ class Shipment < ActiveRecord::Base
       transitions from: :in_transit, to: :delivering
     end
 
-    # leaving feedback by shipper after last status
+    # leaving rating by shipper after last status
     event :closed do
       transitions from: :delivering, to: :completed
     end
@@ -281,6 +281,11 @@ class Shipment < ActiveRecord::Base
     proposals.where('offered_at IS NOT NULL').first
   end
 
+  # Find 'winning' proposal
+  def accepted_proposal
+    proposals.where('offered_at IS NOT NULL AND accepted_at IS NOT NULL AND rejected_at IS NULL').first
+  end
+
   # Check for:
   # -> user has not reached limit of proposals
   # -> user has invitation_for? shipment if private, or shipment active+public
@@ -372,6 +377,7 @@ class Shipment < ActiveRecord::Base
           end
         when 'confirm'
           if role == :carrier
+            # TODO return :already_accepted if accepted_proposal !
             proposal = proposals.where(id: proposal_id).first
             return :bad_proposal_id unless proposal
             proposal.accepted!

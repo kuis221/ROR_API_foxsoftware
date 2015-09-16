@@ -16,6 +16,10 @@
       "description": "Shipment resource"
     },
     {
+      "path": "http://localhost:3000/apidocs/api/v1/ship_invitations.{format}",
+      "description": "Invitations resource"
+    },
+    {
       "path": "http://localhost:3000/apidocs/api/v1/proposals.{format}",
       "description": "Proposals resource"
     },
@@ -34,6 +38,10 @@
     {
       "path": "http://localhost:3000/apidocs/api/v1/trackings.{format}",
       "description": "Shipment tracking resource"
+    },
+    {
+      "path": "http://localhost:3000/apidocs/api/v1/ratings.{format}",
+      "description": "Ratings"
     }
   ],
   "info": {

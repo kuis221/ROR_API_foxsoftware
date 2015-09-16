@@ -56,6 +56,7 @@ class User < ActiveRecord::Base
   # its not user who created ship_invitation but who has been invited
   has_many :ship_invitations, foreign_key: :invitee_id, dependent: :destroy
   has_many :trackings, dependent: :destroy
+  has_many :ratings
 
   has_many :friendships, dependent: :destroy
   has_many :friends, through: :friendships

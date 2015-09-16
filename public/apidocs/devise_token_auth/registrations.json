@@ -34,6 +34,13 @@
             },
             {
               "paramType": "form",
+              "name": "alt_email",
+              "type": "string",
+              "description": "Alternative email",
+              "required": true
+            },
+            {
+              "paramType": "form",
               "name": "password",
               "type": "string",
               "description": "Password",
@@ -117,6 +124,13 @@
               "name": "email",
               "type": "string",
               "description": "Email",
+              "required": true
+            },
+            {
+              "paramType": "form",
+              "name": "alt_email",
+              "type": "string",
+              "description": "Alternative email",
               "required": true
             },
             {

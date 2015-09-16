@@ -35,7 +35,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :show do
-    summary 'LOAD a connection'
+    summary 'LOAD connection'
     param :path, :id, :integer, :required, 'Connection ID'
     response 'ok', "{'id': N, 'type_of': carrier_or_client, 'friend': {UserModel}"
     response 'not_found'
@@ -47,7 +47,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :create do
-    summary 'CREATE a connection'
+    summary 'CREATE connection'
     notes 'Create connection between current user and other user, Users must have opposite roles. For example, current_user(shipper) add carrier.'
     param :form, :friend_id, :string, :required, 'Opposite user ID'
     response 'ok', 'ConnectionObject'
@@ -86,7 +86,7 @@ class Api::V1::MyConnectionsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :destroy do
-    summary 'DELETE a connection'
+    summary 'DELETE connection'
     param :path, :id, :integer, :required, 'Connection ID'
     response 'ok', 'Success'
     response 'not_found'

@@ -52,7 +52,7 @@ class Api::V1::ApiBaseController < ApplicationController
       ## Populate Response model here
       # Add models here which has ATTRS constants in it (see Shipment for details).
 
-      [Shipment, AddressInfo, Tracking].each do |s_model|
+      [Shipment, AddressInfo, Tracking, Rating].each do |s_model|
         # because all setup_basic_api_documentation rendered for each controller
         # we make a little hack to render only models we include in [].each
         next if s_model.table_name != controller_name
@@ -75,7 +75,7 @@ class Api::V1::ApiBaseController < ApplicationController
               param :form, "#{s_model.table_name.singularize}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
             end
             response 'ok', "{#{class_name}Object}", class_name.to_sym
-            response 'not_valid', "{'text': [ArrayOfErrors]}"
+            response 'not_valid', "[ArrayOfErrors]"
           end
         end
       end

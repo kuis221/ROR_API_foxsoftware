@@ -8,8 +8,8 @@
       "path": "api/v1/proposals/{id}/reject.json",
       "operations": [
         {
-          "summary": "REJECT Proposal",
-          "notes": "        Reject a proposal for current_user.<br/>\n        Shipper will get notification and proposal status became rejected.<br/>\n        Shipment status will drop to 'proposing' if any other than proposing.<br/>\n        Rejection possible only when shipment in negotiation status.\n",
+          "summary": "REJECT Proposal by carrier",
+          "notes": "        Reject a proposal by current_user(must be a carrier).<br/>\n        Shipper will get notification and proposal status became rejected.<br/>\n        Shipment status will drop to 'proposing' if any other than proposing.<br/>\n        Rejection possible only when shipment in negotiation status.\n",
           "parameters": [
             {
               "paramType": "path",
@@ -38,6 +38,43 @@
           ],
           "method": "put",
           "nickname": "Api::V1::Proposals#reject"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/proposals/{id}/cancel.json",
+      "operations": [
+        {
+          "summary": "CANCEL Proposal by shipper",
+          "notes": "        Cancel proposal, similar as #reject but can be only set by shipper.<br/>\n        Can be only set when shipment is in 'pending' status(before 'confirming')\n",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Proposal ID",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "Proposal not found in current user shipments, will add shipment status in 'message'"
+            },
+            {
+              "code": "not_valid",
+              "responseModel": null,
+              "message": "Can't reject at this status"
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": null
+            }
+          ],
+          "method": "put",
+          "nickname": "Api::V1::Proposals#cancel"
         }
       ]
     },

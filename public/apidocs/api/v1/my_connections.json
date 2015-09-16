@@ -127,7 +127,7 @@
             }
           ],
           "summary": "LIST user connections",
-          "notes": "Depends on user role it will load his connections, for shipper user will load carriers and vice versa",
+          "notes": "Depends on user role it will load his connections, for shipper user will load his carriers and vice versa",
           "responseMessages": [
             {
               "code": "ok",
@@ -174,7 +174,7 @@
               "required": true
             }
           ],
-          "summary": "CREATE a connection",
+          "summary": "CREATE connection",
           "notes": "Create connection between current user and other user, Users must have opposite roles. For example, current_user(shipper) add carrier.",
           "responseMessages": [
             {
@@ -227,7 +227,7 @@
               "required": true
             }
           ],
-          "summary": "LOAD a connection",
+          "summary": "LOAD connection",
           "responseMessages": [
             {
               "code": "not_found",
@@ -249,7 +249,7 @@
       "path": "api/v1/my_connections/{id}.json",
       "operations": [
         {
-          "summary": "DELETE a connection",
+          "summary": "DELETE connection",
           "parameters": [
             {
               "paramType": "path",

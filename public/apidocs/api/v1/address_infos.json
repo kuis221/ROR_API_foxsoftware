@@ -298,7 +298,7 @@
             {
               "code": "not_valid",
               "responseModel": null,
-              "message": "{'text': [ArrayOfErrors]}"
+              "message": "[ArrayOfErrors]"
             },
             {
               "code": "ok",
@@ -485,7 +485,7 @@
             {
               "code": "not_valid",
               "responseModel": null,
-              "message": "{'text': [ArrayOfErrors]}"
+              "message": "[ArrayOfErrors]"
             },
             {
               "code": "ok",
