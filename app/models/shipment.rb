@@ -378,6 +378,7 @@ class Shipment < ActiveRecord::Base
         when 'confirm'
           if role == :carrier
             # TODO return :already_accepted if accepted_proposal !
+            return :offer_already_accepted if accepted_proposal
             proposal = proposals.where(id: proposal_id).first
             return :bad_proposal_id unless proposal
             proposal.accepted!

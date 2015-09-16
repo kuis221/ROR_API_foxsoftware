@@ -61,7 +61,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
         url = Nokogiri.HTML(body).search('a').map{ |a| a['href'] }.first
         invitation_code = url[/invitation=([^"]+)/, 1]
         expect(invitation_code).to eq shipment.secret_id
-        ActionMailer::Base.deliveries.clear
+        email_clear
 
         ## Registration
         attrs[:email] = @carrier_email

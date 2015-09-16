@@ -54,8 +54,6 @@ describe Api::V1::ShipmentsController do
       end
     end
 
-    # Has to test with and without(bad_proposal_id) proposal id !
-    # TODO to offer without proposal id. when tested manually - its pass the test.
     it 'to offer with proposal_id' do
       @shipment.auction! # ff
       proposal = create :proposal, shipment: @shipment
@@ -87,7 +85,6 @@ describe Api::V1::ShipmentsController do
       end
     end
 
-    # TODO to offer without proposal id. when tested manually - its pass the test.
     it 'to confirm with proposal_id' do
       # Fast forward
       @shipment.auction!
@@ -95,7 +92,7 @@ describe Api::V1::ShipmentsController do
       bidder = create :user# if role == :carrier
       proposal = create :proposal, shipment: @shipment, user: (role == :carrier ? @logged_in_user : bidder ), offered_at: Time.zone.now
       other_proposal = create :proposal, shipment: @shipment
-      ActionMailer::Base.deliveries.clear
+      email_clear
       json_query :post, :set_status, {id: @shipment.id, status: 'confirm', proposal_id: proposal.id}
       if role == :shipper
         expect(@json[:error]).to eq 'bad_role'
@@ -114,6 +111,37 @@ describe Api::V1::ShipmentsController do
         rejected_mail = ActionMailer::Base.deliveries.last # rejected email to other carriers
         expect(rejected_mail.to.first).to eq other_proposal.user.email
         expect(rejected_mail.subject).to eq 'Your proposal has been rejected'
+      end
+    end
+
+    it 'cannot confirm twice' do
+      # Fast forward
+      @shipment.auction!
+      @shipment.offer!
+      bidder = create :user
+      proposal = create :proposal, shipment: @shipment, user: (role == :carrier ? @logged_in_user : bidder ), offered_at: Time.zone.now
+      proposal.offered!
+      proposal.accepted!
+
+      other_proposal = create :proposal, shipment: @shipment
+      email_clear
+      json_query :post, :set_status, {id: @shipment.id, status: 'confirm', proposal_id: other_proposal.id}
+      if role == :shipper
+        expect(@json[:error]).to eq 'bad_role'
+      else
+        expect(@json[:error]).to eq 'offer_already_accepted'
+      end
+    end
+
+    it 'cannot confirm with without proposal_id' do
+      # Fast forward
+      @shipment.auction!
+      @shipment.offer!
+      json_query :post, :set_status, {id: @shipment.id, status: 'confirm'}
+      if role == :shipper
+        expect(@json[:error]).to eq 'bad_role'
+      else
+        expect(@json[:error]).to eq 'bad_proposal_id'
       end
     end
 
@@ -151,14 +179,14 @@ describe Api::V1::ShipmentsController do
       end
     end
 
-    it 'cant set to completed' do
+    it 'cant set to closed' do
       # Fast forward
       @shipment.auction!
       @shipment.offer!
       @shipment.confirm!
       @shipment.picked!
       @shipment.delivered!
-      json_query :post, :set_status, {id: @shipment.id, status: 'completed'}
+      json_query :post, :set_status, {id: @shipment.id, status: 'closed'}
       expect(@json[:error]).to eq 'bad_status'
     end
 
@@ -442,7 +470,7 @@ describe Api::V1::ShipmentsController do
         @shipment.offer!
         @shipment.confirm!
         expect(ActionMailer::Base.deliveries.size).to eq 3 # New proposal, You got offer, Carrier accepted offer
-        ActionMailer::Base.deliveries.clear
+        email_clear
       end
 
       it 'should move to :pending from :confirmed' do

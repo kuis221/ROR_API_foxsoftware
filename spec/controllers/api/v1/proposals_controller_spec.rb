@@ -50,7 +50,7 @@ describe Api::V1::ProposalsController do
       it 'reject properly' do
         proposal = create :proposal, user: @logged_in_user, shipment: @shipment
         @shipment.offer!
-        ActionMailer::Base.deliveries.clear
+        email_clear
         expect {
           json_query :put, :reject, id: proposal.id
           proposal.reload
@@ -68,7 +68,7 @@ describe Api::V1::ProposalsController do
         @shipment.offer!
         @shipment.confirm!
         @shipment.picked!
-        ActionMailer::Base.deliveries.clear
+        email_clear
         expect {
           json_query :put, :reject, id: proposal.id
           proposal.reload
