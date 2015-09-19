@@ -1,28 +1,19 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
+Welcome to FoxLMP application.
 
 * Database initialization
+After db create and migration you can seed the database, then run `rake swagger:docs` to generate with prefilled demo
+data, start localserver, and browse to /api-doc.
+This will allow you to run different queries alive from apidoc.
+
+Currently swagger will generate json files with demo auth data for shipper user(TODO later add possibility to swith
+users). But you can easily switch that in ApiBaseController (line with finding demo shipper user, switch to email of
+carrier user, see seeds.rb), then rerun rake task for doc regeneration.
 
 * How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
+rspec
+After full test you may browse to /coverage/ and see coverage report. Don't let it fall.
 
 * Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+Currently just push to master heroku.
