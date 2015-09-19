@@ -1,3 +1,6 @@
+is_heroku = ENV.any? {|x,_| x=~ /^dyno/i }
+abort('DO NOT RUN IN PRODUCTION MODE') if Rails.env.production? && !is_heroku
+
 require 'ffaker'
 require 'factory_girl'
 ## Create a demo data for api documentation.
@@ -15,8 +18,6 @@ def create_user(email)
   user.save!
   user
 end
-
-abort('DO NOT RUN IN PRODUCTION MODE') if Rails.env.production?
 
 [User, Shipment, Proposal, Rating, Friendship, AddressInfo, ShipInvitation, Tracking].each {|m| m.destroy_all}
 

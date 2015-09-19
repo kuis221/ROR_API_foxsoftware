@@ -41,7 +41,6 @@ gem 'open_uri_redirections'
 gem 'rails_admin'
 gem 'rails_config'
 
-
 ## Assets
 # not needed.
 
@@ -60,10 +59,10 @@ end
 
 group :development, :test do
   gem 'byebug'
-  gem 'ffaker'
   gem 'web-console', '~> 2.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+  gem 'ffaker'
   gem 'factory_girl_rails'
   gem 'awesome_print'
   gem 'rspec-rails'
@@ -79,4 +78,10 @@ group :test do
   gem 'capybara'
   gem 'database_cleaner'
 
+end
+
+is_heroku = ENV.any? {|x,_| x=~ /^dyno/i }
+if is_heroku
+  gem 'ffaker'
+  gem 'factory_girl_rails'
 end
