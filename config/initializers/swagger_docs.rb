@@ -15,6 +15,7 @@ module Swagger
                 # or without FOR arg to create local
                 def extract_for_host
                     for_env = ARGV[1].split('=') rescue false
+                    # TODO change later to some ENV
                     return 'http://foxsoftware.herokuapp.com' if for_env && for_env[0] == 'FOR' && for_env[1] == 'heroku'
                 end
             end

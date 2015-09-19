@@ -17,5 +17,9 @@ After full test you may browse to /coverage/ and see coverage report. Don't let 
 
 * Deployment instructions
 Currently just push to master heroku.
-Before you deploy to staging, you need to regenerate swagger for heroku, run `rake swagger:docs FOR=heroku`
-to generate with heroku app url. For more details see swagger_doc.rb initializer.
+
+* Live documnetation
+For staging server you can prefill auth data (just like above), you need to seed then run swagger generator.
+For heroku now:
+$ heroku rake db:seed
+$ heroku run rake swagger:docs FOR=heroku
