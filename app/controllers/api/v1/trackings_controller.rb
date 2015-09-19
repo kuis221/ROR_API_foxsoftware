@@ -8,7 +8,7 @@ class Api::V1::TrackingsController < Api::V1::ApiBaseController
   swagger_api :index do
     summary 'LOAD a trackings'
     notes 'Carrier user will load all his tracking scoped by shipment ID, Shipper will validate if shipment owned by request user'
-    param :path, :shipment_id, :integer, :required, 'Shipment ID'
+    param :query, :shipment_id, :integer, :required, 'Shipment ID'
     response 'ok', "{'results': [TrackingObjects]}", :Tracking
   end
   # :nocov:

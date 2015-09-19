@@ -38,7 +38,7 @@ class Tracking < ActiveRecord::Base
   after_validation :validate_shipment_status, on: :create
   after_create :notify_client
 
-  # can add tracking only when shipped
+  # can add tracking only when in in_transit state
   def validate_shipment_status
     self.errors.add(:shipment_id, 'is in invalid state for tracking') if shipment.try(:state) != :in_transit
   end

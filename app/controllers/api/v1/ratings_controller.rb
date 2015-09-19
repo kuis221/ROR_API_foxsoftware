@@ -1,12 +1,12 @@
 class Api::V1::RatingsController < Api::V1::ApiBaseController
 
-  authorize_resource # for shipper only
+  authorize_resource
 
   # :nocov:
   swagger_controller :ratings, 'Ratings'
   swagger_api :create do
     notes "Only when shipment in 'delivering' state"
-    response 'not_found', 404
+    response 'not_found', 'Shipment not found'
     response 'already_left', "When rating already left, 'text' will contain date of rating."
     response 'bad_state', "Wrong shipment state, 'text' will contain shipment status"
   end
@@ -23,6 +23,30 @@ class Api::V1::RatingsController < Api::V1::ApiBaseController
       else
         render_error :bad_state, nil, shipment.state
       end
+    end
+  end
+
+  # :nocov:
+  swagger_api :read_rating do
+    summary 'LOAD rating for shipment'
+    param :query, :shipment_id, :integer, :required, 'Shipment ID'
+    response 'not_found', 'Shipment not found'
+    response 'no_rating'
+    response 'access_denied'
+  end
+  # :nocov:
+  def read_rating
+    shipment = Shipment.find params[:shipment_id]
+    rating = shipment.rating # additional validation is in Ability class for
+    # proposal = current_user.proposals.with_shipment(shipment.id)
+    if rating
+      if can?(:read_rating, rating)
+        render_json rating
+      else
+        raise CanCan::AccessDenied
+      end
+    else
+      render_error 'no_rating'
     end
   end
 

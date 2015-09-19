@@ -22,7 +22,7 @@
 
 FactoryGirl.define do
   factory :proposal do
-    price {FFaker.numerify("##.##")}
+    price {FFaker.numerify("###.##")}
     equipment_type {FFaker::NatoAlphabet.callsign}
     user
     shipment

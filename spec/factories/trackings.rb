@@ -21,8 +21,8 @@ FactoryGirl.define do
   factory :tracking do
     shipment
     user
-    location "MyString"
-    notes "MyText"
+    location {"#{FFaker::Geolocation.lat}, #{FFaker::Geolocation.lng}" }
+    notes { FFaker::Lorem.word }
     checkpoint_time 1.minute.ago
   end
 

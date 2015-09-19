@@ -27,13 +27,16 @@ class Ability
     can :read, Tracking do |tracking|
       user.shipment_ids.include?(tracking.shipment_id)
     end
-    can [:read, :create, :update], Rating, user_id: user.id
+    can [:read, :create, :update, :read_rating], Rating, user_id: user.id
   elsif user.carrier?
     # can manage - include reject but not cancel
     can :manage, Proposal, user_id: user.id
     cannot :cancel, Proposal
     can :read, Shipment
-    can :read, Rating
+    # can find rating only when related
+    can :read_rating, Rating do |rating|
+      rating.shipment.accepted_proposal.user_id == user.id
+    end
     can :manage, Tracking, user_id: user.id
   elsif user.has_role?(:user) # both shipper and carrier can manage their address_infos
     can :manage, AddressInfo, user_id: user.id

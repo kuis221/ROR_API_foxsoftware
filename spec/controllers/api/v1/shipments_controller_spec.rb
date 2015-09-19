@@ -222,6 +222,13 @@ describe Api::V1::ShipmentsController do
       expect(@logged_in_user.has_role?(:carrier)).to eq true
     end
 
+    it 'should not list draft shipments' do
+      @shipment.destroy
+      create_list :shipment, 3, private_proposing: false
+      json_query :get, :index
+      expect(@json[:results].size).to eq 0
+    end
+
     it 'filter by shipment.status' do
       # @shipment are in draft state
       shipper = @shipment.user
@@ -245,7 +252,7 @@ describe Api::V1::ShipmentsController do
       expect(@json[:id]).to eq @shipment.id
       keys =  Api::V1::ShipmentPresenter::HASH_show
       keys.each do |key|
-        expect(@json[key.to_sym].to_s).to eq @shipment[key].to_s
+        expect(@json[key.to_sym].to_s).to eq @shipment.send(key).to_s
       end
     end
 
@@ -331,10 +338,6 @@ describe Api::V1::ShipmentsController do
           expect(res['price'].to_f < last).to be true
           last = res['price'].to_f
         end
-      end
-
-      it 'should not list draft shipments' do
-
       end
 
       it 'should list shipments with proposals summaries' do

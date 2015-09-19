@@ -29,6 +29,7 @@
 #  tokens                 :json
 #  mc_num                 :string
 #  alt_email              :string
+#  admin_notes            :string
 #
 # Indexes
 #

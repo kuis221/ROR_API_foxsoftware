@@ -25,9 +25,11 @@ class Api::V1::ApiBaseController < ApplicationController
   # Reuse that method in custom actions, those are out side of regular crud
   def self.add_authorization_headers(api)
     # TODO make a some first user with two shipments, proposals, auth. so api doc user can see the responses
-    api.param :header, 'access-token', :string, :required, 'Logged in user access token'
-    api.param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)'
-    api.param :header, 'client', :string, :required, 'Cliend ID'
+    @shipper_demo_user ||= User.where(email: 'shipper_demo@xxxxxx.com').first # Keep same in seeds
+    # .admin_notes field contain one time generated access-token
+    api.param :header, 'access-token', :string, :required, 'Logged in user access token', {defaultValue: @shipper_demo_user.try(:admin_notes)}
+    api.param :header, 'uid', :string, :required, 'Logged in user UID(uid from oauth or email)', {defaultValue: @shipper_demo_user.try(:uid)}
+    api.param :header, 'client', :string, :required, 'Cliend ID', {defaultValue: (@shipper_demo_user ? @shipper_demo_user.tokens.keys.first : '')}
   end
 
   # do not put code between nocov tags
@@ -75,7 +77,7 @@ class Api::V1::ApiBaseController < ApplicationController
               param :form, "#{s_model.table_name.singularize}[#{k}]", v[:type], v[:required], v[:desc], {defaultValue: v[:default]}
             end
             response 'ok', "{#{class_name}Object}", class_name.to_sym
-            response 'not_valid', "[ArrayOfErrors]"
+            response 'not_valid', "'text': [ArrayOfErrors]"
           end
         end
       end

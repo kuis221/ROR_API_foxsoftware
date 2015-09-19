@@ -52,6 +52,7 @@ class AuthenticationController < ApplicationController
         </tbody></table>
 
         <p>The authentication headers required for each request will be available in the response from the previous request. If you are using the <a href="https://github.com/lynndylanhurley/ng-token-auth">ng-token-auth</a> AngularJS module or the <a href="https://github.com/lynndylanhurley/j-toker">jToker</a> jQuery plugin, this functionality is already provided.</p>
+        <p>In staging environment we have demo data and demo shipper user with pre-filled authentication data everywhere so you can "Try Out!"</p>
     N
   end
   def registration

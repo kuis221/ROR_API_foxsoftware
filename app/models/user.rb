@@ -29,6 +29,7 @@
 #  tokens                 :json
 #  mc_num                 :string
 #  alt_email              :string
+#  admin_notes            :string
 #
 # Indexes
 #
@@ -98,7 +99,8 @@ class User < ActiveRecord::Base
   end
 
   def name
-    "#{first_name} #{last_name[0].to_s.upcase}."
+    lname = last_name.blank? ? '' : " #{last_name[0].to_s.upcase}."
+    "#{first_name}#{lname}"
   end
 
   def invitation_for?(shipment)

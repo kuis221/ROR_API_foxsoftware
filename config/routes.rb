@@ -57,7 +57,11 @@ Rails.application.routes.draw do
       end
 
       resources :trackings, except: [:new, :update, :edit, :show]
-      resources :ratings, only: [:create]
+      resources :ratings, only: [:create] do
+        collection do
+          get :read_rating
+        end
+      end
     end# END V1
 
     ## Remove default: true from previous version when create a new one

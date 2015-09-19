@@ -70,8 +70,9 @@ module DeviseTokenAuth
             }
 
             @resource.save!
+            auth_header = @resource.build_auth_header(@token, @client_id)
+            response.headers.merge!(auth_header)
 
-            update_auth_header
           end
 
           render_json @resource

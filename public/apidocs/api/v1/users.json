@@ -45,21 +45,24 @@
               "name": "access-token",
               "type": "string",
               "description": "Logged in user access token",
-              "required": true
+              "required": true,
+              "defaultValue": "eKn_pgalUkbHbJGaSVmuig"
             },
             {
               "paramType": "header",
               "name": "uid",
               "type": "string",
               "description": "Logged in user UID(uid from oauth or email)",
-              "required": true
+              "required": true,
+              "defaultValue": "shipper_demo@xxxxxx.com"
             },
             {
               "paramType": "header",
               "name": "client",
               "type": "string",
               "description": "Cliend ID",
-              "required": true
+              "required": true,
+              "defaultValue": "px14lNK9hA0l7oP5NpPQhg"
             }
           ],
           "method": "post",
@@ -77,21 +80,24 @@
               "name": "access-token",
               "type": "string",
               "description": "Logged in user access token",
-              "required": true
+              "required": true,
+              "defaultValue": "eKn_pgalUkbHbJGaSVmuig"
             },
             {
               "paramType": "header",
               "name": "uid",
               "type": "string",
               "description": "Logged in user UID(uid from oauth or email)",
-              "required": true
+              "required": true,
+              "defaultValue": "shipper_demo@xxxxxx.com"
             },
             {
               "paramType": "header",
               "name": "client",
               "type": "string",
               "description": "Cliend ID",
-              "required": true
+              "required": true,
+              "defaultValue": "px14lNK9hA0l7oP5NpPQhg"
             },
             {
               "paramType": "path",

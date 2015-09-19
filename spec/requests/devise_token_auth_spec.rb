@@ -6,13 +6,13 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
     let(:attrs) { {password: '123123', password_confirmation: '123123', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
 
     context 'confirming shipper user' do
+
       before do
         expect { post '/auth', attrs}.to change{User.count}.by(1)
         expect(ActionMailer::Base.deliveries.size).to eq 1
         @user = User.last
         expect(@user.email).to eq attrs[:email]
         expect(@user.confirmed?).to eq false
-
         body = ActionMailer::Base.deliveries.last.body.raw_source
         @confirmation_token = body[/confirmation_token=([^"]+)/, 1].split('&')[0]
       end
@@ -46,7 +46,7 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
         @carrier_email = FFaker::Internet.email
       end
 
-      it 'should do it' do
+      it 'should act as a carrier' do
         ## Initialization
         shipper = create :shipper
         shipment = create :shipment, user: shipper, private_proposing: true
