@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://localhost:3000/",
+  "basePath": "http://foxsoftware.herokuapp.com/",
   "resourcePath": "ratings",
   "apis": [
     {
@@ -32,7 +32,7 @@
             {
               "code": "not_found",
               "responseModel": null,
-              "message": null
+              "message": "Shipment not found"
             }
           ],
           "method": "get",
@@ -143,7 +143,7 @@
             {
               "code": "not_found",
               "responseModel": null,
-              "message": 404
+              "message": "Shipment not found"
             }
           ],
           "notes": "Only when shipment in 'delivering' state",
