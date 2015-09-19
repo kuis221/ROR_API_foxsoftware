@@ -23,3 +23,4 @@ For staging server you can prefill auth data (just like above), you need to seed
 For heroku now:
 $ heroku rake db:seed
 $ heroku run rake swagger:docs FOR=heroku
+TODO: heroku not letting to overwrite apidoc json files. find solution for that.
