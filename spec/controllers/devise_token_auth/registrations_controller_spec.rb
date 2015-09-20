@@ -53,8 +53,8 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
 
   it_should_behave_like 'oauth', :facebook
   it_should_behave_like 'oauth', :google_oauth2
+  it_should_behave_like 'oauth', :linkedin
 
-  # linkedin
 
   context 'shipper user with email' do
     let(:attrs) { {alt_email: 'alt@email.com', password: '123123', password_confirmation: '123123', about: 'BIO about',

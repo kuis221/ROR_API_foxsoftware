@@ -246,6 +246,7 @@ Devise.setup do |config|
                                                                                                   image_aspect_ratio: 'square',
                                                                                                   image_size: 50 }
 
+  config.omniauth :linkedin, ENV['FOX_LINKEDIN_KEY'], ENV['FOX_LINKEDIN_SECRET'], scope: 'r_fullprofile r_emailaddress'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
