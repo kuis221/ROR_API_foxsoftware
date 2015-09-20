@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
 
+  # TODO move under V1 version
   mount_devise_token_auth_for 'User', at: 'auth'
-  # devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+  get 'oauth_login/:provider' => 'devise_token_auth/registrations#oauth_login', as: :oauth_login
 
   root to: 'home#index'
 
   get 'auth/registration' => 'authentication#registration' # stub for documentation
   get 'auth/confirmation' => 'authentication#confirmation' # stub for documentation
+
 
   # when forwarding to next version set new default: true
   namespace :api, defaults: {format: :json} do

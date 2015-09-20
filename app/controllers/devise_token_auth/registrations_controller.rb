@@ -3,10 +3,10 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, only: [:destroy, :update]
     before_filter :validate_sign_up_params, only: :create
     before_filter :validate_account_update_params, only: :update
-    skip_after_filter :update_auth_header, only: [:create, :destroy]
+    skip_after_filter :update_auth_header, only: [:create, :destroy, :oauth_login]
 
     # :nocov:
-    swagger_controller :registrations, 'User email registration'
+    swagger_controller :registrations, 'User registration'
 
     swagger_api :create do |api|
       summary 'CREATE user with email'
@@ -83,6 +83,39 @@ module DeviseTokenAuth
       rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
         render_error 'not_unique', 403
+      end
+    end
+
+    # :nocov:
+    swagger_api :oauth_login do
+      summary 'CALLBACK for omniauth login'
+      notes <<-OA
+              This is the page where all omniauth provider land, user will be signed up or/and logged in and redirected
+              according to session.redirect_url, set it before redirecting user to any omniauth provider.<br/>
+              Send to provider link to this action. Currently: <strong>/oauth_login/:provider</strong>
+      OA
+      param :session, :redirect_url, :string, :required, "Redirect URL after auth procedure."
+      param :session, :user_role, :string, :required, 'User role, carrier or shipper'
+      response 'redirect'
+    end
+    # :nocov:
+    # We also receive param[:provider] but looks like its useless.. just for logs.
+    def oauth_login
+      render text: 'no redirect_url in session' and return unless session[:redirect_url]
+      render text: 'no user_role in session' and return unless session[:user_role]
+      auth = request.env['omniauth.auth']
+      identity = Identity.from_omniauth(auth)
+      user = identity.find_or_create_user(current_user)
+
+      if user.valid?
+        user.assign_role_by_param(session[:user_role])
+        auth_header = user.create_new_auth_token
+        response.headers.merge!(auth_header)
+        sign_in user, bypass: true
+        redirect_to session[:redirect_url]
+      else
+        logger.info user.errors.full_messages
+        render_error :invalid_oauth, 500, user.errors.full_messages
       end
     end
 

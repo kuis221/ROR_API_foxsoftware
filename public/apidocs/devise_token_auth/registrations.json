@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://localhost:3000/",
   "resourcePath": "registrations",
   "apis": [
     {
@@ -183,6 +183,40 @@
           ],
           "method": "patch",
           "nickname": "DeviseTokenAuth::Registrations#update"
+        }
+      ]
+    },
+    {
+      "path": "oauth_login/{provider}.json",
+      "operations": [
+        {
+          "summary": "CALLBACK for omniauth login",
+          "notes": "              This is the page where all omniauth provider land, user will be signed up or/and logged in and redirected\n              according to session.redirect_url, set it before redirecting user to any omniauth provider.<br/>\n              Send to provider link to this action. Currently: <strong>/oauth_login/:provider</strong>\n",
+          "parameters": [
+            {
+              "paramType": "session",
+              "name": "redirect_url",
+              "type": "string",
+              "description": "Redirect URL after auth procedure.",
+              "required": true
+            },
+            {
+              "paramType": "session",
+              "name": "user_role",
+              "type": "string",
+              "description": "User role, carrier or shipper",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "redirect",
+              "responseModel": null,
+              "message": null
+            }
+          ],
+          "method": "get",
+          "nickname": "DeviseTokenAuth::Registrations#oauth_login"
         }
       ]
     }

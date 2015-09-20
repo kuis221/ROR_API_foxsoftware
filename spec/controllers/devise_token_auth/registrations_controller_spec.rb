@@ -5,6 +5,57 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
     @request.env["devise.mapping"] = Devise.mappings[:user]
   end
 
+  shared_examples_for 'oauth' do |provider|
+
+    set_oauth_login(provider)
+
+    before do
+      expect(@mock[:provider]).to eq provider
+    end
+
+    it 'should register properly' do
+      session[:redirect_url] = '/'
+      session[:user_role] = 'shipper'
+      expect { get :oauth_login, provider: provider }.to change{User.count}.by(1)
+      expect(response).to redirect_to('/')
+      user = User.last
+      identity = user.identities.last
+      expect(identity.provider).to eq provider.to_s
+      expect(user.roles_name).to match_array %w(user shipper)
+      validate_auth_headers user
+    end
+
+    it 'should not register without redirect url' do
+      session[:redirect_url] = nil
+      session[:user_role] = 'carrier'
+      expect { get :oauth_login, provider: provider }.not_to change{User.count}
+      expect(response.body).to match('no redirect_url in session')
+    end
+
+    it 'should not register without user role' do
+      session[:redirect_url] = '/'
+      session[:user_role] = nil
+      expect { get :oauth_login, provider: provider }.not_to change{User.count}
+      expect(response.body).to match('no user_role in session')
+    end
+
+    it 'should not register without proper email' do
+      @mock['info']['email'] = "d"
+      session[:redirect_url] = '/'
+      session[:user_role] = 'shipper'
+      expect { get :oauth_login, provider: provider }.not_to change{User.count}
+      read_json_response(:get)
+      expect(@json[:error]).to eq 'not_saved'
+    end
+
+
+  end
+
+
+  it_should_behave_like 'oauth', :facebook
+  # google_oauth2
+  # linkedin
+
   context 'shipper user with email' do
     let(:attrs) { {alt_email: 'alt@email.com', password: '123123', password_confirmation: '123123', about: 'BIO about',
                    first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email}
@@ -129,12 +180,6 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
     #   }.not_to change(@logged_in_user, :about)
     # end
 
-  end
-
-  context 'shipper user with oauth' do
-    let(:attrs) { {provider: 'facebook', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
-
-    # TODO
   end
 
 end

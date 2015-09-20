@@ -31,7 +31,7 @@ Devise.setup do |config|
   # session. If you need permissions, you should implement that in a before filter.
   # You can also supply a hash where the value is a boolean determining whether
   # or not authentication should be aborted when the value is not present.
-  # config.authentication_keys = [:email]
+  config.authentication_keys = [:email]
 
   # Configure parameters from the request object used for authentication. Each entry
   # given should be a request method and it will automatically be passed to the
@@ -240,8 +240,12 @@ Devise.setup do |config|
   # up on your models and hooks.
   ## SEE omniauth.rb
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  # config.omniauth :facebook, ENV['FACEBOOK_APP_KEY'], ENV['FACEBOOK_APP_SECRET'], scope: 'email'
-  # config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'], { }
+
+  config.omniauth :facebook, ENV['FOX_FACEBOOK_APP_KEY'], ENV['FOX_FACEBOOK_APP_SECRET'], {scope: 'email', info_fields: 'email, name'}
+  # config.omniauth :google_oauth2, ENV['FOX_GOOGLE_CLIENT_ID'], ENV['FOX_GOOGLE_CLIENT_SECRET'], { scope: 'email, profile',
+  #                                                                                                 image_aspect_ratio: 'square',
+  #                                                                                                 image_size: 50 }
+
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

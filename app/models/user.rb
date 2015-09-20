@@ -59,6 +59,8 @@ class User < ActiveRecord::Base
   has_many :trackings, dependent: :destroy
   has_many :ratings
 
+  has_many :identities, dependent: :destroy
+
   has_many :friendships, dependent: :destroy
   has_many :friends, through: :friendships
 
@@ -123,7 +125,7 @@ class User < ActiveRecord::Base
   end
 
   def assign_user_role
-    self.add_role Settings.default_role
+    self.add_role Settings.default_role unless self.has_role?(:user)
   end
 
   def admin?
