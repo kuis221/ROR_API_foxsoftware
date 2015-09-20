@@ -242,9 +242,9 @@ Devise.setup do |config|
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
   config.omniauth :facebook, ENV['FOX_FACEBOOK_APP_KEY'], ENV['FOX_FACEBOOK_APP_SECRET'], {scope: 'email', info_fields: 'email, name'}
-  # config.omniauth :google_oauth2, ENV['FOX_GOOGLE_CLIENT_ID'], ENV['FOX_GOOGLE_CLIENT_SECRET'], { scope: 'email, profile',
-  #                                                                                                 image_aspect_ratio: 'square',
-  #                                                                                                 image_size: 50 }
+  config.omniauth :google_oauth2, ENV['FOX_GOOGLE_CLIENT_ID'], ENV['FOX_GOOGLE_CLIENT_SECRET'], { scope: 'email, profile',
+                                                                                                  image_aspect_ratio: 'square',
+                                                                                                  image_size: 50 }
 
 
   # ==> Warden configuration

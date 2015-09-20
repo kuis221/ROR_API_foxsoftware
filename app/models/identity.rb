@@ -28,7 +28,6 @@ class Identity < ActiveRecord::Base
   validates_format_of :email, with: /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
 
   def self.from_omniauth(auth)
-    # For facebook. split into providers  vars when doing new
     identity = where(provider: auth.provider, uid: auth.uid).first_or_create do |identity|
       identity.provider     = auth.provider
       identity.uid          = auth.uid

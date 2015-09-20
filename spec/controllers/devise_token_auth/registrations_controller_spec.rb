@@ -51,9 +51,9 @@ describe DeviseTokenAuth::RegistrationsController, type: :controller do
 
   end
 
-
   it_should_behave_like 'oauth', :facebook
-  # google_oauth2
+  it_should_behave_like 'oauth', :google_oauth2
+
   # linkedin
 
   context 'shipper user with email' do
