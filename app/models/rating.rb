@@ -38,8 +38,12 @@ class Rating < ActiveRecord::Base
     validates_inclusion_of k, in: [true, false] if v[:required] == :required && v[:type] == :boolean
   end
 
-  after_validation :validate_shipment_status
+  after_validation :validate_shipment_status, on: :create
   after_create :notify_carrier
+
+  def can_be_updated?
+    Date.today < created_at + Settings.edit_rating_due.days
+  end
 
   # Only :delivering status can create rating
   def validate_shipment_status

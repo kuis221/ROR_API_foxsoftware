@@ -8,3 +8,4 @@ index_list: 10
 default_email_from: no-reply@example.com
 host: http://localhost:3000
 proposal_limit: 99999
+edit_rating_due: 90

@@ -54,18 +54,40 @@ RSpec.describe Api::V1::RatingsController, type: :controller do
       expect_email(0)
     end
 
-    it 'should not let carrier to left rating' do
-      @logged_in_user.roles.destroy_all
-      @logged_in_user.add_role :carrier
-      @shipment.delivered!
-      email_clear
-      expect {
-        json_query :post, :create, rating: attrs
-      }.not_to change{Rating.count}
-      expect(@json[:error]).to eq 'access_denied_with_role'
-      @shipment.reload
-      expect(@shipment.state).to eq :delivering
-      expect_email(0)
+    context 'update' do
+      before do
+        @shipment.delivered!
+        @rating = create :rating, user: @logged_in_user, shipment: @shipment
+        @a = attrs
+        @a[:pick_on_time] = false
+        email_clear
+      end
+
+      it 'should update rating' do
+        expect {
+          json_query :put, :update, id: @rating.id, rating: @a
+          @rating.reload
+          expect(@json[:status]).to eq 'ok'
+        }.to change(@rating, :pick_on_time)
+      end
+
+      it 'should not let update beyond maximum limit in Settings.edit_rating_due' do
+        @rating.update_attribute :created_at, Date.today - (Settings.edit_rating_due + 1).days
+        expect {
+          json_query :put, :update, id: @rating.id, rating: @a
+          @rating.reload
+          expect(@json[:error]).to eq 'time_over'
+        }.not_to change(@rating, :pick_on_time)
+      end
+
+      it 'should not let update someone rating' do
+        @rating.update_attribute :user_id, 0
+        expect {
+          json_query :put, :update, id: @rating.id, rating: @a
+          @rating.reload
+          expect(@json[:error]).to eq 'not_found'
+        }.not_to change(@rating, :pick_on_time)
+      end
     end
   end
 
@@ -102,5 +124,30 @@ RSpec.describe Api::V1::RatingsController, type: :controller do
       expect(@json[:error]).to eq 'access_denied_with_role'
     end
 
+
+    it 'should not let carrier to create rating' do
+      @shipment.update_attribute(:aasm_state, 'delivering') # just return to past state
+      @rating.destroy
+      email_clear
+      expect {
+        json_query :post, :create, rating: attrs
+      }.not_to change{Rating.count}
+      expect(@json[:error]).to eq 'access_denied_with_role'
+      @shipment.reload
+      expect(@shipment.state).to eq :delivering
+      expect_email(0)
+    end
+
+    it 'should not let carrier edit rating' do
+      a = attrs
+      a[:pick_on_time] = false
+      email_clear
+      expect {
+        json_query :put, :update, id: @rating.id, rating: a
+        @rating.reload
+      }.not_to change(@rating, :pick_on_time)
+      expect(@json[:error]).to eq 'access_denied_with_role'
+      expect_email(0)
+    end
   end
 end

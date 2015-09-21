@@ -62,7 +62,7 @@ Rails.application.routes.draw do
       end
 
       resources :trackings, except: [:new, :update, :edit, :show]
-      resources :ratings, only: [:create] do
+      resources :ratings, only: [:create, :update] do
         collection do
           get :read_rating
         end
