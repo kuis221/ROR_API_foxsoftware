@@ -29,6 +29,9 @@ class Proposal < ActiveRecord::Base
   scope :by_lowest, ->() {order('proposals.price ASC')}
   scope :from_user, ->(user) {where('proposals.user_id = ?', user.id)}
   scope :latest, ->() { order('proposals.created_at DESC') }
+  # return any proposal that still in active mode(offered or accepted)
+  scope :active, -> { where('(accepted_at IS NOT NULL OR offered_at IS NOT NULL) AND rejected_at IS NULL') }
+
   resourcify
   delegate :name, to: :user, prefix: true
 

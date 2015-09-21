@@ -42,4 +42,22 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+
+  context 'should assign_role_by_param' do
+    before do
+      @user = create :user
+      @user.assign_role_by_param('carrier')
+      @user.reload
+    end
+
+    it 'normally' do
+      expect(@user.has_role?(:carrier)).to be_truthy
+    end
+
+    it 'should not add twise same role' do
+      @user.assign_role_by_param('carrier')
+      @user.reload
+      expect(@user.roles_name).to match_array %w(user carrier)
+    end
+  end
 end

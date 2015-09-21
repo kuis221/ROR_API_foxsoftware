@@ -5,7 +5,6 @@ describe Api::V1::UsersController, type: :controller do
   context 'Signed in user' do
 
     login_user
-
     it 'should return not blocked user' do
       user = create :user, blocked: false
       json_query :get, :show, id: user.id
@@ -38,6 +37,31 @@ describe Api::V1::UsersController, type: :controller do
       json_query :post, :get_address_by_zip, zip: '1234'
       expect(@json[:result]).to be nil
       expect(@json[:error]).to eq 'not_found'
+    end
+
+    it 'should render status page' do
+      user = create :shipper
+      carrier = create :carrier
+      shipments = create_list :shipment, 2, user: user
+      shipment = shipments.first
+      shipment.auction!
+      proposal = create :proposal, shipment: shipment, user: carrier
+      proposal.offered!
+      proposal.accepted!
+      shipment.offer!
+      shipment.confirm!
+      shipment.picked!
+      shipment.delivered!
+      create :rating, shipment: shipment, user: user
+      json_query :get, :stats, id: carrier.id
+      expect(@json[:role]).to eq 'carrier'
+      expect(@json[:shipments]['done_shipments']).to eq 1
+
+      create_list(:shipment, 3, user: user, aasm_state: 'proposing')
+      json_query :get, :stats, id: user.id
+      expect(@json[:role]).to eq 'shipper'
+      expect(@json[:shipments]['done_shipments']).to eq 1
+      expect(@json[:shipments]['on_auction']).to eq 3
     end
   end
 

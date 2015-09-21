@@ -38,6 +38,9 @@ Rails.application.routes.draw do
         collection do
           post :get_address_by_zip
         end
+        member do
+          get :stats
+        end
       end
       resources :address_infos do
         member do

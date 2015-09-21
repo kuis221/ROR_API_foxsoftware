@@ -6,7 +6,7 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
   swagger_controller :users, 'User Management'
 
   swagger_api :show do
-    summary 'Fetches a single User item'
+    summary 'LOAD user'
     param :path, :id, :integer, :required, 'User ID'
     response 'ok', 'Success', :User
     response 'unauthorized'
@@ -15,6 +15,19 @@ class Api::V1::UsersController < Api::V1::ApiBaseController
   # :nocov:
   def show
     render_json @user
+  end
+
+  # :nocov:
+  swagger_api :stats do
+    summary 'SHOW user statistics'
+    param :path, :id, :integer, :required, 'User ID'
+    response 'ok', 'StatsObject'
+    response 'unauthorized'
+    response 'not_found'
+  end
+  # :nocov:
+  def stats
+    render json: Api::V1::UserStatsPresenter.minimal_hash(@user, current_user)
   end
 
   # :nocov:

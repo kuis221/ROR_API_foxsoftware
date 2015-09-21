@@ -113,15 +113,20 @@ class User < ActiveRecord::Base
   def main_role
     return :carrier if has_role?(:carrier)
     return :shipper if has_role?(:shipper)
-    return :admin if has_role?(:admin)
+    # return :admin if has_role?(:admin) # dont need
     raise "USER #{id} HAS NO MAIN ROLE"
+  end
+
+  # for carrier role. load active proposals and find shipments
+  def involved_shipments
+    Shipment.where(id: proposals.active.pluck(:shipment_id))
   end
 
   # by default all users get :user role. second role  depends on params[:user_type]
   def assign_role_by_param(user_type)
     role = :shipper
     role = :carrier if user_type == 'carrier'
-    add_role role
+    add_role role unless has_role?(role)
   end
 
   def assign_user_role

@@ -28,7 +28,7 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :show do
-    summary 'LOAD a proposal'
+    summary 'LOAD proposal'
     param :path, :id, :integer, :required, 'Proposal ID'
     response 'ok', 'Success', :Proposal
     response 'not_found'
@@ -40,7 +40,7 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :create do
-    summary 'CREATE a Proposal'
+    summary 'CREATE proposal'
     notes 'This endpoint provide creation of new proposal for shipment. Only user with <strong>carrier</strong> role can do this.'
     param :form, 'proposal[price]', :double, :required, desc: 'Offered price'
     param :form, 'proposal[shipment_id]', :integer, :required, desc: 'Shipment ID'
@@ -73,7 +73,7 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :reject do
-    summary 'REJECT Proposal by carrier'
+    summary 'REJECT proposal by carrier'
     notes <<-REJECT
         Reject a proposal by current_user(must be a carrier).<br/>
         Shipper will get notification and proposal status became rejected.<br/>
@@ -98,7 +98,7 @@ class Api::V1::ProposalsController < Api::V1::ApiBaseController
 
   # :nocov:
   swagger_api :cancel do
-    summary 'CANCEL Proposal by shipper'
+    summary 'CANCEL proposal by shipper'
     notes <<-CANCEL
         Cancel proposal, similar as #reject but can be only set by shipper.<br/>
         Can be only set when shipment is in 'pending' status(before 'confirming')
