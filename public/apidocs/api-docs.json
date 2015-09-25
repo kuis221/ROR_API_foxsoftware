@@ -1,46 +1,46 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxlmp-dev:3000/",
+  "basePath": "http://foxsoftware.herokuapp.com/",
   "apis": [
     {
-      "path": "http://foxlmp-dev:3000/apidocs/devise_token_auth/registrations.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/devise_token_auth/registrations.{format}",
       "description": "User registration"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/authentication.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/authentication.{format}",
       "description": "Authenticating Fox LMP API"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/shipments.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/shipments.{format}",
       "description": "Shipment resource"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/ship_invitations.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/ship_invitations.{format}",
       "description": "Invitations resource"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/proposals.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/proposals.{format}",
       "description": "Proposals resource"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/users.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/users.{format}",
       "description": "User Management"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/address_infos.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/address_infos.{format}",
       "description": "User addresses management"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/my_connections.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/my_connections.{format}",
       "description": "User connections"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/trackings.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/trackings.{format}",
       "description": "Shipment tracking resource"
     },
     {
-      "path": "http://foxlmp-dev:3000/apidocs/api/v1/ratings.{format}",
+      "path": "http://foxsoftware.herokuapp.com/apidocs/api/v1/ratings.{format}",
       "description": "Ratings"
     }
   ],
