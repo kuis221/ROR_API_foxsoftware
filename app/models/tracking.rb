@@ -18,6 +18,7 @@
 #
 
 class Tracking < ActiveRecord::Base
+  include TrackingAdmin
   belongs_to :shipment
   belongs_to :user # carrier
 

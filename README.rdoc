@@ -24,3 +24,11 @@ For heroku now:
 $ heroku rake db:seed
 $ heroku run rake swagger:docs FOR=heroku
 TODO: heroku not letting to overwrite apidoc json files. find solution for that.
+
+* Admin
+To access and check admin panel you need to:
+- Make seeded shipper user with roles of admin(via console)
+- Regenerate swagger doc(to insert shipper user with admin roles into doc)
+- Peform login via frontend(if ready) OR
+- Go to /api-doc and perform any authorized query - note that auth fields are pre-filled in.
+- Change url to /fox-admin

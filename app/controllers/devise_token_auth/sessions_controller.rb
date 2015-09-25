@@ -5,9 +5,10 @@ module DeviseTokenAuth
     after_action :reset_session, :only => [:destroy]
 
     def new
-      render json: {
-        errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
-      }, status: 405
+      render text: 'Please login on main site.'
+      # render json: {
+      #   errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
+      # }, status: 405
     end
 
     def create

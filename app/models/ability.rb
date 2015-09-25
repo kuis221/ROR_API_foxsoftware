@@ -9,10 +9,20 @@ class Ability
 
   user ||= User.new # guest user (not logged in)
 
+  # users with :admin role can have subroles. just to prevent some useless messing
   if user.admin?
     can :manage, :all
     can :access, :rails_admin
     can :dashboard
+    cannot :create, Shipment
+    cannot :create, Proposal
+    cannot :create, Tracking
+    cannot :create, Rating
+    cannot :create, Identity
+    unless user.has_role?(:user_manager)
+      cannot :manage, Role
+      cannot :manage, Identity
+    end
     # See more user cases for rails_admin: https://github.com/sferik/rails_admin/wiki/CanCan
   elsif user.shipper?
     # can read only his own shipments

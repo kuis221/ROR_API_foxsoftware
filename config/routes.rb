@@ -9,8 +9,10 @@ Rails.application.routes.draw do
   get 'auth/registration' => 'authentication#registration' # stub for documentation
   get 'auth/confirmation' => 'authentication#confirmation' # stub for documentation
 
+  mount RailsAdmin::Engine => '/fox-admin', as: 'rails_admin'
 
   # when forwarding to next version set new default: true
+  # TODO -> path: false, constraints: { subdomain: 'api' }
   namespace :api, defaults: {format: :json} do
     api_version(module: 'V1', path: {value: 'v1'}, default: true) do
 
@@ -74,8 +76,5 @@ Rails.application.routes.draw do
     #
     # end
   end
-
-
-  mount RailsAdmin::Engine => '/super_fox_admin', as: 'rails_admin'
 
 end

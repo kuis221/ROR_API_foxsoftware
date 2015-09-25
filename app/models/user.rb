@@ -40,6 +40,7 @@
 #
 
 class User < ActiveRecord::Base
+  include UserAdmin
   rolify
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable, :registerable, :recoverable, :rememberable, :trackable
@@ -113,7 +114,8 @@ class User < ActiveRecord::Base
   def main_role
     return :carrier if has_role?(:carrier)
     return :shipper if has_role?(:shipper)
-    # return :admin if has_role?(:admin) # dont need
+    return :admin if has_role?(:admin)
+    return :user if has_role?(:user)
     raise "USER #{id} HAS NO MAIN ROLE"
   end
 

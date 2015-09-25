@@ -21,6 +21,7 @@
 #
 
 class Proposal < ActiveRecord::Base
+  include ProposalAdmin
   belongs_to :user
   belongs_to :shipment
 

@@ -12,14 +12,17 @@ class ApplicationController < ActionController::Base
     render_error :not_found, 404
   end
 
-  # raise activerecord erorr or string(used from AddressInfoController)
+  # raise activerecord error or string(used from AddressInfoController)
   rescue_from ActiveRecord::RecordInvalid do |e|
     render_error :not_saved, 500, (e.is_a?(String) ? e : e.record.errors.full_messages)
   end
 
   rescue_from CanCan::AccessDenied do |exception|
-    logger.info "ROLE DENIED DENIED: user: #{current_user.id} roles: #{current_user.roles_name}"
-    render_error :access_denied_with_role, 403
+    logger.info "ROLE DENIED DENIED: user: #{current_user.try(:id)} roles: #{current_user.try(:roles_name)}"
+    respond_to do |f|
+      f.html  { render text: 'To access admin please login as an admin' }
+      f.json { render_error :access_denied_with_role, 403 }
+    end
   end
 
   rescue_from MissingParam do |e|
@@ -28,6 +31,11 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # def set_auth_headers
+  #   response.headers['access-token'] = request.headers['access-token']
+  #   response.headers['uid'] = request.headers['uid']
+  #   response.headers['client'] = request.headers['client']
+  # end
   # def dummy_proof_auth_headers
   #   params['access-token'] = request.headers['access-token']
   #   params['uid'] = request.headers['uid']

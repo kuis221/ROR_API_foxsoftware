@@ -23,6 +23,10 @@ class Rating < ActiveRecord::Base
   belongs_to :user
   belongs_to :shipment
 
+  rails_admin do
+    exclude_fields :updated_at
+  end
+
   ATTRS = {
       pick_on_time: {desc: 'Pickup On-time?', required: :required, type: :boolean},
       delivery_on_time: {desc: 'Delivery On-time?', required: :required, type: :boolean},

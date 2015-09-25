@@ -16,6 +16,8 @@
 #
 
 class Friendship < ActiveRecord::Base
+  include FriendshipAdmin
+
   belongs_to :user
   belongs_to :friend, class_name: 'User'
   # Type of friendship relation - shipper has many carriers or carrier has many clients

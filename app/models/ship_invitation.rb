@@ -16,6 +16,7 @@
 #
 
 class ShipInvitation < ActiveRecord::Base
+  include ShipInvitationAdmin
   belongs_to :shipment
   # Invitee user, may be blank if user not available in our users yet.
   belongs_to :invitee, class_name: 'User', foreign_key: :invitee_id

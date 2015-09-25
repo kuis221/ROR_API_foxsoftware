@@ -50,6 +50,7 @@
 
 class Shipment < ActiveRecord::Base
   include AASM
+  include ShipmentAdmin
 
   belongs_to :user
   belongs_to :shipper_info

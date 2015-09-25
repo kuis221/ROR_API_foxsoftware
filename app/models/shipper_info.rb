@@ -26,6 +26,7 @@
 
 # STI
 class ShipperInfo < AddressInfo
+  has_one :shipment
   belongs_to :user
 end
 

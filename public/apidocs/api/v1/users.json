@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://localhost:3000/",
+  "basePath": "http://foxlmp-dev:3000/",
   "resourcePath": "users",
   "apis": [
     {
@@ -36,6 +36,42 @@
       ]
     },
     {
+      "path": "api/v1/users/{id}/stats.json",
+      "operations": [
+        {
+          "summary": "SHOW user statistics",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "User ID",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": null
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": "StatsObject"
+            },
+            {
+              "code": "unauthorized",
+              "responseModel": null,
+              "message": null
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::Users#stats"
+        }
+      ]
+    },
+    {
       "path": "api/v1/users.json",
       "operations": [
         {
@@ -46,7 +82,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "eKn_pgalUkbHbJGaSVmuig"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -62,7 +98,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "px14lNK9hA0l7oP5NpPQhg"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             }
           ],
           "method": "post",
@@ -81,7 +117,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "eKn_pgalUkbHbJGaSVmuig"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -97,7 +133,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "px14lNK9hA0l7oP5NpPQhg"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "path",
@@ -107,7 +143,7 @@
               "required": true
             }
           ],
-          "summary": "Fetches a single User item",
+          "summary": "LOAD user",
           "responseMessages": [
             {
               "code": "not_found",

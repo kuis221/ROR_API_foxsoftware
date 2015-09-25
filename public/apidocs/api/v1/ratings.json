@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://localhost:3000/",
+  "basePath": "http://foxlmp-dev:3000/",
   "resourcePath": "ratings",
   "apis": [
     {
@@ -51,7 +51,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "eKn_pgalUkbHbJGaSVmuig"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -67,7 +67,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "px14lNK9hA0l7oP5NpPQhg"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "form",
@@ -149,6 +149,124 @@
           "notes": "Only when shipment in 'delivering' state",
           "method": "post",
           "nickname": "Api::V1::Ratings#create"
+        }
+      ]
+    },
+    {
+      "path": "api/v1/ratings/{id}.json",
+      "operations": [
+        {
+          "parameters": [
+            {
+              "paramType": "header",
+              "name": "access-token",
+              "type": "string",
+              "description": "Logged in user access token",
+              "required": true,
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
+            },
+            {
+              "paramType": "header",
+              "name": "uid",
+              "type": "string",
+              "description": "Logged in user UID(uid from oauth or email)",
+              "required": true,
+              "defaultValue": "shipper_demo@xxxxxx.com"
+            },
+            {
+              "paramType": "header",
+              "name": "client",
+              "type": "string",
+              "description": "Cliend ID",
+              "required": true,
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
+            },
+            {
+              "paramType": "form",
+              "name": "rating[pick_on_time]",
+              "type": "boolean",
+              "description": "Pickup On-time?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[delivery_on_time]",
+              "type": "boolean",
+              "description": "Delivery On-time?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[tracking_updated]",
+              "type": "boolean",
+              "description": "Tracking Updates provided as requested?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[had_claims]",
+              "type": "boolean",
+              "description": "Did you have any claims?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[will_recommend]",
+              "type": "boolean",
+              "description": "Would you recommend this carrier?",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "form",
+              "name": "rating[shipment_id]",
+              "type": "string",
+              "description": "Shipment ID",
+              "required": true,
+              "defaultValue": null
+            },
+            {
+              "paramType": "path",
+              "name": "id",
+              "type": "integer",
+              "description": "Rating ID",
+              "required": true
+            }
+          ],
+          "summary": "UPDATE Rating",
+          "responseMessages": [
+            {
+              "code": "not_valid",
+              "responseModel": null,
+              "message": "'text': [ArrayOfErrors]"
+            },
+            {
+              "code": "ok",
+              "responseModel": "Rating",
+              "message": "{RatingObject}"
+            },
+            {
+              "code": "access_denied_for_role",
+              "responseModel": null,
+              "message": null
+            },
+            {
+              "code": "not_found",
+              "responseModel": null,
+              "message": "Rating not found"
+            },
+            {
+              "code": "time_over",
+              "responseModel": null,
+              "message": "Can't update after 90 days"
+            }
+          ],
+          "method": "patch",
+          "nickname": "Api::V1::Ratings#update"
         }
       ]
     }

@@ -27,7 +27,6 @@
 # Dont use AddressInfo directly
 class AddressInfo < ActiveRecord::Base
   belongs_to :user
-  has_many :shipments
 
   resourcify
 

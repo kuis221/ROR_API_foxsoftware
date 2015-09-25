@@ -28,9 +28,11 @@ email = "adminx@exxample.com"
 unless User.exists?(email: email)
   puts '-> Create a user with admin role'
   user = create_user(email)
-  access_token = user.create_new_auth_token['access-token']
   user.add_role :admin
+  user.add_role :user_manager
 end
+access_token = user.create_new_auth_token['access-token']
+user.update_attribute(:admin_notes, access_token)
 
 carrier_email = 'carrier_demo@xxxxxx.com'
 # keep same email in @shipper_demo_user finding in ApiBaseController

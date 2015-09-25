@@ -26,24 +26,15 @@ RailsAdmin.config do |config|
     edit
     delete
     show_in_app
-
     ## With an audit adapter, you can add:
-    history_index
-    history_show
+    # history_index
+    # history_show
   end
-end
 
+  # Total width of columns
+  config.total_columns_width = 1000
 
-def solution(a)
-  size = a.size
-  passable = [false] * size
-  uncovered = size
-  a.each_with_index do |value, idx|
-    unless passable[idx-1]
-      passable[idx-1] = true
-      uncovered -= 1
-      return idx if uncovered ==0
-    end
-  end
-  -1
+  # Not displayed models
+  # config.excluded_models << %w(AddressInfo)
+
 end
