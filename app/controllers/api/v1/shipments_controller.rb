@@ -182,12 +182,12 @@ class Api::V1::ShipmentsController < Api::V1::ApiBaseController
     summary 'SET shipment status/transit to'
     notes <<-TR
       Transit shipment status to new one, according to current status and current_user role.
-      Available statuses:
+      <strong>Available events:</strong>
       <table>
         <thead><th>Status</th><th>Set by</th><th>Explanation</th><th>From statuses</th></thead>
         <tr><th>auction</th><td>Shipper</td><td>Move from Draft to Auction</td><td>draft</td></tr>
         <tr><th>pause</th><td>Shipper</td><td>Set shipment to 'draft' and remove all proposals</td><td>offer, auction</td></tr>
-        <tr><th>propose</th><td>Shipper</td><td>Accept proposal(make an offer)</td>auction</tr>
+        <tr><th>propose</th><td>Shipper</td><td>Accept proposal(make an offer)</td>td>auction</td></tr>
         <tr><th>confirm</th><td>Carrier</td><td>Accept above offer.</td><td>propose</td></tr>
         <tr><th>in_transit</th><td>Carrier</td><td>Mark as in transit</td><td>confirm</td></tr>
         <tr><th>delivered</th><td>Carrier</td><td>Mark as delivered</td><td>in_transit</td></tr>
