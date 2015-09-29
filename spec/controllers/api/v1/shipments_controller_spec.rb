@@ -102,15 +102,19 @@ describe Api::V1::ShipmentsController do
         proposal.reload
         expect(proposal.accepted_at).not_to be_falsey
         expect(@shipment.state).to eq :confirming
-        # Check that shipper get an email
-        shipper_mail = ActionMailer::Base.deliveries.first
-        expect(shipper_mail.to.first).to eq @shipment.user.email
-        expect(shipper_mail.subject).to eq "Carrier has accepted your offer for shipment: #{@shipment.id}"
 
-        # Should let other carriers that their proposals are rejected
-        rejected_mail = ActionMailer::Base.deliveries.last # rejected email to other carriers
-        expect(rejected_mail.to.first).to eq other_proposal.user.email
-        expect(rejected_mail.subject).to eq 'Your proposal has been rejected'
+        expect(ProposalAccepted).to have_enqueued_job(@shipment.id)
+        ## Will not validate next session anymore since we using sidekiq
+        # Check that shipper get an email
+        # shipper_mail = ActionMailer::Base.deliveries.first
+        # expect(shipper_mail.to.first).to eq @shipment.user.email
+        # expect(shipper_mail.subject).to eq "Carrier has accepted your offer for shipment: #{@shipment.id}"
+        #
+        # # Should let other carriers that their proposals are rejected
+        # rejected_mail = ActionMailer::Base.deliveries.last # rejected email to other carriers
+        # expect(rejected_mail.to.first).to eq other_proposal.user.email
+        # expect(rejected_mail.subject).to eq 'Your proposal has been rejected'
+
       end
     end
 
@@ -472,7 +476,9 @@ describe Api::V1::ShipmentsController do
         @proposal = create :proposal, shipment: @shipment, price: 120, user: @logged_in_user, offered_at: 2.hours.ago, accepted_at: Time.zone.now
         @shipment.offer!
         @shipment.confirm!
-        expect(ActionMailer::Base.deliveries.size).to eq 3 # New proposal, You got offer, Carrier accepted offer
+        # New proposal, You got offer. Carrier accepted offer goes to Sidekiq
+        expect_email(2)
+        expect(ProposalAccepted).to have_enqueued_job(@shipment.id)
         email_clear
       end
 

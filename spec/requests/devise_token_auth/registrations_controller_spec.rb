@@ -108,9 +108,4 @@ describe DeviseTokenAuth::RegistrationsController, type: :request do
     end
   end
 
-  context 'shipper user with oauth' do
-    let(:attrs) { {provider: 'facebook', about: 'BIO about', first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, email: FFaker::Internet.email} }
-    # TODO, write oauth test
-  end
-
 end

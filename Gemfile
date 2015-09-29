@@ -77,7 +77,7 @@ group :test do
   gem 'simplecov', require: false
   gem 'capybara'
   gem 'database_cleaner'
-
+  gem 'rspec-sidekiq'
 end
 
 is_heroku = ENV.any? {|x,_| x=~ /^dyno/i }

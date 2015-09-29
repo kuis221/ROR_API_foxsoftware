@@ -112,7 +112,7 @@ class Shipment < ActiveRecord::Base
   validates_inclusion_of :hide_proposals, in: [true, false]
 
   aasm do # add whiny_transitions: true to return true/false as a transition result
-    ## Statuses descriptions(and appropriate events): TODO cover with heavy tests
+    ## Statuses descriptions(and appropriate events)
     ## see #switch_status.
     ## not listed = for public. author can always see it.
     ## Okay, statuses
@@ -267,14 +267,8 @@ class Shipment < ActiveRecord::Base
   end
 
   # Reject proposals except offered and notify carriers
-  # TODO Sidekiq
-  # TODO remove proposals ?
   def notify_shipper_and_reject_proposals
-    ShipperMailer.offer_accepted(self).deliver_now
-    offered = offered_proposal
-    proposals.where('id != ?', offered.try(:id)).each do |proposal|
-      CarrierMailer.shipment_rejected(proposal).deliver_now
-    end
+    ProposalAccepted.perform_async(id)
   end
 
   # Find proposal with offer from shipper
