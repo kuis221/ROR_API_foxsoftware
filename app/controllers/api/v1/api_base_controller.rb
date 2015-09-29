@@ -15,7 +15,7 @@ class Api::V1::ApiBaseController < ApplicationController
     api.param :form, :first_name, :string, :required, 'First Name'
     api.param :form, :last_name, :string, :required, 'Last Name'
     api.param :form, :email, :string, :required, 'Email'
-    api.param :form, :alt_email, :string, :required, 'Alternative email'
+    api.param :form, :alt_email, :string, :optional, 'Alternative email'
     api.param :form, :password, :string, :required, 'Password'
     api.param :form, :password_confirmation, :string, :required, 'Password confirmation'
     api.param :form, :about, :string, :optional, 'About me'
@@ -48,7 +48,7 @@ class Api::V1::ApiBaseController < ApplicationController
       [:index, :show, :create, :update, :delete].each do |api_action|
         swagger_api api_action do |api|
           Api::V1::ApiBaseController.add_authorization_headers(api)
-          Api::V1::ApiBaseController.add_pagination_params(api) if api_action == :index # Pagination autoadded for all indexes
+          Api::V1::ApiBaseController.add_pagination_params(api) if api_action == :index # Pagination auto-added for all indexes
         end
       end
       ## Populate Response model here

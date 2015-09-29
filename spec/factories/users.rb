@@ -51,6 +51,10 @@ FactoryGirl.define do
       user.add_role :user
       user.create_new_auth_token
     end
+
+    trait :confirmed do
+      confirmed_at Time.now
+    end
   end
 
   factory :admin, parent: :user do

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   # TODO move under V1 version
   mount_devise_token_auth_for 'User', at: 'auth'
+
   get 'oauth_login/:provider' => 'devise_token_auth/registrations#oauth_login', as: :oauth_login
 
   root to: 'home#index'

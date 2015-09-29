@@ -1,17 +1,21 @@
-# see http://www.emilsoman.com/blog/2013/05/18/building-a-tested/
 module DeviseTokenAuth
   class SessionsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:destroy]
-    after_action :reset_session, :only => [:destroy]
+    before_filter :set_user_by_token, only: [:destroy]
+    after_action :reset_session, only: [:destroy]
 
-    def new
-      render text: 'Please login on main site.'
-      # render json: {
-      #   errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
-      # }, status: 405
+    # :nocov:
+    swagger_controller :sessions, 'Email login resource'
+    swagger_api :create do
+      summary 'LOGIN with email'
+      param :query, :email, :string, :required, 'Email'
+      param :query, :password, :string, :required, 'Password'
+      param :query, :remember_me, :string, :optional, 'Remember user for two weeks, (true/false)'
+      response 'ok', "{'data': {}}"
+      response 'not_confirmed'
+      response 'bad_credentials'
     end
-
-    def create
+    # :nocov:
+    def create # login
       # Check
       field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
 
@@ -33,7 +37,6 @@ module DeviseTokenAuth
       end
 
       if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
-        # create shipper id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
 
@@ -44,23 +47,17 @@ module DeviseTokenAuth
         @resource.save
 
         sign_in(:user, @resource, store: false, bypass: false)
+        auth_headers = @resource.build_auth_header(@token, @client_id)
 
         yield if block_given?
 
-        render json: {
-          data: @resource.token_validation_response
-        }
+        response.headers.merge!(auth_headers)
+        render_ok
 
       elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
-        render json: {
-          success: false,
-          errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
-        }, status: 401
-
+        render_error 'not_confirmed', 401
       else
-        render json: {
-          errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
-        }, status: 401
+        render_error 'bad_credentials', 401
       end
     end
 
@@ -76,14 +73,9 @@ module DeviseTokenAuth
 
         yield if block_given?
 
-        render json: {
-          success:true
-        }, status: 200
-
+        render_ok
       else
-        render json: {
-          errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
-        }, status: 404
+        raise ActiveRecord::RecordNotFound
       end
     end
 
