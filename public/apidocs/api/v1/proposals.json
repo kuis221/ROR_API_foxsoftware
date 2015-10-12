@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://foxlmp-dev:3000/",
   "resourcePath": "proposals",
   "apis": [
     {
@@ -9,7 +9,6 @@
       "operations": [
         {
           "summary": "REJECT proposal by carrier",
-          "notes": "        Reject a proposal by current_user(must be a carrier).<br/>\n        Shipper will get notification and proposal status became rejected.<br/>\n        Shipment status will drop to 'proposing' if any other than proposing.<br/>\n        Rejection possible only when shipment in negotiation status.\n",
           "parameters": [
             {
               "paramType": "path",
@@ -36,6 +35,7 @@
               "message": null
             }
           ],
+          "notes": "        Reject a proposal by current_user(must be a carrier).<br/>\n        Shipper will get notification and proposal status became rejected.<br/>\n        Shipment status will drop to 'proposing' if any other than proposing.<br/>\n        Rejection possible only when shipment in negotiation status.\n",
           "method": "put",
           "nickname": "Api::V1::Proposals#reject"
         }
@@ -46,7 +46,6 @@
       "operations": [
         {
           "summary": "CANCEL proposal by shipper",
-          "notes": "        Cancel proposal, similar as #reject but can be only set by shipper.<br/>\n        Can be only set when shipment is in 'pending' status(before 'confirming')\n",
           "parameters": [
             {
               "paramType": "path",
@@ -73,6 +72,7 @@
               "message": null
             }
           ],
+          "notes": "        Cancel proposal, similar as #reject but can be only set by shipper.<br/>\n        Can be only set when shipment is in 'pending' status(before 'confirming')\n",
           "method": "put",
           "nickname": "Api::V1::Proposals#cancel"
         }
@@ -89,7 +89,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -105,7 +105,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "query",
@@ -132,7 +132,6 @@
             }
           ],
           "summary": "LIST all current user proposals",
-          "notes": "Sorted by newest at the top",
           "responseMessages": [
             {
               "code": "ok",
@@ -140,6 +139,7 @@
               "message": "Success"
             }
           ],
+          "notes": "Sorted by newest at the top",
           "method": "get",
           "nickname": "Api::V1::Proposals#index"
         }
@@ -156,7 +156,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -172,7 +172,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "form",
@@ -203,7 +203,6 @@
             }
           ],
           "summary": "CREATE proposal",
-          "notes": "This endpoint provide creation of new proposal for shipment. Only user with <strong>carrier</strong> role can do this.",
           "responseMessages": [
             {
               "code": "end_auction_date",
@@ -236,6 +235,7 @@
               "message": null
             }
           ],
+          "notes": "This endpoint provide creation of new proposal for shipment. Only user with <strong>carrier</strong> role can do this.",
           "method": "post",
           "nickname": "Api::V1::Proposals#create"
         }
@@ -252,7 +252,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -268,7 +268,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "path",

@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://foxlmp-dev:3000/",
   "resourcePath": "shipments",
   "apis": [
     {
@@ -81,7 +81,6 @@
       "operations": [
         {
           "summary": "LIST all current proposals for shipment",
-          "notes": "For author of shipment will render all proposals, and for viewers will render non-private active shipment proposals",
           "parameters": [
             {
               "paramType": "query",
@@ -129,6 +128,7 @@
               "message": "Success"
             }
           ],
+          "notes": "For author of shipment will render all proposals, and for viewers will render non-private active shipment proposals",
           "method": "get",
           "nickname": "Api::V1::Shipments#current_proposals"
         }
@@ -139,7 +139,6 @@
       "operations": [
         {
           "summary": "SET shipment status/transit to",
-          "notes": "      Transit shipment status to new one, according to current status and current_user role.\n      Available statuses:\n      <table>\n        <thead><th>Status</th><th>Set by</th><th>Explanation</th><th>From statuses</th></thead>\n        <tr><th>auction</th><td>Shipper</td><td>Move from Draft to Auction</td><td>draft</td></tr>\n        <tr><th>pause</th><td>Shipper</td><td>Set shipment to 'draft' and remove all proposals</td><td>offer, auction</td></tr>\n        <tr><th>propose</th><td>Shipper</td><td>Accept proposal(make an offer)</td>auction</tr>\n        <tr><th>confirm</th><td>Carrier</td><td>Accept above offer.</td><td>propose</td></tr>\n        <tr><th>in_transit</th><td>Carrier</td><td>Mark as in transit</td><td>confirm</td></tr>\n        <tr><th>delivered</th><td>Carrier</td><td>Mark as delivered</td><td>in_transit</td></tr>\n        <!--<tr><th>state</th><td></td><td>role</td><td>explanation</td><td>from statuses</td></tr> -->\n      </table>\n",
           "parameters": [
             {
               "paramType": "path",
@@ -205,6 +204,7 @@
               "message": null
             }
           ],
+          "notes": "      Transit shipment status to new one, according to current status and current_user role.\n      <strong>Available events:</strong>\n      <table>\n        <thead><th>Status</th><th>Set by</th><th>Explanation</th><th>From statuses</th></thead>\n        <tr><th>auction</th><td>Shipper</td><td>Move from Draft to Auction</td><td>draft</td></tr>\n        <tr><th>pause</th><td>Shipper</td><td>Set shipment to 'draft' and remove all proposals</td><td>offer, auction</td></tr>\n        <tr><th>propose</th><td>Shipper</td><td>Accept proposal(make an offer)</td>td>auction</td></tr>\n        <tr><th>confirm</th><td>Carrier</td><td>Accept above offer.</td><td>propose</td></tr>\n        <tr><th>in_transit</th><td>Carrier</td><td>Mark as in transit</td><td>confirm</td></tr>\n        <tr><th>delivered</th><td>Carrier</td><td>Mark as delivered</td><td>in_transit</td></tr>\n        <!--<tr><th>state</th><td></td><td>role</td><td>explanation</td><td>from statuses</td></tr> -->\n      </table>\n",
           "method": "post",
           "nickname": "Api::V1::Shipments#set_status"
         }
@@ -215,7 +215,6 @@
       "operations": [
         {
           "summary": "Check if new proposals has been made since last check",
-          "notes": "For shipper users",
           "parameters": [
             {
               "paramType": "path",
@@ -232,6 +231,7 @@
               "message": "Return number of new proposals since the last check"
             }
           ],
+          "notes": "For shipper users",
           "method": "get",
           "nickname": "Api::V1::Shipments#check_new_proposals"
         }
@@ -242,7 +242,6 @@
       "operations": [
         {
           "summary": "LIST all invited shipments for carrier user",
-          "notes": "Find and display all current_user invited shipments in active status",
           "parameters": [
             {
               "paramType": "query",
@@ -268,6 +267,7 @@
               "message": "{'results': [ShipmentObjects]}"
             }
           ],
+          "notes": "Find and display all current_user invited shipments in active status",
           "method": "get",
           "nickname": "Api::V1::Shipments#my_invitations"
         }
@@ -284,7 +284,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -300,7 +300,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "query",
@@ -334,7 +334,6 @@
             }
           ],
           "summary": "LIST all user shipments",
-          "notes": "For current user, list owned shipments. When listing with user_id - only public and active shipments will be shown",
           "responseMessages": [
             {
               "code": "ok",
@@ -342,6 +341,7 @@
               "message": "{'results': [ShipmentObjects]}"
             }
           ],
+          "notes": "For current user, list owned shipments. When listing with user_id - only public and active shipments will be shown",
           "method": "get",
           "nickname": "Api::V1::Shipments#index"
         }
@@ -358,7 +358,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -374,7 +374,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "form",
@@ -617,7 +617,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -633,7 +633,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "path",
@@ -651,7 +651,6 @@
             }
           ],
           "summary": "LOAD shipment",
-          "notes": "Only active shipments will be displayed for carriers, or any shipment for shipment user",
           "responseMessages": [
             {
               "code": "not_eligible",
@@ -674,6 +673,7 @@
               "message": "No access to this shipment"
             }
           ],
+          "notes": "Only active shipments will be displayed for carriers, or any shipment for shipment user",
           "method": "get",
           "nickname": "Api::V1::Shipments#show"
         }
@@ -690,7 +690,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -706,7 +706,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "form",

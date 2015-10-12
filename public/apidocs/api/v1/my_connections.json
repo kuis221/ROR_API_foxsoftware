@@ -1,7 +1,7 @@
 {
   "apiVersion": "1.0",
   "swaggerVersion": "1.2",
-  "basePath": "http://foxsoftware.herokuapp.com/",
+  "basePath": "http://foxlmp-dev:3000/",
   "resourcePath": "my_connections",
   "apis": [
     {
@@ -9,7 +9,6 @@
       "operations": [
         {
           "summary": "Invite carriers to proposal on specific shipment",
-          "notes": "And email will be send to each email inviting people to our system.",
           "parameters": [
             {
               "paramType": "form",
@@ -46,6 +45,7 @@
               "message": "Number of invitations created"
             }
           ],
+          "notes": "And email will be send to each email inviting people to our system.",
           "method": "post",
           "nickname": "Api::V1::MyConnections#invite_carrier"
         }
@@ -56,7 +56,6 @@
       "operations": [
         {
           "summary": "AUTOCOMPLETE carriers connections y part of email",
-          "notes": "For shipper role only.<br/>Will find carrier in current_user connections, depends on current_user role, will return only 5 first matches",
           "parameters": [
             {
               "paramType": "query",
@@ -78,6 +77,7 @@
               "message": "{'results': [ArrayOfUsers]}"
             }
           ],
+          "notes": "For shipper role only.<br/>Will find carrier in current_user connections, depends on current_user role, will return only 5 first matches",
           "method": "post",
           "nickname": "Api::V1::MyConnections#autocomplete_carriers"
         }
@@ -94,7 +94,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -110,7 +110,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "query",
@@ -130,7 +130,6 @@
             }
           ],
           "summary": "LIST user connections",
-          "notes": "Depends on user role it will load his connections, for shipper user will load his carriers and vice versa",
           "responseMessages": [
             {
               "code": "ok",
@@ -138,6 +137,7 @@
               "message": "{'results': ArrayOfConnectionObject}"
             }
           ],
+          "notes": "Depends on user role it will load his connections, for shipper user will load his carriers and vice versa",
           "method": "get",
           "nickname": "Api::V1::MyConnections#index"
         }
@@ -154,7 +154,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -170,7 +170,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "form",
@@ -181,7 +181,6 @@
             }
           ],
           "summary": "CREATE connection",
-          "notes": "Create connection between current user and other user, Users must have opposite roles. For example, current_user(shipper) add carrier.",
           "responseMessages": [
             {
               "code": "not_saved",
@@ -194,6 +193,7 @@
               "message": "ConnectionObject"
             }
           ],
+          "notes": "Create connection between current user and other user, Users must have opposite roles. For example, current_user(shipper) add carrier.",
           "method": "post",
           "nickname": "Api::V1::MyConnections#create"
         }
@@ -210,7 +210,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "fGiGcvMI7MPXf159FhZ4iQ"
+              "defaultValue": "5lYBFimEJD8fgEWqUjikeQ"
             },
             {
               "paramType": "header",
@@ -226,7 +226,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "PEBfg83DK4u5-i06yATPDQ"
+              "defaultValue": "Y9gl2s_pe9m88e3ZaSvF4A"
             },
             {
               "paramType": "path",
