@@ -1,0 +1,58 @@
+{
+  "apiVersion": "1.0",
+  "swaggerVersion": "1.2",
+  "basePath": "http://foxsoftware.herokuapp.com/",
+  "resourcePath": "sessions",
+  "apis": [
+    {
+      "path": "auth/sign_in.json",
+      "operations": [
+        {
+          "summary": "LOGIN with email",
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "email",
+              "type": "string",
+              "description": "Email",
+              "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "password",
+              "type": "string",
+              "description": "Password",
+              "required": true
+            },
+            {
+              "paramType": "query",
+              "name": "remember_me",
+              "type": "string",
+              "description": "Remember user for two weeks, (true/false)",
+              "required": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": "bad_credentials",
+              "responseModel": null,
+              "message": null
+            },
+            {
+              "code": "not_confirmed",
+              "responseModel": null,
+              "message": null
+            },
+            {
+              "code": "ok",
+              "responseModel": null,
+              "message": "{'data': {}}"
+            }
+          ],
+          "method": "post",
+          "nickname": "DeviseTokenAuth::Sessions#create"
+        }
+      ]
+    }
+  ]
+}

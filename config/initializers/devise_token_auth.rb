@@ -7,7 +7,7 @@ DeviseTokenAuth.setup do |config|
   is_heroku = ENV.any? {|x,_| x=~ /^dyno/i }
   # change headers only in heroku or any non-production environment.
   # should change only in production, staging must keep in 'false' because of use of api prepopulated login data
-  config.change_headers_on_each_request = !is_heroku && Rails.env.production?
+  config.change_headers_on_each_request = false # !is_heroku && Rails.env.production?
 
   # By default, users will need to re-authenticate after 2 weeks. This setting
   # determines how long tokens will remain valid after they are issued.
