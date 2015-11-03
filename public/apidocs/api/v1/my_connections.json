@@ -94,7 +94,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "ZQ9041w9kHXnc2Zyk3LQ9g"
+              "defaultValue": "qVHE7nm1lO4on67C6URjtw"
             },
             {
               "paramType": "header",
@@ -110,7 +110,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "L_ezTiyCEdM0w74AdZ2b9w"
+              "defaultValue": "LxnNbXlA-JrWoTK3IY08nA"
             },
             {
               "paramType": "query",
@@ -154,7 +154,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "ZQ9041w9kHXnc2Zyk3LQ9g"
+              "defaultValue": "qVHE7nm1lO4on67C6URjtw"
             },
             {
               "paramType": "header",
@@ -170,7 +170,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "L_ezTiyCEdM0w74AdZ2b9w"
+              "defaultValue": "LxnNbXlA-JrWoTK3IY08nA"
             },
             {
               "paramType": "form",
@@ -210,7 +210,7 @@
               "type": "string",
               "description": "Logged in user access token",
               "required": true,
-              "defaultValue": "ZQ9041w9kHXnc2Zyk3LQ9g"
+              "defaultValue": "qVHE7nm1lO4on67C6URjtw"
             },
             {
               "paramType": "header",
@@ -226,7 +226,7 @@
               "type": "string",
               "description": "Cliend ID",
               "required": true,
-              "defaultValue": "L_ezTiyCEdM0w74AdZ2b9w"
+              "defaultValue": "LxnNbXlA-JrWoTK3IY08nA"
             },
             {
               "paramType": "path",
