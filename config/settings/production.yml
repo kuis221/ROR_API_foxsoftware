@@ -1,2 +1,2 @@
 some_shared: prodvar
-host: http://foxsoftware.herokuapp.com
+host: http://foxsoftware-staging.herokuapp.com

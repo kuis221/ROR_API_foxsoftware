@@ -118,18 +118,6 @@ ActiveRecord::Schema.define(version: 20150920094851) do
   add_index "ship_invitations", ["invitee_id"], name: "index_ship_invitations_on_invitee_id", using: :btree
   add_index "ship_invitations", ["shipment_id"], name: "index_ship_invitations_on_shipment_id", using: :btree
 
-  create_table "shipment_feedbacks", force: :cascade do |t|
-    t.string   "description"
-    t.integer  "rate",        null: false
-    t.integer  "user_id"
-    t.integer  "shipment_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "shipment_feedbacks", ["shipment_id"], name: "index_shipment_feedbacks_on_shipment_id", using: :btree
-  add_index "shipment_feedbacks", ["user_id"], name: "index_shipment_feedbacks_on_user_id", using: :btree
-
   create_table "shipments", force: :cascade do |t|
     t.string   "notes"
     t.string   "picture"

@@ -1,11 +1,15 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  host: localhost
   pool: 100
+  timeout: 5000
 
 development:
   <<: *default
   database: fox_development
+  username: postgres
+  password: postgres
 
 test:
   <<: *default
